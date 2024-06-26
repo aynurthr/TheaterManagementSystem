@@ -1,0 +1,127 @@
+﻿@model HomePageViewModel
+
+@{
+    ViewData["Title"] = "Kazan State Theater of The Young Spectators";
+    ViewBag.BodyId = "Home";
+
+}
+
+<section class="hero">
+    <div class="hero__top">
+        <div class="hero__top__shadow"></div>
+        <div class="container">
+            <div class="hero__info">
+                <div class="hero__info-item">
+                    <span>Founded</span>
+                    <strong>1932</strong>
+                </div>
+                <div class="hero__info-item">
+                    <span>2020-2021</span>
+                    <strong>34 performances</strong>
+                </div>
+                <div class="hero__info-item">
+                    <span>For everyone</span>
+                    <strong>0+</strong>
+                </div>
+            </div>
+            <div class="hero__heading">
+                <h1>Kazan State Theater of The Young Spectators</h1>
+            </div>
+        </div>
+    </div>
+    <div class="hero__bottom">
+        <div class="container">
+            <div class="hero__info">
+                <div class="hero__info-item">
+                    <span>Founded</span>
+                    <strong>1932</strong>
+                </div>
+                <div class="hero__info-item">
+                    <span>2020-2021</span>
+                    <strong>34 performances</strong>
+                </div>
+                <div class="hero__info-item">
+                    <span>For everyone</span>
+                    <strong>0+</strong>
+                </div>
+            </div>
+            <a href="../about/index.html" class="hero__link">Learn More</a>
+        </div>
+    </div>
+</section>
+
+
+<section class="premieres">
+    <div class="container">
+        <h1>Upcoming Premieres</h1>
+        <div class="premieres__shows" id="premieres-shows">
+            @foreach (var poster in Model.RecentPosters)
+            {
+                <a href="@Url.Action("Details", "Posters", new { id = poster.Id })" class="premieres__shows-show" data-id="@poster.Id">
+                    <img src="@poster.ImageUrl" alt="show@poster.Id" />
+                    <div class="premieres__shows-show__shadow"></div>
+                    <div class="premieres__shows-show__top">
+                        <date>@poster.ShowDate.ToString("dd MMM, HH:mm")</date>
+                        <age>@poster.Age</age>
+                    </div>
+                    <div class="premieres__shows-show__bottom">
+                        <h5>@poster.Title</h5>
+                        <p class="description">
+                            @poster.Description
+                        </p>
+                    </div>
+                </a>
+            }
+
+            @if (Model.MoreShowsAvailable)
+            {
+                <a href="@Url.Action("Index", "Posters")" class="btn btn--more">More</a>
+            }
+        </div>
+    </div>
+</section>
+
+
+
+<section class="info">
+    <div class="container">
+        <a href="@Url.Action("RulesOfConduct", "Home")" class="info-button">Rules of Conduct</a>
+        <a href="@Url.Action("HallPanorama", "Home")" class="info-button">Hall Panorama</a>
+        <a href="@Url.Action("TheaterTeam", "Home")" class="info-button">Theater Team</a>
+    </div>
+</section>
+
+<section class="news">
+    <div class="container">
+        <div class="news__top">
+            <h1>Theater News</h1>
+            <a href="@Url.Action("Index", "News")" class="show-all">
+                <p>Show All</p>
+                <img class="arrow-icon" src="../../assets/media/icons/arrow.svg" alt="arrow icon" />
+            </a>
+        </div>
+
+        <div class="news-wrapper" id="news-wrapper">
+            @foreach (var news in Model.RecentNews)
+            {
+                <a href="@Url.Action("Details", "News", new { id = news.Id })" class="news-item" data-id="@news.Id">
+                    <img src="@news.ImageUrl" alt="news@news.Id" class="news-item__image" />
+                    <div class="news-item__content">
+                        <div class="news-item__content__top">
+                            <h2>@news.Title</h2>
+                            <date>@news.Date.ToString("dd.MM.yyyy")</date>
+                        </div>
+                        <p class="news-item__content__description">
+                            @news.Description
+                        </p>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    <script src="~/js/home.script.js"></script>
+}

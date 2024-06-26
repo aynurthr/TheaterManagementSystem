@@ -1,0 +1,98 @@
+﻿@model Theater.Presentation.Models.SeatingChartViewModel
+
+@{
+    ViewBag.Title = "Buy Ticket";
+    ViewBag.BodyId = "Buy-ticket";
+}
+
+<section class="poster-details">
+    <img class="poster-image" src="~/assets/media/images/premiere1.jpg" alt="Poster Image" />
+    <div class="poster-item__content">
+        <div class="container">
+            <div class="poster-item__content__left">
+                <h1 id="poster-title">@Model.Title</h1>
+            </div>
+            <div class="poster-item__content__price">
+                <h1 id="total-price">0$</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="booking">
+    <div class="container">
+        <div class="booking__left">
+            <h2>Select Show Date</h2>
+            <div class="booking__dates">
+                @foreach (var showDate in Model.ShowDates)
+                {
+                    <button class="booking__date" data-date="@showDate.Date.ToString("o")">
+                        @showDate.Date.ToString("MMMM dd, yyyy")
+                    </button>
+                }
+            </div>
+            <p class="booking__info">
+                Attention! The selected tickets must be paid for by credit card within 30 minutes. Be sure to print the electronic ticket you purchased. It must be presented at the entrance to the theater.
+            </p>
+            <div class="booking__actions">
+                <button class="btn btn--pay">Pay for Ticket</button>
+                <button class="btn btn--cancel">Cancel</button>
+            </div>
+        </div>
+        <div class="booking__right">
+            <h2>Seating Chart</h2>
+            <div class="booking__seating">
+                <div class="seating-chart">
+                    @foreach (var rowGroup in Model.Seats.GroupBy(s => s.Row))
+                    {
+                        <div class="seating-row">
+                            <div>@rowGroup.Key</div>
+                            @foreach (var seat in rowGroup)
+                            {
+                                <span class="seat @(seat.IsReserved ? "reserved" : "")" data-row="@seat.Row" data-seat="@seat.Number" data-price="@seat.Price">@seat.Number</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    var reservedSeats = @Html.Raw(Json.Serialize(Model.Seats.Where(s => s.IsReserved).Select(s => new { s.Row, s.Number })));
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Handle date selection
+        document.querySelector(".booking__dates").addEventListener("click", function (event) {
+            if (event.target.classList.contains("booking__date")) {
+                document.querySelectorAll(".booking__date").forEach((btn) => btn.classList.remove("active"));
+                event.target.classList.add("active");
+            }
+        });
+
+        // Seat selection and price change
+        let totalPrice = 0;
+        document.addEventListener("click", function (event) {
+            if (event.target.classList.contains("seat")) {
+                event.target.classList.toggle("selected");
+                if (event.target.classList.contains("selected")) {
+                    totalPrice += parseFloat(event.target.dataset.price);
+                } else {
+                    totalPrice -= parseFloat(event.target.dataset.price);
+                }
+                updateTotalPrice(totalPrice);
+            }
+        });
+
+        function updateTotalPrice(price) {
+            document.getElementById("total-price").innerText = `${price}$`;
+        }
+
+        // Cancel button functionality
+        document.querySelector(".btn--cancel").addEventListener("click", function () {
+            window.history.back();
+        });
+    });
+</script>

@@ -1,0 +1,43 @@
+﻿@using Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery
+@using Theater.Infrastructure.Extensions
+
+@model IEnumerable<PosterGetAllRequestDto>
+@{
+    ViewBag.Title = "Premieres";
+    ViewBag.BodyId = "Premieres";
+}
+
+<section class="shows">
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search premieres..." id="posters-search" />
+        </div>
+        <h1>Premieres</h1>
+        <div class="shows-wrapper" id="shows-wrapper">
+            @foreach (var poster in Model)
+            {
+                <div class="shows-item" data-id="@poster.Id">
+                    <a href="@Url.Action("Details", "Posters", new { id = poster.Id })" class="shows-item__link">
+                        <img src="@poster.ImageUrl" alt="show@poster.Id" />
+                        <div class="shows-item__shadow"></div>
+                        <div class="shows-item__top">
+                            <date>@poster.ShowDate.ToString("dd MMMM, HH:mm")</date>
+                            <age>@poster.Age</age>
+                        </div>
+                        <div class="shows-item__bottom">
+                            <h5>@poster.Title</h5>
+                            <p class="description">
+                                @Html.Raw(@poster.Description.Truncate(150)) <!-- Adjust the length as needed -->
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section addjs {
+    <script type="module" src="~/scripts/posters.js"></script>
+    <script src="~/assets/common/sidebar.js"></script>
+}

@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Hall Panorama";
+    ViewBag.BodyId = "Halls";
+
+}
+
+<section class="hall-panorama">
+    <div class="container">
+        <div class="hall-panorama__title">
+            <a href="@Url.Action("Index", "Home")">
+                <img src="~/assets/media/icons/arrow.svg" alt="" style="transform: scaleX(-1)" />
+            </a>
+            <h1>Hall Panorama</h1>
+        </div>
+        <p>
+            Our theater boasts two main halls, each offering a unique experience for our visitors. Explore the details of each hall below.
+        </p>
+
+        <div class="hall">
+            <div class="hall-images">
+                <div class="image-container">
+                    <button class="prev hall1-prev">&laquo;</button>
+                    <img src="~/assets/media/images/first-hall/hall1-1.webp" alt="Hall 1 Image 1" id="hall1-image" />
+                    <button class="next hall1-next">&raquo;</button>
+                </div>
+            </div>
+            <div class="hall-info">
+                <h2>Hall 1</h2>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at libero nec ligula varius scelerisque. Vestibulum tincidunt sem ut ex fermentum, a feugiat leo aliquam.
+                </p>
+                <ul>
+                    <li>Capacity: 500 seats</li>
+                    <li>State-of-the-art sound system</li>
+                    <li>Comfortable seating</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="hall hall-reverse">
+            <div class="hall-info">
+                <h2>Hall 2</h2>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at libero nec ligula varius scelerisque. Vestibulum tincidunt sem ut ex fermentum, a feugiat leo aliquam.
+                </p>
+                <ul>
+                    <li>Capacity: 300 seats</li>
+                    <li>Advanced lighting system</li>
+                    <li>Spacious stage</li>
+                </ul>
+            </div>
+            <div class="hall-images">
+                <div class="image-container">
+                    <button class="prev hall2-prev">&laquo;</button>
+                    <img src="~/assets/media/images/second-hall/hall2-1.jpg" alt="Hall 2 Image 1" id="hall2-image" />
+                    <button class="next hall2-next">&raquo;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/halls.js"></script>
+}

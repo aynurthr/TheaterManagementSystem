@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "About the Theater";
+    ViewBag.BodyId = "About";
+}
+
+<section class="details">
+    <div class="container">
+        <div class="details__header">
+            <div class="header-item">
+                <p>Founded</p>
+                <p>1932</p>
+            </div>
+            <div class="header-item">
+                <p>Shows in 2020-2021</p>
+                <p>34 performances</p>
+            </div>
+            <div class="header-item">
+                <p>Suitable for all ages</p>
+                <p>0+</p>
+            </div>
+        </div>
+        <div class="details__return-link">
+            <a href="@Url.Action("Index", "Home")">Return</a>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container">
+        <div class="content__left">
+            <div class="content__left__tabs">
+                <a href="#" class="tab active" data-tab="history">Theater History</a>
+                <a href="#" class="tab" data-tab="tour">Theater Tour</a>
+            </div>
+            <div class="content__left__text">
+                <div class="tab-content active" id="history">
+                    <p>
+                        The Kazan State Theater of The Young Spectators was founded in 1932 and has become a cultural landmark in Kazan. It offers a variety of performances, including children's shows, comedies, and dramas. Over the years, the theater has staged numerous productions and hosted countless visitors.
+                        <br /><br />
+                        The theater is dedicated to providing high-quality entertainment and educational experiences for young audiences. It features a diverse repertoire and is known for its innovative approaches to theater arts.
+                        <br /><br />
+                        The theater building, located at Ostrovskogo St., 10, is an architectural gem and a hub for cultural activities in the city. It houses modern facilities, ensuring a comfortable and engaging experience for all visitors.
+                    </p>
+                </div>
+                <div class="tab-content" id="tour">
+                    <p>
+                        The theater tour includes a visit to the main auditorium, backstage areas, and rehearsal rooms. Visitors can learn about the history of the theater, see costumes and props, and get an insider's view of how productions are created and staged.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="content__image">
+            <img src="~/assets/media/images/city-image.png" alt="Theater Building" />
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/about.js"></script>
+}

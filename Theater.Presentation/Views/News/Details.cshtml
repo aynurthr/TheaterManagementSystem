@@ -1,0 +1,39 @@
+﻿@model Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery.NewsGetByIdRequestDto
+
+
+@{
+    ViewBag.Title = @Model.Title;
+    ViewBag.BodyId = "News-details";
+}
+
+
+@section addcss {
+    <link rel="stylesheet" href="~/assets/sass/main.css" />
+    <link rel="icon" type="image/x-icon" href="~/assets/media/icons/theater.svg" />
+}
+
+<section class="news-details">
+    <div class="news-details__image">
+        <img id="news-image" src="@Model.ImageUrl" alt="News Image" />
+    </div>
+    <div class="news-details__content">
+        <div class="container">
+            <date id="news-date">@Model.PublishedAt.ToString("dd.MM.yyyy")</date>
+            <h1 id="news-title">@Model.Title</h1>
+        </div>
+    </div>
+    <div class="news-details__description">
+        <div class="container">
+            <p id="news-description">
+                @Model.Description
+            </p>
+        </div>
+    </div>
+</section>
+
+@section addjs {
+    <script type="module" src="~/scripts/news.js"></script>
+    <script src="~/assets/common/sidebar.js"></script>
+}
+
+

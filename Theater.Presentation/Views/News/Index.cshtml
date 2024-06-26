@@ -1,0 +1,47 @@
+﻿@using Theater.Application.Modules.NewsModule.Queries.NewsGetAllQuery
+@using Theater.Infrastructure.Extensions
+
+@model IEnumerable<NewsGetAllRequestDto>
+@{
+    ViewBag.Title = "All News";
+    ViewBag.BodyId = "All-news";
+}
+
+
+
+<section class="news">
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search news..." id="news-search" />
+        </div>
+        <h1>Theater News</h1>
+        <div class="news-wrapper" id="news-wrapper">
+            @foreach (var news in Model)
+            {
+                <div class="news-item">
+                    <a href="@Url.Action("Details", "News", new { id = news.Id })" class="news-item__link">
+
+                    <img src="@news.ImageUrl" alt="news-image" class="news-item__image" />
+                    <div class="news-item__content">
+                        <div class="news-item__content__top">
+                            <h2>@news.Title</h2>
+                            <date>@news.PublishedAt.ToString("dd.MM.yyyy")</date>
+                        </div>
+                        <p class="news-item__content__description">
+                            @news.Description.Truncate(150) <!-- Adjust the length as needed -->
+                        </p>
+                    </div>
+                        </a>
+
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section addjs {
+    <script type="module" src="~/scripts/news.js"></script>
+    <script src="~/assets/common/sidebar.js"></script>
+}
+
+

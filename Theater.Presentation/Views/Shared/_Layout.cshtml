@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/assets/sass/main.css" />
+    <link rel="icon" type="image/x-icon" href="~/assets/media/icons/theater.svg" />
+    @RenderSection("addcss", required: false)
+</head>
+<body id="@ViewBag.BodyId">
+    <section class="navbar">
+        <div class="container">
+            <div class="navbar__menu">
+                <a class="navbar__logo" href="@Url.Action("Index", "Home")">
+                    <img src="~/assets/media/icons/theater.svg" alt="Theater logo" />
+                </a>
+                <div>
+                    <a class="navbar__text" href="@Url.Action("Index", "Home")">Home</a>
+                    <a class="navbar__text" href="@Url.Action("Index", "Posters")">Premieres</a>
+                    <a class="navbar__text" href="@Url.Action("Index", "News")">News</a>
+                    <a class="navbar__text" href="@Url.Action("About", "Home")">About the Theater</a>
+                    <a class="navbar__text" href="@Url.Action("Index", "Contact")">Contact Us</a>
+                </div>
+            </div>
+
+            <div class="navbar__actions">
+                <a href="@Url.Action("Login", "Account")" class="btn btn--login">Log In</a>
+                <a href="@Url.Action("Register", "Account")" class="btn btn--register">Register</a>
+            </div>
+            <div class="navbar__burger" id="burger-btn">
+                <img src="~/assets/media/icons/burger.svg" alt="Burger icon" />
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <a href="@Url.Action("Index", "Posters")">Premieres</a>
+            <a href="@Url.Action("Index", "News")">News</a>
+            <a href="@Url.Action("About", "Home")">About the Theater</a>
+            <a href="@Url.Action("Index", "Contact")">Contact Us</a>
+            <a href="@Url.Action("Login", "Account")" class="btn btn--login">Log In</a>
+            <a href="@Url.Action("Register", "Account")" class="btn btn--register">Register</a>
+        </div>
+    </section>
+
+    @RenderBody()
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-top__left">
+                    <div class="footer-logo">
+                        <img src="~/assets/media/icons/theater.svg" alt="Theater logo" />
+                        <h3>Kazan State Theater of The Young Spectators</h3>
+                    </div>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Address:</th>
+                                <td>123 Theater Lane, Kazan, Russia</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>contact@kazan-theater.ru</td>
+                            </tr>
+                            <tr>
+                                <th>Phone:</th>
+                                <td>+7 (123) 456-7890</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>Join our community</p>
+                    <div class="footer-social-icons">
+                        <a href="#"><img src="~/assets/media/icons/youtube.svg" alt="Youtube Logo" /></a>
+                        <a href="#"><img src="~/assets/media/icons/twitter.svg" alt="Twitter Logo" /></a>
+                        <a href="#"><img src="~/assets/media/icons/instagram.svg" alt="Instagram Logo" /></a>
+                    </div>
+                </div>
+                <div class="footer-top__middle">
+                    <div class="footer-top__middle__header"><h3>Explore</h3></div>
+                    <div class="footer-links">
+                        <a href="@Url.Action("Index", "Posters")">Premieres</a>
+                        <a href="@Url.Action("Index", "News")">News</a>
+                        <a href="@Url.Action("About", "Home")">About the Theater</a>
+                        <a href="@Url.Action("Index", "Contact")">Contact Us</a>
+                    </div>
+                </div>
+                <div class="footer-top__right">
+                    <div class="footer-top__right__header"><h3>Subscribe to our newsletter</h3></div>
+                    <p>Get exclusive promotions and updates straight to your inbox.</p>
+                    <form action="" class="email-form">
+                        <input type="email" placeholder="Enter your email" class="email-input" />
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-bottom__divider"></div>
+                <p>Ⓒ Kazan State Theater of The Young Spectators.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="~/assets/common/sidebar.js"></script>
+    @RenderSection("addjs", required: false)
+        @RenderSection("Scripts", required: false)
+
+</body>
+</html>

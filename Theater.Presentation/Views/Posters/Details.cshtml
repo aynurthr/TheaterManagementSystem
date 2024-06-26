@@ -1,0 +1,120 @@
+﻿@model Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery.PosterGetByIdRequestDto
+
+@{
+    ViewBag.Title = @Model.Title;
+    ViewBag.BodyId = "Poster-details";
+}
+
+<section class="poster-details">
+    <img class="poster-image" src="@Model.ImageUrl" alt="Poster Image" />
+    <div class="poster-item__content">
+        <div class="poster-item__content__top">
+            <div class="container">
+                <div class="poster-item__content__top__left">
+                    <h1>@Model.Title</h1>
+                    <div class="genre">@Model.Genre</div>
+                </div>
+                <div class="poster-item__content__top__middle">
+                    <div>
+                        <p>Duration</p>
+                        <div class="duration">@Model.Duration</div>
+                    </div>
+                    <div>
+                        <p>Age Limit</p>
+                        <div class="age">@Model.Age</div>
+                    </div>
+                </div>
+                <div class="poster-item__content__top__right">
+                    <a id="buy-ticket-btn" href="@Url.Action("BuyTicket", "Posters", new { posterId = Model.Id })">Buy Ticket</a>
+                </div>
+
+
+
+            </div>
+        </div>
+
+        <div class="poster-item__actions">
+            <div class="container">
+                <p>Watched the show? Review it now and let us know how we did!</p>
+                <div class="action-button" id="toggle-icon">
+                    <i class="fa-regular fa-eye" style="color: #282828" aria-hidden="true"></i>
+                </div>
+                <div class="star-rating">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="fa-regular fa-star @(i <= @Model.Rating ? "filled" : "")" style="color: #282828" data-value="@i" aria-hidden="true"></i>
+                    }
+                    <h1 class="rating">@Model.Rating</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="poster-item__content__bottom">
+            <section class="tabs">
+                <div class="container">
+                    <div class="tabs__menu">
+                        <a href="#" class="tab active" data-tab="about">About the Show</a>
+                        <a href="#" class="tab" data-tab="team">Cast</a>
+                        <a href="#" class="tab" data-tab="comments">Feedback</a>
+                    </div>
+                    <div class="tabs__content">
+                        <div class="tab-content" id="about" style="display: block">
+                            <p>
+                                @Html.Raw(Model.Description)
+                            </p>
+                        </div>
+                        <div class="tab-content" id="team" style="display: none">
+                            <div class="team-content">
+                                @foreach (var actor in Model.Actors)
+                                {
+                                    <div class="cast-member">
+                                        <img src="@actor.ImageSrc" alt="@actor.FullName" />
+                                        <div class="cast-info">
+                                            <p class="role">@actor.Role</p>
+                                            <h3>@actor.FullName</h3>
+                                            <p>@actor.Title</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="tab-content" id="comments" style="display: none">
+                            <div class="comments-content">
+                                <h2>Comments</h2>
+                                <form class="comment-form" id="comment-form">
+                                    <textarea id="comment-input" placeholder="Add a comment..." required></textarea>
+                                    <button type="submit">Post Comment</button>
+                                </form>
+                                <div class="comments-info">
+                                    <p id="comments-count">@Model.Comments.Count() Comments</p>
+                                </div>
+                                <div class="comments-list" id="comments-list">
+                                    @foreach (var comment in Model.Comments)
+                                    {
+                                        <div class="comment">
+                                            <div class="comment-avatar">
+                                                <img src="~/assets/media/images/default-avatar.jpg" alt="Default Avatar" />
+                                            </div>
+                                            <div class="comment-content">
+                                                <div class="comment-user">@comment.UserName</div>
+                                                <div class="comment-time">@comment.CreatedAt.ToString("MM/dd/yyyy, h:mm:ss tt")</div>
+                                                <div class="comment-text">@comment.Text</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <p class="poster-description"></p>
+    </div>
+</section>
+
+@section addjs {
+    <script src="https://kit.fontawesome.com/277e46d269.js" crossorigin="anonymous"></script>
+    <script src="~/js/posterDetails.js"></script>
+}
+

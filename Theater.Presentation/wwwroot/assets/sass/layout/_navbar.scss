@@ -1,0 +1,162 @@
+.navbar {
+  background-color: $background-color;
+  border-bottom: 1px solid #e0e0e0;
+
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__logo {
+    margin-right: 40px;
+
+    img {
+      height: 55px;
+      width: 55px;
+    }
+  }
+
+  &__menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .navbar__text {
+      color: $primary-text-color;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+
+      &:hover {
+        color: $primary-color;
+      }
+      @media (max-width: $tablet-width) {
+        display: none;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 20px;
+
+    .btn {
+      padding: 10px 20px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s, color 0.3s;
+      border-radius: $border-radius;
+
+      &--login {
+        color: $primary-text-color;
+        background-color: transparent;
+        border: 1px solid $secondary-text-color;
+
+        &:hover {
+          color: #fff;
+          background-color: $primary-color;
+          border: 1px solid $primary-color;
+        }
+      }
+
+      &--register {
+        color: #fff;
+        background-color: $primary-color;
+        border: 1px solid $primary-color;
+
+        &:hover {
+          background-color: darken($primary-color, 20%);
+          border: 1px solid darken($primary-color, 20%);
+        }
+      }
+    }
+    @media (max-width: $tablet-width) {
+      display: none;
+    }
+  }
+
+  &__burger {
+    display: none !important;
+    cursor: pointer;
+
+    img {
+      height: 30px;
+    }
+
+    @media (max-width: $tablet-width) {
+      display: block !important;
+    }
+  }
+}
+
+// Sidebar Menu
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+
+  &--active {
+    right: 0;
+  }
+
+  a {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+    color: $primary-text-color;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  .btn {
+    text-align: center;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: $border-radius;
+
+    &--login {
+      color: $primary-text-color;
+      background-color: transparent;
+      border: 1px solid $secondary-text-color;
+
+      &:hover {
+        color: #fff;
+        background-color: $primary-color;
+        border: 1px solid $primary-color;
+      }
+    }
+
+    &--register {
+      color: #fff;
+      background-color: $primary-color;
+      border: 1px solid $primary-color;
+
+      &:hover {
+        background-color: darken($primary-color, 20%);
+        border: 1px solid darken($primary-color, 20%);
+      }
+    }
+  }
+}
