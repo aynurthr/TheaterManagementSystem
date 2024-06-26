@@ -9,6 +9,9 @@ using Theater.Application.Repositories;
 using Theater.Repository;
 using Theater.DataAccessLayer.Contexts;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Autofac.Core;
+using FluentValidation.AspNetCore;
+using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 //using Theater.Infrastructure.Repositories;
 
 namespace Theater.Presentation
@@ -38,6 +41,10 @@ namespace Theater.Presentation
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             //builder.Services.AddScoped<IPosterRepository, PostersRepository>();
             builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+
+
+            builder.Services.AddControllersWithViews()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
 
             var app = builder.Build();
 

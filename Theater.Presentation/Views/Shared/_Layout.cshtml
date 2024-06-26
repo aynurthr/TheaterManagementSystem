@@ -4,8 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title</title>
+
     <link rel="stylesheet" href="~/assets/sass/main.css" />
     <link rel="icon" type="image/x-icon" href="~/assets/media/icons/theater.svg" />
+
     @RenderSection("addcss", required: false)
 </head>
 <body id="@ViewBag.BodyId">
@@ -20,7 +22,7 @@
                     <a class="navbar__text" href="@Url.Action("Index", "Posters")">Premieres</a>
                     <a class="navbar__text" href="@Url.Action("Index", "News")">News</a>
                     <a class="navbar__text" href="@Url.Action("About", "Home")">About the Theater</a>
-                    <a class="navbar__text" href="@Url.Action("Index", "Contact")">Contact Us</a>
+                    <a class="navbar__text" href="@Url.Action("Contact", "Home")">Contact Us</a>
                 </div>
             </div>
 
@@ -37,7 +39,7 @@
             <a href="@Url.Action("Index", "Posters")">Premieres</a>
             <a href="@Url.Action("Index", "News")">News</a>
             <a href="@Url.Action("About", "Home")">About the Theater</a>
-            <a href="@Url.Action("Index", "Contact")">Contact Us</a>
+            <a href="@Url.Action("Contact", "Home")">Contact Us</a>
             <a href="@Url.Action("Login", "Account")" class="btn btn--login">Log In</a>
             <a href="@Url.Action("Register", "Account")" class="btn btn--register">Register</a>
         </div>
@@ -82,7 +84,7 @@
                         <a href="@Url.Action("Index", "Posters")">Premieres</a>
                         <a href="@Url.Action("Index", "News")">News</a>
                         <a href="@Url.Action("About", "Home")">About the Theater</a>
-                        <a href="@Url.Action("Index", "Contact")">Contact Us</a>
+                        <a href="@Url.Action("Contact", "Home")">Contact Us</a>
                     </div>
                 </div>
                 <div class="footer-top__right">

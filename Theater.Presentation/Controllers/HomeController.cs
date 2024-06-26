@@ -6,6 +6,7 @@ using Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery;
 using System.Text.RegularExpressions;
 using MediatR;
 using Theater.Presentation.Models;
+using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 
 namespace Theater.Presentation.Controllers
 {
@@ -86,5 +87,41 @@ namespace Theater.Presentation.Controllers
             return View();
         }
 
-    }
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Contact(ContactPostApplyRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Select(m => new
+                {
+                    Property = m.Key,
+                    Messages = m.Value.Errors.Select(e => e.ErrorMessage)
+                }).ToDictionary(m => m.Property, v => v.Messages);
+
+                return BadRequest(new
+                {
+                    error = true,
+                    message = "There are validation errors",
+                    errors = errors
+                });
+            }
+
+            await _mediator.Send(request);
+            return Json(new
+            {
+                error = false,
+                message = "Your message has been sent successfully.",
+                errors = new Dictionary<string, IEnumerable<string>>()
+            });
+        }
+    
+
 }
+
+}
+
