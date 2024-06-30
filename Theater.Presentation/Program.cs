@@ -1,18 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using Autofac.Extensions.DependencyInjection;
 using Autofac;
-using Theater.Infrastructure.Abstracts;
+using Autofac.Extensions.DependencyInjection;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Theater.Application;
+using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 using Theater.Application.Services.File;
 using Theater.Application.Services.Identity;
-using Theater.Application;
-using Theater.Application.Repositories;
-using Theater.Repository;
 using Theater.DataAccessLayer.Contexts;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Autofac.Core;
-using FluentValidation.AspNetCore;
-using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
-//using Theater.Infrastructure.Repositories;
+using Theater.Infrastructure.Abstracts;
 
 namespace Theater.Presentation
 {
@@ -39,21 +35,11 @@ namespace Theater.Presentation
             builder.Services.AddScoped<IIdentityService, FakeIdentityService>();
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            //builder.Services.AddScoped<IPosterRepository, PostersRepository>();
-            builder.Services.AddScoped<ISeatRepository, SeatRepository>();
-
 
             builder.Services.AddControllersWithViews()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
 
             var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -65,6 +51,9 @@ namespace Theater.Presentation
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllers();
+
 
             app.Run();
         }

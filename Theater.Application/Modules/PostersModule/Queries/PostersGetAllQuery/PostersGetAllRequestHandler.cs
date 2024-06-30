@@ -42,7 +42,8 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery
                              .Where(sd => sd.Date >= DateTime.Now)
                              .OrderBy(sd => sd.Date)
                              .FirstOrDefault().Date,
-                Age = m.Age
+                Age = m.Age,
+                Genre = m.Genre.Name
             }).ToListAsync(cancellationToken);
 
             return queryResponse;

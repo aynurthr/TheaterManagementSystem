@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using Theater.Domain.Models.Entities;
 
-namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketRequestDto
+namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
 {
-    public class SeatingChartViewModel
+    public class PosterBuyTicketResponseDto
     {
         public int ShowDateId { get; set; }
+        public DateTime Date { get; set; }
         public List<SeatDto> Seats { get; set; }
-        public List<ShowDateDto> ShowDates { get; set; }
-        public string Title { get; set; }
+        public string Title { get; set; } // Add this
+        public string ImageSrc { get; set; } // Add this
+        public List<ShowDateDto> ShowDates { get; set; } // Add this
     }
 
     public class SeatDto
     {
-        public int Row { get; set; }
-        public int Number { get; set; }
+        public string Row { get; set; }
+        public int SeatNumber { get; set; }
+        public bool IsPurchased { get; set; }
         public decimal Price { get; set; }
-        public bool IsReserved { get; set; }
     }
 
     public class ShowDateDto
     {
-        public int Id { get; set; }
+        public int ShowDateId { get; set; }
         public DateTime Date { get; set; }
     }
 }

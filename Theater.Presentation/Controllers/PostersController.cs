@@ -1,31 +1,32 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketRequestDto;
 using Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery;
 using Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery;
+using Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery;
 
 namespace Theater.Presentation.Controllers
 {
     public class PostersController : Controller
     {
-        private readonly IMediator mediator;
+        private readonly IMediator _mediator;
 
-        public PostersController(IMediator mediator)
+        public PostersController(IMediator mediator, DbContext context)
         {
-            this.mediator = mediator;
+            _mediator = mediator;
         }
 
         public async Task<IActionResult> Index(PosterGetAllRequest request)
         {
-            var response = await mediator.Send(request);
+            var response = await _mediator.Send(request);
             return View(response);
         }
 
         public async Task<IActionResult> Details(int id)
         {
             var request = new PosterGetByIdRequest { Id = id };
-            var response = await mediator.Send(request);
+            var response = await _mediator.Send(request);
 
             if (response == null)
             {
@@ -35,11 +36,10 @@ namespace Theater.Presentation.Controllers
             return View(response);
         }
 
-        [HttpGet("posters/buyticket/{posterId}")]
-        public async Task<IActionResult> BuyTicket(int posterId)
+        public async Task<IActionResult> BuyTicket(int id)
         {
-            var request = new PosterBuyTicketRequest { PosterId = posterId };
-            var response = await mediator.Send(request);
+            var request = new PosterBuyTicketRequest { PosterId = id };
+            var response = await _mediator.Send(request);
 
             if (response == null)
             {
@@ -47,6 +47,21 @@ namespace Theater.Presentation.Controllers
             }
 
             return View(response);
+        }
+
+        [HttpGet("/api/tickets/{showDateId}")]
+        public async Task<IActionResult> GetTickets(int showDateId)
+        {
+            var request = new PosterBuyTicketRequest { ShowDateId = showDateId };
+            var response = await _mediator.Send(request);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            return Json(response);
         }
     }
 }
+

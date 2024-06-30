@@ -1,7 +1,5 @@
-﻿
-namespace Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery
+﻿namespace Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery
 {
-
     public class PosterGetByIdRequestDto
     {
         public int Id { get; set; }

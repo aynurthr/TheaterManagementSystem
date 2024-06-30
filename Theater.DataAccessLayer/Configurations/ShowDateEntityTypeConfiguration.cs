@@ -8,16 +8,15 @@ public class ShowDateTypeConfiguration : IEntityTypeConfiguration<ShowDate>
     {
         builder.HasKey(sd => sd.Id);
         builder.Property(sd => sd.Date).IsRequired();
+        builder.Property(sd => sd.Time).IsRequired();
 
         builder.HasOne(sd => sd.Poster)
             .WithMany(p => p.ShowDates)
-            .HasForeignKey(sd => sd.PosterId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(sd => sd.PosterId);
 
-        builder.HasMany(sd => sd.SeatReservations)
-            .WithOne(sr => sr.ShowDate)
-            .HasForeignKey(sr => sr.ShowDateId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(sd => sd.Hall)
+            .WithMany(h => h.ShowDates)
+            .HasForeignKey(sd => sd.HallId);
 
         builder.ToTable("ShowDates");
     }

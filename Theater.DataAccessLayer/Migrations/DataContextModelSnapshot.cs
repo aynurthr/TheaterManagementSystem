@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Theater.DataAccessLayer.Contexts;
 
 #nullable disable
 
@@ -77,26 +78,7 @@ namespace Theater.DataAccessLayer.Migrations
 
                     b.Property<string>("CommentText")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastModifiedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PosterId")
                         .HasColumnType("int");
@@ -111,7 +93,7 @@ namespace Theater.DataAccessLayer.Migrations
 
                     b.HasIndex("PosterId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comment");
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.ContactPost", b =>
@@ -156,7 +138,7 @@ namespace Theater.DataAccessLayer.Migrations
                     b.ToTable("Contacts", (string)null);
                 });
 
-            modelBuilder.Entity("Theater.Domain.Models.Entities.Hall", b =>
+            modelBuilder.Entity("Theater.Domain.Models.Entities.Genre", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -184,16 +166,47 @@ namespace Theater.DataAccessLayer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("Rows")
+                    b.HasKey("Id");
+
+                    b.ToTable("Genres", (string)null);
+                });
+
+            modelBuilder.Entity("Theater.Domain.Models.Entities.Hall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("SeatsPerRowJson")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("SeatsPerRowJson");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -209,6 +222,7 @@ namespace Theater.DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar");
@@ -224,6 +238,10 @@ namespace Theater.DataAccessLayer.Migrations
                         .HasColumnType("varchar");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles", "Membership");
                 });
@@ -268,6 +286,7 @@ namespace Theater.DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("varchar");
@@ -332,6 +351,13 @@ namespace Theater.DataAccessLayer.Migrations
                         .HasColumnType("varchar");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("Users", "Membership");
                 });
@@ -506,12 +532,7 @@ namespace Theater.DataAccessLayer.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("HallId")
+                    b.Property<int>("GenreId")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageSrc")
@@ -525,9 +546,6 @@ namespace Theater.DataAccessLayer.Migrations
                     b.Property<int?>("LastModifiedBy")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
@@ -538,7 +556,7 @@ namespace Theater.DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HallId");
+                    b.HasIndex("GenreId");
 
                     b.ToTable("Posters", (string)null);
                 });
@@ -598,13 +616,13 @@ namespace Theater.DataAccessLayer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("CreatedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DeletedBy")
                         .HasColumnType("int");
@@ -613,7 +631,7 @@ namespace Theater.DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("LastModifiedBy")
                         .HasColumnType("int");
@@ -624,59 +642,16 @@ namespace Theater.DataAccessLayer.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Row")
-                        .HasColumnType("int");
+                    b.Property<string>("Row")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("HallId");
 
                     b.ToTable("Seats", (string)null);
-                });
-
-            modelBuilder.Entity("Theater.Domain.Models.Entities.SeatReservation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SeatId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ShowDateId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SeatId");
-
-                    b.HasIndex("ShowDateId");
-
-                    b.ToTable("SeatReservations", (string)null);
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.ShowDate", b =>
@@ -702,6 +677,9 @@ namespace Theater.DataAccessLayer.Migrations
                     b.Property<int?>("DeletedBy")
                         .HasColumnType("int");
 
+                    b.Property<int>("HallId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -711,7 +689,12 @@ namespace Theater.DataAccessLayer.Migrations
                     b.Property<int>("PosterId")
                         .HasColumnType("int");
 
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("HallId");
 
                     b.HasIndex("PosterId");
 
@@ -766,6 +749,53 @@ namespace Theater.DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TeamMembers", (string)null);
+                });
+
+            modelBuilder.Entity("Theater.Domain.Models.Entities.Ticket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPurchased")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SeatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShowDateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeatId");
+
+                    b.HasIndex("ShowDateId");
+
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.Comment", b =>
@@ -832,13 +862,13 @@ namespace Theater.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.Poster", b =>
                 {
-                    b.HasOne("Theater.Domain.Models.Entities.Hall", "Hall")
-                        .WithMany("Posters")
-                        .HasForeignKey("HallId")
+                    b.HasOne("Theater.Domain.Models.Entities.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Hall");
+                    b.Navigation("Genre");
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.Role", b =>
@@ -871,34 +901,42 @@ namespace Theater.DataAccessLayer.Migrations
                     b.Navigation("Hall");
                 });
 
-            modelBuilder.Entity("Theater.Domain.Models.Entities.SeatReservation", b =>
+            modelBuilder.Entity("Theater.Domain.Models.Entities.ShowDate", b =>
                 {
-                    b.HasOne("Theater.Domain.Models.Entities.Seat", "Seat")
-                        .WithMany("SeatReservations")
-                        .HasForeignKey("SeatId")
+                    b.HasOne("Theater.Domain.Models.Entities.Hall", "Hall")
+                        .WithMany("ShowDates")
+                        .HasForeignKey("HallId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Theater.Domain.Models.Entities.ShowDate", "ShowDate")
-                        .WithMany("SeatReservations")
-                        .HasForeignKey("ShowDateId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Seat");
-
-                    b.Navigation("ShowDate");
-                });
-
-            modelBuilder.Entity("Theater.Domain.Models.Entities.ShowDate", b =>
-                {
                     b.HasOne("Theater.Domain.Models.Entities.Poster", "Poster")
                         .WithMany("ShowDates")
                         .HasForeignKey("PosterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Hall");
+
                     b.Navigation("Poster");
+                });
+
+            modelBuilder.Entity("Theater.Domain.Models.Entities.Ticket", b =>
+                {
+                    b.HasOne("Theater.Domain.Models.Entities.Seat", "Seat")
+                        .WithMany("Tickets")
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Theater.Domain.Models.Entities.ShowDate", "ShowDate")
+                        .WithMany("Tickets")
+                        .HasForeignKey("ShowDateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Seat");
+
+                    b.Navigation("ShowDate");
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.Actor", b =>
@@ -908,9 +946,9 @@ namespace Theater.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.Hall", b =>
                 {
-                    b.Navigation("Posters");
-
                     b.Navigation("Seats");
+
+                    b.Navigation("ShowDates");
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.Poster", b =>
@@ -924,12 +962,12 @@ namespace Theater.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.Seat", b =>
                 {
-                    b.Navigation("SeatReservations");
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.ShowDate", b =>
                 {
-                    b.Navigation("SeatReservations");
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

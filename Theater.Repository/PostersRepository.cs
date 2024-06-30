@@ -16,19 +16,5 @@ namespace Theater.Repository
         {
         }
 
-        public async Task<Poster> GetByIdAsync(int posterId, CancellationToken cancellationToken) // Implement this method
-        {
-            return await db.Set<Poster>().FirstOrDefaultAsync(p => p.Id == posterId, cancellationToken);
-        }
-
-        public async Task<ShowDate> GetShowDateByIdAsync(int showDateId, CancellationToken cancellationToken)
-        {
-            return await db.Set<ShowDate>().FirstOrDefaultAsync(sd => sd.Id == showDateId, cancellationToken);
-        }
-
-        public async Task<IEnumerable<ShowDate>> GetShowDatesByPosterIdAsync(int posterId, CancellationToken cancellationToken)
-        {
-            return await db.Set<ShowDate>().Where(sd => sd.PosterId == posterId).ToListAsync(cancellationToken);
-        }
     }
 }

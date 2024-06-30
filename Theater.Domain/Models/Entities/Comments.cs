@@ -3,7 +3,7 @@ using Theater.Infrastructure.Concrates;
 
 namespace Theater.Domain.Models.Entities
 {
-    public class Comment : AuditableEntity
+    public class Comment
     {
         public int Id { get; set; }
         public int UserId { get; set; }

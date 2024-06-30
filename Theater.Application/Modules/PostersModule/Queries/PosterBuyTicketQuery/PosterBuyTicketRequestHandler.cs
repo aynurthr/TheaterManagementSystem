@@ -1,53 +1,58 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketRequestDto;
 using Theater.Application.Repositories;
 using Theater.Domain.Models.Entities;
-using Theater.Infrastructure.Exceptions;
 
-namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketRequestQuery
+namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
 {
-    public class PosterBuyTicketRequestHandler : IRequestHandler<PosterBuyTicketRequest, SeatingChartViewModel>
+    public class PosterBuyTicketRequestHandler : IRequestHandler<PosterBuyTicketRequest, PosterBuyTicketResponseDto>
     {
         private readonly IPosterRepository _posterRepository;
-        private readonly ISeatRepository _seatRepository;
 
-        public PosterBuyTicketRequestHandler(IPosterRepository posterRepository, ISeatRepository seatRepository)
+        public PosterBuyTicketRequestHandler(IPosterRepository posterRepository)
         {
             _posterRepository = posterRepository;
-            _seatRepository = seatRepository;
         }
 
-        public async Task<SeatingChartViewModel> Handle(PosterBuyTicketRequest request, CancellationToken cancellationToken)
+        public async Task<PosterBuyTicketResponseDto> Handle(PosterBuyTicketRequest request, CancellationToken cancellationToken)
         {
-            var poster = await _posterRepository.GetByIdAsync(request.PosterId, cancellationToken);
+            var poster = await _posterRepository.GetAll()
+                .Where(p => p.Id == request.PosterId)
+                .Include(p => p.ShowDates)
+                .ThenInclude(sd => sd.Tickets)
+                .ThenInclude(t => t.Seat)
+                .FirstOrDefaultAsync(cancellationToken);
+
             if (poster == null)
             {
-                throw new NotFoundException(nameof(Poster), request.PosterId);
+                return null;
             }
 
-            var showDates = await _posterRepository.GetShowDatesByPosterIdAsync(request.PosterId, cancellationToken);
-            var seats = await _seatRepository.GetSeatsByShowDateIdAsync(request.ShowDateId, cancellationToken);
-            var reservedSeatIds = await _seatRepository.GetReservedSeatIdsByShowDateIdAsync(request.ShowDateId, cancellationToken);
-
-            return new SeatingChartViewModel
+            var response = new PosterBuyTicketResponseDto
             {
                 Title = poster.Title,
-                ShowDates = showDates.Select(sd => new ShowDateDto
+                ImageSrc = poster.ImageSrc,
+                ShowDates = poster.ShowDates.Select(sd => new ShowDateDto
                 {
-                    Id = sd.Id,
+                    ShowDateId = sd.Id,
                     Date = sd.Date
                 }).ToList(),
-                Seats = seats.Select(s => new SeatDto
+                ShowDateId = request.ShowDateId,
+                Date = poster.ShowDates.FirstOrDefault(sd => sd.Id == request.ShowDateId)?.Date ?? DateTime.MinValue,
+                Seats = poster.ShowDates.FirstOrDefault(sd => sd.Id == request.ShowDateId)?.Tickets.Select(t => new SeatDto
                 {
-                    Row = s.Row,
-                    Number = s.Number,
-                    Price = s.Price,
-                    IsReserved = reservedSeatIds.Contains(s.Id)
+                    Row = t.Seat.Row,
+                    SeatNumber = t.Seat.Number,
+                    IsPurchased = t.IsPurchased,
+                    Price = t.Price
                 }).ToList()
             };
+
+            return response;
         }
     }
 }

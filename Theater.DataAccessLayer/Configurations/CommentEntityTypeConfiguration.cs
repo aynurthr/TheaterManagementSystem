@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Theater.Domain.Models.Entities;
 
-public class CommentTypeConfiguration : IEntityTypeConfiguration<Comment>
+public class CommentTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<Comment> builder)
     {
