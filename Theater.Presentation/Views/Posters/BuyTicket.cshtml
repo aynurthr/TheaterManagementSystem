@@ -53,12 +53,10 @@
         var totalPrice = 0;
         var selectedSeats = [];
 
-        // Function to update total price
         function updateTotalPrice() {
             $('#total-price').text(totalPrice + '$');
         }
 
-        // Handle seat selection
         $(document).on('click', '.seat', function () {
             var seatPrice = parseFloat($(this).data('price'));
             if ($(this).hasClass('selected')) {
@@ -73,7 +71,6 @@
             updateTotalPrice();
         });
 
-        // Load seats for selected show date
         $('.booking__date').click(function () {
             $('.booking__date').removeClass('active');
             $(this).addClass('active');
@@ -110,18 +107,8 @@
             });
         });
 
-        // Handle payment button click
-        $('#pay-button').click(function () {
-            if (selectedSeats.length === 0) {
-                alert('Please select at least one seat.');
-                return;
-            }
-
-            alert('Payment processing for seats: ' + selectedSeats.join(', ') + '. Total price: ' + totalPrice + '$');
-        });
-
-        // Trigger the click on the first date button to load initial seats
         $('.booking__date').first().trigger('click');
     });
+
 </script>
 

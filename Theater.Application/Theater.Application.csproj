@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Modules\HallModule\Queries\HallGetByIdQuery\" />
-    <Folder Include="Modules\NewsModule\Commands\" />
   </ItemGroup>
 
 

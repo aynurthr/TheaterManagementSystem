@@ -39,6 +39,14 @@ namespace Theater.Presentation
             builder.Services.AddControllersWithViews()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
 
+            //// Add logging
+            //builder.Services.AddLogging(config =>
+            //{
+            //    config.ClearProviders();
+            //    config.AddConsole();
+            //    config.AddDebug();
+            //});
+
             var app = builder.Build();
 
             app.UseHttpsRedirection();
@@ -48,12 +56,16 @@ namespace Theater.Presentation
 
             app.UseAuthorization();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-            app.MapControllers();
-
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
 
             app.Run();
         }
