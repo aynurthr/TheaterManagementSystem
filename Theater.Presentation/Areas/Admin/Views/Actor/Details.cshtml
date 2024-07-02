@@ -1,0 +1,68 @@
+﻿@model Theater.Application.Modules.ActorModule.Queries.ActorRequestDto
+
+@{
+    ViewData["Title"] = "Actor Details";
+}
+
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>@Model.FullName</h4>
+                    <span>Details of the selected actor</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="@Url.Action("Index", "Home", new { area = "" })"> <i class="feather icon-home"></i> </a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="@Url.Action("Index", "Actor", new { area = "Admin" })">Actor Management</a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="#">@Model.FullName</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-body">
+    <div class="card">
+        <div class="card-header">
+            <h5>@Model.FullName</h5>
+        </div>
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="@Model.ImageSrc" alt="Actor Image" class="img-fluid">
+                </div>
+                <div class="col-md-6">
+                    <h5>Title</h5>
+                    <p>@Model.Title</p>
+                    <h5>Roles</h5>
+                    <ul>
+                        @foreach (var role in Model.Roles)
+                        {
+                            <li>@role.RoleName (Show: @role.PosterTitle)</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">
+                        <i class="fa fa-pencil"></i> Edit
+                    </a>
+                    <a class="btn btn-secondary" asp-action="Index" asp-route-id="@Model.Id">
+                        <i class="fa fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

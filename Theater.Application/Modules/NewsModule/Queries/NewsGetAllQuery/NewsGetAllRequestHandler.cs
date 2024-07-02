@@ -38,7 +38,7 @@ namespace Theater.Application.Modules.NewsModule.Queries.NewsGetAllQuery
                     Title = m.Title,
                     ImageUrl = $"{host}/uploads/images/{m.ImageSrc}",
                     Description = m.Description,
-                    PublishedAt = m.Date // Assuming PublishedAt is the property in your News entity
+                    PublishedAt = m.Date
                 }).ToListAsync(cancellationToken);
 
             return queryResponse;
