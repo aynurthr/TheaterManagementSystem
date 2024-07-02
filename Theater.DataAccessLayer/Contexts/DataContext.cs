@@ -39,13 +39,13 @@ namespace Theater.DataAccessLayer.Contexts
                     {
                         case EntityState.Added:
                             entry.Entity.CreatedBy = identityService.GetPrincipialId();
-                            entry.Entity.CreatedAt = DateTime.UtcNow;
+                            entry.Entity.CreatedAt = DateTime.Now; //UtcNow for global sites
                             break;
                         case EntityState.Modified:
                             entry.Property(m => m.CreatedBy).IsModified = false;
                             entry.Property(m => m.CreatedAt).IsModified = false;
                             entry.Entity.LastModifiedBy = identityService.GetPrincipialId();
-                            entry.Entity.LastModifiedAt = DateTime.UtcNow;
+                            entry.Entity.LastModifiedAt = DateTime.Now;
                             break;
                         case EntityState.Deleted:
                             entry.State = EntityState.Modified;
@@ -54,7 +54,7 @@ namespace Theater.DataAccessLayer.Contexts
                             entry.Property(m => m.LastModifiedBy).IsModified = false;
                             entry.Property(m => m.LastModifiedAt).IsModified = false;
                             entry.Entity.DeletedBy = identityService.GetPrincipialId();
-                            entry.Entity.DeletedAt = DateTime.UtcNow;
+                            entry.Entity.DeletedAt = DateTime.Now;
                             break;
                         default:
                             break;

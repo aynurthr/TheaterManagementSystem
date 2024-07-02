@@ -13,7 +13,6 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\Theater.Application\Theater.Application.csproj" />
-	  <ProjectReference Include="..\Theater.DataAccessLayer\Theater.DataAccessLayer.csproj" />
 	  <ProjectReference Include="..\Theater.Domain\Theater.Domain.csproj" />
 	</ItemGroup>
 

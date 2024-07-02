@@ -1,26 +1,22 @@
-﻿@model IEnumerable<Theater.Application.Modules.NewsModule.Queries.NewsGetAllQuery.NewsGetAllRequestDto>
-@using Theater.Infrastructure.Extensions
+﻿@using Theater.Application.Modules.GenreModule.Queries
 
-
+@model IEnumerable<GenreRequestDto>
 @{
-    ViewData["Title"] = "News Index";
+    ViewData["Title"] = "Genres Index";
 }
 
 <div class="page-body">
     <div class="card">
         <div class="card-header">
-            <h5>News List</h5>
-            <span>Manage your news articles</span>
+            <h5>Genres List</h5>
+            <span>Manage your genres</span>
         </div>
         <div class="card-block table-border-style">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Date</th>
+                            <th>Name</th>
                             <th class="operation">
                                 <a class="btn btn-sm btn-success" asp-action="Create">
                                     <i class="fa fa-plus"></i>
@@ -32,24 +28,12 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>
-                                    <img src="@item.ImageUrl" alt="News Image" style="width: 100px; height: auto;">
-                                </td>
-                                <td>@item.Title</td>
-                                <td>
-                                
-                                @Html.Raw(item.Description.TruncateHtml(50))
-                                
-                                </td>
-                                <td>@item.PublishedAt.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>@item.Name</td>
                                 <td class="operation">
-                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Id">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
                                     <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">
                                         <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                     </a>
-                                    <a class="btn btn-sm btn-danger" data-entity-name="@item.Title" asp-action="Remove" asp-route-id="@item.Id" onclick="confirmRemoveEntity(event)">
+                                    <a class="btn btn-sm btn-danger" data-entity-name="@item.Name" asp-action="Remove" asp-route-id="@item.Id" onclick="confirmRemoveEntity(event)">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>
