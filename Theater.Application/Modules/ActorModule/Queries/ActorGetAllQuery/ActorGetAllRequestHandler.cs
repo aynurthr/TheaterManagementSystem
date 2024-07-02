@@ -29,6 +29,7 @@ namespace Theater.Application.Modules.ActorModule.Queries.ActorGetAllQuery
                 query = query.Where(m => m.DeletedAt == null);
             }
 
+
             string host = $"{_ctx.ActionContext.HttpContext.Request.Scheme}://{_ctx.ActionContext.HttpContext.Request.Host}";
             var queryResponse = await query
                 .OrderBy(m => m.FullName)

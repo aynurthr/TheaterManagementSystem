@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
+using Theater.Application.Modules.ActorModule.Queries;
 
 namespace Theater.Application.Modules.ActorModule.Commands.ActorEditCommand
 {
-    internal class ActorEditRequest
+    public class ActorEditRequest : IRequest<ActorRequestDto>
     {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string Title { get; set; }
+        public IFormFile Image { get; set; }
     }
 }

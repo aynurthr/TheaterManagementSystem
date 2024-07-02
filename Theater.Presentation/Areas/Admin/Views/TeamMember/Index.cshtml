@@ -1,23 +1,24 @@
-﻿@using Theater.Application.Modules.GenreModule.Queries
+﻿ @model IEnumerable<Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberRequestDto>
 
-@model IEnumerable<GenreRequestDto>
 
 @{
-    ViewData["Title"] = "Genres Index";
+    ViewData["Title"] = "Team Members";
 }
 
 <div class="page-body">
     <div class="card">
         <div class="card-header">
-            <h5>Genres List</h5>
-            <span>Manage your genres</span>
+            <h5>Team Members List</h5>
+            <span>Manage your team members</span>
         </div>
         <div class="card-block table-border-style">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Image</th>
                             <th>Name</th>
+                            <th>Role</th>
                             <th class="operation">
                                 <a class="btn btn-sm btn-success" asp-action="Create">
                                     <i class="fa fa-plus"></i>
@@ -29,8 +30,15 @@
                         @foreach (var item in Model)
                         {
                             <tr>
+                                <td>
+                                    <img src="@item.ImageUrl" alt="Team Member Image" style="width: 100px; height: auto;">
+                                </td>
                                 <td>@item.Name</td>
+                                <td>@item.Role</td>
                                 <td class="operation">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Id">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
                                     <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">
                                         <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                     </a>

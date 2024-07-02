@@ -1,0 +1,101 @@
+﻿@using Theater.Application.Modules.TeamMemberModule.Queries
+@model TeamMemberRequestDto
+
+
+
+@{
+    ViewData["Title"] = "Edit Team Member";
+}
+
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>Edit Team Member</h4>
+                    <span>Edit the details of the team member.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="@Url.Action("Index", "Home", new { area = "" })"> <i class="feather icon-home"></i> </a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="@Url.Action("Index", "TeamMember", new { area = "Admin" })">Team Member Management</a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="#">Edit Team Member</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Edit Team Member</h5>
+                    <span>Edit the fields below to update the team member.</span>
+
+                    <div class="card-header-right">
+                        <i class="icofont icofont-spinner-alt-5"></i>
+                    </div>
+                </div>
+                <div class="card-block p-3">
+                    <h4 class="sub-title">Team Member Details</h4>
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Role" class="control-label"></label>
+                            <input asp-for="Role" class="form-control" />
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Biography" class="control-label"></label>
+                            <textarea asp-for="Biography" class="form-control"></textarea>
+                            <span asp-validation-for="Biography" class="text-danger"></span>
+                        </div>
+                        <div class="form-group d-flex justify-content-start">
+                            <input name="Image" id="cover-image" type="file" class="d-none" data-image="@Model.ImageUrl" accept="image/png, image/gif, image/jpeg" />
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" asp-for="Id" />
+                            <input type="submit" value="Save" class="btn btn-success" />
+                            <a href="@Url.Action("Index", "TeamMember")" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section addcss {
+    <link rel="stylesheet" href="~/lib/single-image-chooser/single-image-chooser.css" />
+}
+
+@section addjs {
+    <script src="~/lib/single-image-chooser/single-image-chooser.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#cover-image').singleImageChooser();
+
+            ClassicEditor
+                .create(document.querySelector('#body-editor'))
+                .then(editor => { })
+                .catch(error => { console.error(error); });
+
+        });
+    </script>
+}

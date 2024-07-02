@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
 
 namespace Theater.Application.Modules.ActorModule.Commands.ActorRemoveCommand
 {
-    internal class ActorRemoveRequest
+    public class ActorRemoveRequest : IRequest
     {
+        public int Id { get; set; }
     }
 }

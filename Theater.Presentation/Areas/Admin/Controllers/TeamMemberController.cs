@@ -1,33 +1,33 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Theater.Application.Modules.ActorModule.Commands.ActorAddCommand;
-using Theater.Application.Modules.ActorModule.Commands.ActorEditCommand;
-using Theater.Application.Modules.ActorModule.Commands.ActorRemoveCommand;
-using Theater.Application.Modules.ActorModule.Queries.ActorGetAllQuery;
-using Theater.Application.Modules.ActorModule.Queries.ActorGetByIdQuery;
+using Theater.Application.Modules.TeamMemberModule.Commands.TeamMemberAddCommand;
+using Theater.Application.Modules.TeamMemberModule.Commands.TeamMemberEditCommand;
+using Theater.Application.Modules.TeamMemberModule.Commands.TeamMemberRemoveCommand;
+using Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetAllQuery;
+using Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetByIdQuery;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class ActorController : Controller
+    public class TeamMemberController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IValidator<ActorAddRequest> _actorAddValidator;
+        private readonly IValidator<TeamMemberAddRequest> _teamMemberAddValidator;
 
-        public ActorController(IMediator mediator, IValidator<ActorAddRequest> actorAddValidator)
+        public TeamMemberController(IMediator mediator, IValidator<TeamMemberAddRequest> teamMemberAddValidator)
         {
             _mediator = mediator;
-            _actorAddValidator = actorAddValidator;
+            _teamMemberAddValidator = teamMemberAddValidator;
         }
 
-        public async Task<IActionResult> Index(ActorGetAllRequest request)
+        public async Task<IActionResult> Index(TeamMemberGetAllRequest request)
         {
             var response = await _mediator.Send(request);
             return View(response);
         }
 
-        public async Task<IActionResult> Details([FromRoute] ActorGetByIdRequest request)
+        public async Task<IActionResult> Details([FromRoute] TeamMemberGetByIdRequest request)
         {
             var response = await _mediator.Send(request);
             return View(response);
@@ -39,9 +39,9 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] ActorAddRequest request)
+        public async Task<IActionResult> Create([FromForm] TeamMemberAddRequest request)
         {
-            var validationResult = await _actorAddValidator.ValidateAsync(request);
+            var validationResult = await _teamMemberAddValidator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
@@ -57,22 +57,21 @@ namespace Theater.Presentation.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit([FromRoute] ActorGetByIdRequest request)
+        public async Task<IActionResult> Edit([FromRoute] TeamMemberGetByIdRequest request)
         {
             var response = await _mediator.Send(request);
             return View(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm] ActorEditRequest request)
+        public async Task<IActionResult> Edit([FromForm] TeamMemberEditRequest request)
         {
             await _mediator.Send(request);
             return RedirectToAction(nameof(Index));
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Remove([FromRoute] ActorRemoveRequest request)
+        public async Task<IActionResult> Remove([FromRoute] TeamMemberRemoveRequest request)
         {
             await _mediator.Send(request);
             return RedirectToAction(nameof(Index));

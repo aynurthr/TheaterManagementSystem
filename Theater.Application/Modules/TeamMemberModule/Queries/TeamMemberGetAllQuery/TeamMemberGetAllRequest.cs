@@ -8,7 +8,7 @@ using Theater.Application.Modules.NewsModule.Queries.NewsGetAllQuery;
 
 namespace Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetAllQuery
 {
-    public class TeamMemberGetAllRequest : IRequest<IEnumerable<TeamMemberGetAllRequestDto>>
+    public class TeamMemberGetAllRequest : IRequest<IEnumerable<TeamMemberRequestDto>>
     {
         public bool OnlyAvailable { get; set; } = true;
     }

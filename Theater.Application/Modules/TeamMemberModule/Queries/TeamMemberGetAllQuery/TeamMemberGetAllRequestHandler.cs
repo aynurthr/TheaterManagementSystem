@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetAllQuery
 {
-    class TeamMemberGetAllRequestHandler : IRequestHandler<TeamMemberGetAllRequest, IEnumerable<TeamMemberGetAllRequestDto>>
+    class TeamMemberGetAllRequestHandler : IRequestHandler<TeamMemberGetAllRequest, IEnumerable<TeamMemberRequestDto>>
     {
         private readonly ITeamMemberRepository teamMemberRepository;
         private readonly IActionContextAccessor ctx;
@@ -20,13 +20,18 @@ namespace Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetAllQ
             this.ctx = ctx;
         }
 
-        public async Task<IEnumerable<TeamMemberGetAllRequestDto>> Handle(TeamMemberGetAllRequest request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<TeamMemberRequestDto>> Handle(TeamMemberGetAllRequest request, CancellationToken cancellationToken)
         {
             var query = teamMemberRepository.GetAll();
 
+            if (request.OnlyAvailable)
+            {
+                query = query.Where(m => m.DeletedAt == null);
+            }
+
             string host = $"{ctx.ActionContext.HttpContext.Request.Scheme}://{ctx.ActionContext.HttpContext.Request.Host}";
             var queryResponse = await query
-                .Select(m => new TeamMemberGetAllRequestDto
+                .Select(m => new TeamMemberRequestDto
                 {
                     Id = m.Id,
                     Name = m.Name,
