@@ -32,20 +32,13 @@ namespace Theater.Presentation
                 containerBuilder.RegisterModule<TheaterDIModule>();
             });
 
+
             builder.Services.AddScoped<IIdentityService, FakeIdentityService>();
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             builder.Services.AddControllersWithViews()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
-
-            //// Add logging
-            //builder.Services.AddLogging(config =>
-            //{
-            //    config.ClearProviders();
-            //    config.AddConsole();
-            //    config.AddDebug();
-            //});
 
             var app = builder.Build();
 
