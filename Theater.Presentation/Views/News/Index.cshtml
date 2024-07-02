@@ -28,7 +28,7 @@
                             <date>@news.PublishedAt.ToString("dd.MM.yyyy")</date>
                         </div>
                         <p class="news-item__content__description">
-                            @news.Description.Truncate(150) <!-- Adjust the length as needed -->
+                                @Html.Raw(news.Description.TruncateHtml(150))
                         </p>
                     </div>
                         </a>

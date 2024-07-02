@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.NewsModule.Commands.NewsAddCommand;
 using Theater.Application.Modules.NewsModule.Commands.NewsEditCommand;
@@ -70,11 +71,14 @@ namespace Theater.Presentation.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Remove([FromRoute] NewsRemoveRequest request)
         {
             await _mediator.Send(request);
             return RedirectToAction(nameof(Index));
         }
+
+
     }
 }

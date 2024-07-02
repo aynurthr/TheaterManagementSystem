@@ -1,4 +1,6 @@
 ﻿@model HomePageViewModel
+@using Theater.Infrastructure.Extensions
+
 
 @{
     ViewData["Title"] = "Kazan State Theater of The Young Spectators";
@@ -112,7 +114,8 @@
                             <date>@news.Date.ToString("dd.MM.yyyy")</date>
                         </div>
                         <p class="news-item__content__description">
-                            @news.Description
+                            
+                            @Html.Raw(news.Description)
                         </p>
                     </div>
                 </a>

@@ -1,0 +1,65 @@
+﻿@model Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery.NewsGetByIdRequestDto
+
+@{
+    ViewData["Title"] = "News Details";
+}
+
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>@Model.Title</h4>
+                    <span>Details of the selected news article</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="@Url.Action("Index", "Home", new { area = "" })"> <i class="feather icon-home"></i> </a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="@Url.Action("Index", "News", new { area = "Admin" })">News Management</a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="#">News Details</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-body">
+    <div class="card">
+        <div class="card-header">
+            <h5>@Model.Title</h5>
+        </div>
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="@Model.ImageUrl" alt="News Image" class="img-fluid">
+                </div>
+                <div class="col-md-6">
+                    <h5>Description</h5>
+                    <p>@Html.Raw(Model.Description)</p>
+                    <h5>Date</h5>
+                    <p>@Model.PublishedAt.ToString("dd MMM yyyy, HH:mm")</p>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">
+                        <i class="fa fa-pencil"></i> Edit
+                    </a>
+                    <a class="btn btn-secondary" asp-action="Index" asp-route-id="@Model.Id">
+                        <i class="fa fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

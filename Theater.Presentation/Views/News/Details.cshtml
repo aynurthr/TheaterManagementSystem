@@ -1,4 +1,5 @@
 ﻿@model Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery.NewsGetByIdRequestDto
+@using Theater.Infrastructure.Extensions
 
 
 @{
@@ -25,7 +26,7 @@
     <div class="news-details__description">
         <div class="container">
             <p id="news-description">
-                @Model.Description
+                @Html.Raw(Model.Description)
             </p>
         </div>
     </div>

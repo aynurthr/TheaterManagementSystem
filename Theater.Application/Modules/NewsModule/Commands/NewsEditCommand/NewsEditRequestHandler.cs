@@ -24,10 +24,12 @@ namespace Theater.Application.Modules.NewsModule.Commands.NewsEditCommand
 
             entity.Title = request.Title;
             entity.Description = request.Description;
-            entity.Date = request.Date;
 
             if (request.Image != null)
                 entity.ImageSrc = await _fileService.ChangeFileAsync(entity.ImageSrc, request.Image);
+
+            entity.Date = request.PublishedAt == default ? DateTime.Now : request.PublishedAt; // Ensure valid DateTime
+
 
             _newsRepository.Edit(entity);
             await _newsRepository.SaveAsync(cancellationToken);

@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Http;
+
 namespace Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery
 {
     public class NewsGetByIdRequestDto
@@ -9,6 +11,7 @@ namespace Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery
         public string ImageUrl { get; set; }
         public DateTime PublishedAt { get; set; }
 
+        public IFormFile Image { get; set; }
     }
 }
 

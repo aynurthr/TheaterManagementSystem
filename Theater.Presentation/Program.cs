@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Theater.Application;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
-using Theater.Application.Services.File;
+using Theater.Application.Services;
 using Theater.Application.Services.Identity;
 using Theater.DataAccessLayer.Contexts;
 using Theater.Infrastructure.Abstracts;

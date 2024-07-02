@@ -1,7 +1,122 @@
-﻿
+﻿@model IEnumerable<Theater.Application.Modules.NewsModule.Queries.NewsGetAllQuery.NewsGetAllRequestDto>
+@using Theater.Infrastructure.Extensions
+
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "News Index";
 }
 
-<h1>Index</h1>
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>News Management</h4>
+                    <span>Manage your news articles here</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="@Url.Action("Index", "Home", new { area = "" })"> <i class="feather icon-home"></i> </a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="#">News Management</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-body">
+    <div class="card">
+        <div class="card-header">
+            <h5>News List</h5>
+            <span>Manage your news articles</span>
+        </div>
+        <div class="card-block table-border-style">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th class="operation">
+                                <a class="btn btn-sm btn-success" asp-action="Create">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@item.ImageUrl" alt="News Image" style="width: 100px; height: auto;">
+                                </td>
+                                <td>@item.Title</td>
+                                <td>
+                                
+                                @Html.Raw(item.Description.TruncateHtml(50))
+                                
+                                </td>
+                                <td>@item.PublishedAt.ToString("dd MMM yyyy HH:mm")</td>
+                                <td class="operation">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Id">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">
+                                        <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-danger" data-entity-name="@item.Title" asp-action="Remove" asp-route-id="@item.Id" onclick="confirmRemoveEntity(event)">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
+@section addjs {
+    <script>
+        function confirmRemoveEntity(e) {
+            e.preventDefault();
+            let element = e.currentTarget;
+            let name = $(element).data('entity-name');
+
+            if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                removeEntity(element);
+            }
+        }
+
+        function removeEntity(element) {
+            $(element).attr('disabled', 'disabled');
+
+            const link = $(element).attr('href');
+
+            $.ajax({
+                url: link,
+                type: 'POST',
+                success: function (response) {
+                    alert(`${name} deleted successfully`);
+                    location.reload(); // Refresh the page to reflect the deletion
+                },
+                error: function (errResponse) {
+                    console.log(errResponse);
+                    alert('An error occurred while deleting the item.');
+                }
+            }).always(function () {
+                $(element).removeAttr('disabled').trigger('blur');
+            });
+        }
+    </script>
+}

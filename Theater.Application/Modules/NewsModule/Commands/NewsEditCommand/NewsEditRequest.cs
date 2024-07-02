@@ -9,7 +9,7 @@ namespace Theater.Application.Modules.NewsModule.Commands.NewsEditCommand
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime PublishedAt { get; set; } = DateTime.Now;
         public string Description { get; set; }
         public IFormFile Image { get; set; }
     }

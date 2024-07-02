@@ -1,0 +1,26 @@
+﻿label.file-choose + input[type=file] {
+    display: none;
+}
+
+label.file-choose {
+    border: 1px solid teal;
+    border-radius: 3px;
+    width: 300px;
+    height: 250px;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 400;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+    label.file-choose.empty::before {
+        content: "\f03e";
+        display: inline-block;
+        font-size: 3.5em;
+        color: #cdcdcd;
+    }

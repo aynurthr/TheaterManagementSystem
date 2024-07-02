@@ -8,6 +8,7 @@ using MediatR;
 using Theater.Presentation.Models;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 
+
 namespace Theater.Presentation.Controllers
 {
     public class HomeController : Controller
@@ -63,7 +64,7 @@ namespace Theater.Presentation.Controllers
 
         private string StripHtmlTags(string input)
         {
-            return Regex.Replace(input, "<.*?>", string.Empty);
+            return Regex.Replace(input, @"<[^>]*>", string.Empty);
         }
 
         private string TruncateDescription(string description, int maxLength)

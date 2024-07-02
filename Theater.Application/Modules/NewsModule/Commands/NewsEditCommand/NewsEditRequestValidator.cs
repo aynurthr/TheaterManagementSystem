@@ -18,7 +18,7 @@ namespace Theater.Application.Validators.News
                 .NotEmpty().WithMessage("Description is required.")
                 .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");
 
-            RuleFor(x => x.Date)
+            RuleFor(x => x.PublishedAt)
                 .NotEmpty().WithMessage("Date is required.");
 
             RuleFor(x => x.Image)

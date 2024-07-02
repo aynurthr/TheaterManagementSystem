@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using Theater.Infrastructure.Abstracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
-using Theater.Infrastructure.Abstracts;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace Theater.Application.Services.File
+namespace Theater.Application.Services
 {
     public class FileService : IFileService
     {
@@ -20,7 +20,15 @@ namespace Theater.Application.Services.File
         {
             string extension = Path.GetExtension(file.FileName); //.jpg
             string randomFileName = $"{Guid.NewGuid()}{extension}";
-            string fullName = Path.Combine(env.ContentRootPath, "wwwroot", "uploads", "images", randomFileName);
+            string uploadsPath = Path.Combine(env.ContentRootPath, "wwwroot", "uploads", "images");
+
+            // Ensure the upload directory exists
+            if (!Directory.Exists(uploadsPath))
+            {
+                Directory.CreateDirectory(uploadsPath);
+            }
+
+            string fullName = Path.Combine(uploadsPath, randomFileName);
 
             using (var fs = new FileStream(fullName, FileMode.Create, FileAccess.Write))
             {
@@ -32,16 +40,41 @@ namespace Theater.Application.Services.File
 
         public async Task<string> ChangeFileAsync(string oldFileName, IFormFile file)
         {
-            string oldFilePath = Path.Combine(env.ContentRootPath, "wwwroot", "uploads", "images", oldFileName);
+            string oldFilePath = ResolveOldFilePath(oldFileName);
+            string archivePath = Path.Combine(env.ContentRootPath, "wwwroot", "uploads", "images", "archive");
 
-            if (System.IO.File.Exists(oldFilePath))
+            // Ensure the archive directory exists
+            if (!Directory.Exists(archivePath))
             {
-                string archiveFilePath = Path.Combine(env.ContentRootPath, "wwwroot", "uploads", "images", $"archive-{oldFileName}");
+                Directory.CreateDirectory(archivePath);
+            }
 
-                System.IO.File.Move(oldFilePath, archiveFilePath);
+            if (File.Exists(oldFilePath))
+            {
+                string archiveFileName = $"archive-{Path.GetFileName(oldFilePath)}";
+                string archiveFilePath = Path.Combine(archivePath, archiveFileName);
+
+                File.Move(oldFilePath, archiveFilePath);
             }
 
             return await UploadAsync(file);
+        }
+
+        private string ResolveOldFilePath(string oldFileName)
+        {
+            string uploadsPath = Path.Combine(env.ContentRootPath, "wwwroot", "uploads", "images");
+            string assetsPath = Path.Combine(env.ContentRootPath, "wwwroot", "assets", "media", "images");
+
+            // Check if the old filename contains a relative path
+            if (oldFileName.StartsWith(".."))
+            {
+                // Convert the relative path to an absolute path
+                string relativePath = oldFileName.Replace("../", string.Empty).Replace("/", Path.DirectorySeparatorChar.ToString());
+                return Path.Combine(env.ContentRootPath, relativePath);
+            }
+
+            // Default to the uploads path if no relative path is found
+            return Path.Combine(uploadsPath, oldFileName);
         }
     }
 }
