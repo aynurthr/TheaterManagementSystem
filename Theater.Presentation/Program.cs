@@ -1,6 +1,9 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Theater.Application;
@@ -8,7 +11,10 @@ using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCom
 using Theater.Application.Services;
 using Theater.Application.Services.Identity;
 using Theater.DataAccessLayer.Contexts;
+using Theater.Domain.Models.Entities.Membership;
 using Theater.Infrastructure.Abstracts;
+using Theater.Infrastructure.Configurations;
+using Theater.Presentation.Pipeline;
 
 namespace Theater.Presentation
 {
@@ -18,49 +24,61 @@ namespace Theater.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("cString")));
 
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddRouting(options => options.LowercaseUrls = true);
-            builder.Services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<IApplicationReference>());
-
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+            builder.Services.AddControllersWithViews(cfg =>
             {
-                containerBuilder.RegisterModule<TheaterDIModule>();
+                cfg.Filters.Add<GlobalErrorHandlingExceptionFilter>();
+                cfg.Filters.Add<StopwatchActionFilterAttribute>();
+
+                cfg.Filters.AppendAuthorization();
             });
 
+
+            builder.Services.AddRouting(cfg => cfg.LowercaseUrls = true);
+
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IApplicationReference>());
+
+            builder.Host.UseServiceProviderFactory(new TheaterServiceProviderFactory());
+
+
+            builder.Services.Configure<EmailServiceOptions>(cfg => builder.Configuration.Bind(nameof(EmailServiceOptions), cfg))
+                .AddSingleton<IEmailService, EmailService>();
+
+            builder.Services.Configure<CryptoServiceOptions>(cfg => builder.Configuration.Bind(nameof(CryptoServiceOptions), cfg))
+                .AddSingleton<ICryptoService, CryptoService>();
 
             builder.Services.AddScoped<IIdentityService, FakeIdentityService>();
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
-            builder.Services.AddControllersWithViews()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
 
+            builder.Services.AddControllersWithViews()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
+
+
+            //builder.Services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
+
+            builder.Services.AddFluentValidationAutoValidation(cfg =>
+            {
+                cfg.DisableDataAnnotationsValidation = false;
+            });
+            builder.Services.AddValidatorsFromAssemblyContaining<IApplicationReference>(includeInternalTypes: true);
+
+            builder.Services.AddIdentity();
             var app = builder.Build();
 
-            app.UseHttpsRedirection();
+            app.UseIdentity(builder.Configuration);
+
             app.UseStaticFiles();
 
-            app.UseRouting();
+            app.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=home}/{action=index}/{id?}");
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "areas",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.MapControllerRoute(name: "default", pattern: "{controller=home}/{action=index}/{id?}");
 
             app.Run();
+
         }
     }
 }

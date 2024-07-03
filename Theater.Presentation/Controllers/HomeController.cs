@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using MediatR;
 using Theater.Presentation.Models;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
+using Theater.Application.Modules.ActorModule.Commands.ActorAddCommand;
+using FluentValidation;
 
 
 namespace Theater.Presentation.Controllers
@@ -14,10 +16,13 @@ namespace Theater.Presentation.Controllers
     public class HomeController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IValidator<ContactPostApplyRequest> _contactAddValidator;
 
-        public HomeController(IMediator mediator)
+
+        public HomeController(IMediator mediator, IValidator<ContactPostApplyRequest> contactAddValidator)
         {
             _mediator = mediator;
+            _contactAddValidator = contactAddValidator;
         }
 
         public async Task<IActionResult> Index()
@@ -96,20 +101,16 @@ namespace Theater.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> Contact(ContactPostApplyRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Select(m => new
-                {
-                    Property = m.Key,
-                    Messages = m.Value.Errors.Select(e => e.ErrorMessage)
-                }).ToDictionary(m => m.Property, v => v.Messages);
+            var validationResult = await _contactAddValidator.ValidateAsync(request);
 
-                return BadRequest(new
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
                 {
-                    error = true,
-                    message = "There are validation errors",
-                    errors = errors
-                });
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
+                return View(request);
             }
 
             await _mediator.Send(request);
@@ -120,9 +121,11 @@ namespace Theater.Presentation.Controllers
                 errors = new Dictionary<string, IEnumerable<string>>()
             });
         }
-    
 
-}
+
+
+
+    }
 
 }
 

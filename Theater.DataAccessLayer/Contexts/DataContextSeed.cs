@@ -33,6 +33,8 @@ namespace Theater.DataAccessLayer.Contexts
                     roleManager.CreateAsync(role).Wait();
                 }
 
+                string superAdminName = configuration["Identity:Name"]!;
+                string superAdminSurname = configuration["Identity:Surname"]!;
                 string superAdminEmail = configuration["Identity:Email"]!;
                 string superAdminPassword = configuration["Identity:Password"]!;
 
@@ -42,6 +44,8 @@ namespace Theater.DataAccessLayer.Contexts
                 {
                     user = new AppUser
                     {
+                        Name=superAdminName,
+                        Surname=superAdminSurname,
                         UserName = superAdminEmail,
                         Email = superAdminEmail,
                         EmailConfirmed = true

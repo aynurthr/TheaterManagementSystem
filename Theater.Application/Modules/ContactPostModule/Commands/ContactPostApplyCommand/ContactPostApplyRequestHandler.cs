@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Theater.Application.Modules.ActorModule.Queries;
 using Theater.Application.Repositories;
 using Theater.Domain.Models.Entities;
 
@@ -24,6 +25,7 @@ namespace Theater.Application.Modules.ContactPostModule.Commands.ContactPostAppl
 
             await contactPostRepository.AddAsync(entity, cancellationToken);
             await contactPostRepository.SaveAsync(cancellationToken);
+
         }
     }
 }
