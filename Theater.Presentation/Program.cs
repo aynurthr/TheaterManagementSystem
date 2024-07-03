@@ -54,8 +54,8 @@ namespace Theater.Presentation
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 
-            builder.Services.AddControllersWithViews()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
+    //        builder.Services.AddControllersWithViews()
+    //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
 
 
             //builder.Services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();

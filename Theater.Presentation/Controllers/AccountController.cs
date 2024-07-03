@@ -61,9 +61,14 @@ namespace Theater.Presentation.Controllers
         [Route("/signup.html")]
         public async Task<IActionResult> Signup(SignupRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
             await mediator.Send(request);
 
-            return Empty;
+            return View("Signup");
         }
 
         [AllowAnonymous]

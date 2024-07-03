@@ -108,8 +108,6 @@ namespace Theater.Presentation.Pipeline
                         return;
                     }
 
-
-
                     context.Result = new ContentResult
                     {
                         ContentType = MediaTypeNames.Text.Html, // text/html
