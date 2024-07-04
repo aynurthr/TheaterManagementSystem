@@ -17,6 +17,10 @@ namespace Theater.Presentation.Controllers
         [Route("/signin.html")]
         public async Task<IActionResult> Signin()
         {
+            if (TempData["EmailConfirmationSent"] != null)
+            {
+                ViewBag.EmailConfirmationSent = TempData["EmailConfirmationSent"];
+            }
             return View();
         }
 
@@ -64,7 +68,9 @@ namespace Theater.Presentation.Controllers
         {
             await mediator.Send(request);
 
-            return Empty;
+            TempData["EmailConfirmationSent"] = "Confirmation email has been sent. Please check your email and confirm your account.";
+
+            return RedirectToAction("Signin", "Account");
         }
 
         [AllowAnonymous]
@@ -73,7 +79,21 @@ namespace Theater.Presentation.Controllers
         {
             await mediator.Send(request);
 
-            return Empty;
+            TempData["EmailConfirmed"] = "Your email has been confirmed successfully. You can now log in.";
+
+            return RedirectToAction("EmailConfirmed", "Account");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("/email-confirmed.html")]
+        public IActionResult EmailConfirmed()
+        {
+            if (TempData["EmailConfirmed"] != null)
+            {
+                ViewBag.EmailConfirmed = TempData["EmailConfirmed"];
+            }
+            return View();
         }
 
 
