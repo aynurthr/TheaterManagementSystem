@@ -17,6 +17,12 @@
         <div class="auth__form">
             <h1>Login</h1>
             <p>Welcome back! Please enter your credentials to login.</p>
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.ErrorMessage
+                </div>
+            }
             <form asp-action="Signin" method="post" id="signinForm">
                 <div class="input-group">
                     <input asp-for="UserName" placeholder="Username" class="form-control" required />

@@ -1,14 +1,11 @@
 ﻿using Theater.Domain.Models.Entities.Membership;
-using Theater.Infrastructure.Exceptions;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
 {
-    class SigninRequestHandler : IRequestHandler<SigninRequest, ClaimsPrincipal>
+    class SigninRequestHandler : IRequestHandler<SigninRequest, SigninResult>
     {
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signinManager;
@@ -19,13 +16,14 @@ namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
             this.signinManager = signinManager;
         }
 
-
-        public async Task<ClaimsPrincipal> Handle(SigninRequest request, CancellationToken cancellationToken)
+        public async Task<SigninResult> Handle(SigninRequest request, CancellationToken cancellationToken)
         {
             var user = await userManager.FindByEmailAsync(request.UserName);
 
             if (user is null)
-                throw new UserNotFoundException();
+            {
+                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email or password." };
+            }
 
             var isSuccess = await signinManager.CheckPasswordSignInAsync(user, request.Password, true);
 
@@ -39,10 +37,14 @@ namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
 
                 var claimsIdentity = new ClaimsIdentity(claims, request.Scheme);
 
-                return new ClaimsPrincipal(claimsIdentity);
+                return new SigninResult { Succeeded = true, Principal = new ClaimsPrincipal(claimsIdentity) };
             }
             else
-                throw new UserNotFoundException();
+            {
+                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email or password." };
+            }
         }
     }
+
+   
 }

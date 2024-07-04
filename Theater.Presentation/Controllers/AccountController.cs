@@ -31,26 +31,32 @@ namespace Theater.Presentation.Controllers
         {
             request.Scheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
-            var principal = await mediator.Send(request);
+            var result = await mediator.Send(request);
 
-            var props = new AuthenticationProperties
+            if (result.Succeeded)
             {
-                IsPersistent = true,
-                ExpiresUtc = DateTime.UtcNow.AddMinutes(20)
-            };
+                var props = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddMinutes(20)
+                };
 
-            await HttpContext.SignInAsync(request.Scheme, principal, props);
+                await HttpContext.SignInAsync(request.Scheme, result.Principal, props);
 
-            //ReturnUrl
+                var callbackUrl = Request.Query["ReturnUrl"];
 
-            var callbackUrl = Request.Query["ReturnUrl"];
+                if (!string.IsNullOrWhiteSpace(callbackUrl))
+                {
+                    return Redirect(callbackUrl!);
+                }
 
-            if (!string.IsNullOrWhiteSpace(callbackUrl))
-            {
-                return Redirect(callbackUrl!);
+                return RedirectToAction("Index", "Home");
             }
-
-            return RedirectToAction("Index", controllerName: "Home");
+            else
+            {
+                ViewBag.ErrorMessage = result.ErrorMessage;
+                return View(request);
+            }
         }
 
         [HttpGet]
