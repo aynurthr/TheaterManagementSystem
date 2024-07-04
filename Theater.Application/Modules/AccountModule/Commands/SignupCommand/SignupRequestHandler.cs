@@ -73,10 +73,9 @@ namespace Theater.Application.Modules.AccountModule.Commands.SignupCommand
             token = cryptoService.Encrypt($"{user.Email}-{token}");
             token = HttpUtility.UrlEncode(token);
 
-            var comfirmationUrl = $"{ctx.ActionContext.HttpContext.Request.Scheme}://{ctx.ActionContext.HttpContext.Request.Host}/email-confirmation.html?token={token}";
+            var confirmationUrl = $"{ctx.ActionContext.HttpContext.Request.Scheme}://{ctx.ActionContext.HttpContext.Request.Host}/email-confirmation.html?token={token}";
 
-
-            await emailService.SendEmailAsync(request.Email, "Bigon Registration", @$"Hello, Dear Customer.<br/>Please <a href='{comfirmationUrl}'>Comfirm</a> your email");
+            await emailService.SendEmailAsync(request.Email, "Kazan Theater Registration", @$"Hello, Dear Customer.<br/>Please <a href='{confirmationUrl}'>Confirm</a> your email");
         }
     }
 }

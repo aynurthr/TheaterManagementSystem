@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.AccountModule.Commands.EmailConfirmationCommand;
 using Theater.Application.Modules.AccountModule.Commands.SigninCommand;
@@ -9,7 +10,7 @@ using Theater.Application.Modules.AccountModule.Commands.SignupCommand;
 
 namespace Theater.Presentation.Controllers
 {
-    public class AccountController(IMediator mediator) : Controller
+        public class AccountController(IMediator mediator) : Controller
     {
 
         [AllowAnonymous]
@@ -48,7 +49,7 @@ namespace Theater.Presentation.Controllers
             return RedirectToAction("Index", controllerName: "Home");
         }
 
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
         [Route("/signup.html")]
         public async Task<IActionResult> Signup()
@@ -61,14 +62,9 @@ namespace Theater.Presentation.Controllers
         [Route("/signup.html")]
         public async Task<IActionResult> Signup(SignupRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(request);
-            }
-
             await mediator.Send(request);
 
-            return View("Signup");
+            return Empty;
         }
 
         [AllowAnonymous]
@@ -93,4 +89,5 @@ namespace Theater.Presentation.Controllers
             return Content("Cixish burdandir");
         }
     }
+
 }
