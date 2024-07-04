@@ -54,32 +54,35 @@ namespace Theater.Application.Services
                 cs.Write(buffer, 0, buffer.Length);
                 cs.FlushFinalBlock();
 
-                ms.Seek(0, SeekOrigin.Begin);
-
-                byte[] chiperBuffer = new byte[ms.Length];
-                ms.Read(chiperBuffer, 0, chiperBuffer.Length);
-
-                return Convert.ToBase64String(chiperBuffer);
+                return Convert.ToBase64String(ms.ToArray());
             }
         }
 
         public string Decrypt(string text)
         {
-            byte[] buffer = Convert.FromBase64String(text);
-            var transform = provider.CreateDecryptor();
-
-            using (var ms = new MemoryStream())
-            using (var cs = new CryptoStream(ms, transform, CryptoStreamMode.Write))
+            try
             {
-                cs.Write(buffer, 0, buffer.Length);
-                cs.FlushFinalBlock();
+                byte[] buffer = Convert.FromBase64String(text);
+                var transform = provider.CreateDecryptor();
 
-                ms.Seek(0, SeekOrigin.Begin);
+                using (var ms = new MemoryStream())
+                using (var cs = new CryptoStream(ms, transform, CryptoStreamMode.Write))
+                {
+                    cs.Write(buffer, 0, buffer.Length);
+                    cs.FlushFinalBlock();
 
-                byte[] chiperBuffer = new byte[ms.Length];
-                ms.Read(chiperBuffer, 0, chiperBuffer.Length);
-
-                return Encoding.UTF8.GetString(chiperBuffer);
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
+            }
+            catch (CryptographicException ex)
+            {
+                Console.WriteLine($"Cryptographic error during decryption: {ex.Message}");
+                throw new InvalidOperationException("Decryption failed. Ensure the key and IV are correct.", ex);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"General error during decryption: {ex.Message}");
+                throw new InvalidOperationException("An error occurred during decryption.", ex);
             }
         }
 
