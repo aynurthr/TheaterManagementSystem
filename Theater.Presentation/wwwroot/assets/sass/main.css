@@ -1611,7 +1611,7 @@ a:hover {
 }
 #Register .auth__image img {
   width: 540px;
-  height: 540px;
+  height: 600px;
   -o-object-fit: cover;
      object-fit: cover;
   border: #e7e7e8 10px solid;
@@ -1628,7 +1628,7 @@ a:hover {
   }
 }
 #Register .auth__form {
-  height: 540px;
+  height: 600px;
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -4363,4 +4363,34 @@ a:hover {
 #User .profile-content .tab-content .ticket p {
   margin: 0;
   font-size: 14px;
+}
+
+
+#Register {
+
+.iti__flag-box, .iti__country-name
+{
+    color: black !important
+}
+
+.iti {
+    width: 100% !important
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 1.5em;
+}
+
+    .input-group .form-control {
+        height: 2.5em;
+    }
+
+    .input-group span.text-danger {
+        position: absolute;
+        bottom: -1.2em;
+        left: 0;
+        font-size: 0.875em;
+        height: 1em;
+    }
 }

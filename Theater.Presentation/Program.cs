@@ -1,4 +1,5 @@
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -35,6 +36,8 @@ namespace Theater.Presentation
                 cfg.Filters.AppendAuthorization();
             });
 
+            builder.Services.AddControllersWithViews()
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignupRequestValidator>());
 
             builder.Services.AddRouting(cfg => cfg.LowercaseUrls = true);
 

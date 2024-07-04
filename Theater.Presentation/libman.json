@@ -5,6 +5,10 @@
     {
       "library": "ckeditor5@42.0.0",
       "destination": "wwwroot/lib/ckeditor5/"
+    },
+    {
+      "library": "intl-tel-input@23.1.0",
+      "destination": "wwwroot/lib/intl-tel-input/"
     }
   ]
 }

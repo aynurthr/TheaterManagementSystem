@@ -1,10 +1,13 @@
 ﻿@model Theater.Application.Modules.AccountModule.Commands.SignupCommand.SignupRequest
 
-
 @{
     ViewData["Title"] = "Sign Up";
     ViewBag.BodyId = "Register";
 }
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+<link rel="stylesheet" href="~/assets/sass/main.css" />
 
 
 <section class="auth">
@@ -30,6 +33,11 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="input-group">
+                    <input asp-for="PhoneNumber" type="tel" id="phone" placeholder="Phone Number (optional)" class="form-control pl-5" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    <span id="phoneError" class="text-danger"></span>
+                </div>
+                <div class="input-group">
                     <input asp-for="Password" type="password" placeholder="Password" class="form-control" required />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
@@ -48,6 +56,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
 @section Scripts {
     <script>
@@ -96,6 +105,29 @@
                         required: "Confirm Password is required.",
                         equalTo: "Passwords do not match."
                     }
+                }
+            });
+
+            var input = document.querySelector("#phone");
+            var iti = window.intlTelInput(input, {
+                initialCountry: "auto",
+                geoIpLookup: function (success, failure) {
+                    $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
+                        var countryCode = (resp && resp.country) ? resp.country : "us";
+                        success(countryCode);
+                    });
+                },
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+
+            $('#signupForm').on('submit', function () {
+                $('#phoneError').text(''); // Clear previous error message
+                if (input.value.trim() && !iti.isValidNumber()) {
+                    $('#phoneError').text('Invalid phone number'); // Show error message
+                    return false;
+                } else if (input.value.trim()) {
+                    var phoneNumber = iti.getNumber();
+                    $('#PhoneNumber').val(phoneNumber);
                 }
             });
         });

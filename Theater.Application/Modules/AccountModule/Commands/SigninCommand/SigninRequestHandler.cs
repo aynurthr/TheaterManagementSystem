@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
 {
@@ -18,11 +19,24 @@ namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
 
         public async Task<SigninResult> Handle(SigninRequest request, CancellationToken cancellationToken)
         {
-            var user = await userManager.FindByEmailAsync(request.UserName);
+            AppUser user = null;
+
+            if (request.UserName.Contains("@"))
+            {
+                user = await userManager.FindByEmailAsync(request.UserName);
+            }
+            else if (request.UserName.All(char.IsDigit))
+            {
+                user = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.UserName);
+            }
+            else
+            {
+                user = await userManager.FindByNameAsync(request.UserName);
+            }
 
             if (user is null)
             {
-                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email or password." };
+                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email, username, or phone number." };
             }
 
             var isSuccess = await signinManager.CheckPasswordSignInAsync(user, request.Password, true);
@@ -41,10 +55,8 @@ namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
             }
             else
             {
-                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email or password." };
+                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid username/email/phone number or password." };
             }
         }
     }
-
-   
 }
