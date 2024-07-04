@@ -1,0 +1,86 @@
+﻿@using Theater.Domain.Models.DTOs
+@model AppUserDto
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<h1>User Details</h1>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Username</dt>
+        <dd class="col-sm-10">@Model.UserName</dd>
+
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+
+        <dt class="col-sm-2">Email Confirmed</dt>
+        <dd class="col-sm-10">@Model.EmailConfirmed</dd>
+
+        <dt class="col-sm-2">Phone Number</dt>
+        <dd class="col-sm-10">@Model.Phone</dd>
+
+        <dt class="col-sm-2">Phone Confirmed</dt>
+        <dd class="col-sm-10">@Model.PhoneConfirmed</dd>
+    </dl>
+</div>
+
+<h4>Roles</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Role Name</th>
+            <th>Assigned</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model.Roles)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    @if (role.Selected)
+                    {
+                        <span class="text-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">No</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>Policies</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Policy Name</th>
+            <th>Assigned</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var policy in Model.Policies)
+        {
+            <tr>
+                <td>@policy.Name</td>
+                <td>
+                    @if (policy.Selected)
+                    {
+                        <span class="text-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">No</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

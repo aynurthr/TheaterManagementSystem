@@ -1,18 +1,15 @@
 using Autofac;
-using Autofac.Core;
-using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using Theater.Application;
-using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 using Theater.Application.Services;
 using Theater.Application.Services.Identity;
 using Theater.DataAccessLayer.Contexts;
-using Theater.Domain.Models.Entities.Membership;
 using Theater.Infrastructure.Abstracts;
 using Theater.Infrastructure.Configurations;
 using Theater.Presentation.Pipeline;
@@ -21,8 +18,11 @@ namespace Theater.Presentation
 {
     public class Program
     {
+        internal static string[] policies = null;
         public static void Main(string[] args)
         {
+            Program.policies = GetPolicies();
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<DataContext>(options =>
@@ -36,8 +36,8 @@ namespace Theater.Presentation
                 cfg.Filters.AppendAuthorization();
             });
 
-            builder.Services.AddControllersWithViews()
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignupRequestValidator>());
+            //builder.Services.AddControllersWithViews()
+            //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignupRequestValidator>());
 
             builder.Services.AddRouting(cfg => cfg.LowercaseUrls = true);
 
@@ -57,8 +57,8 @@ namespace Theater.Presentation
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 
-    //        builder.Services.AddControllersWithViews()
-    //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
+            //        builder.Services.AddControllersWithViews()
+            //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
 
 
             //builder.Services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
@@ -82,6 +82,29 @@ namespace Theater.Presentation
 
             app.Run();
 
+        }
+        static string[] GetPolicies()
+        {
+            var types = typeof(Program).Assembly.GetTypes();
+
+            var policies = types
+                .Where(t => typeof(ControllerBase).IsAssignableFrom(t) && t.IsDefined(typeof(AuthorizeAttribute), true))
+                .SelectMany(t => t.GetCustomAttributes<AuthorizeAttribute>())
+                .Union(
+                types
+                .Where(t => typeof(ControllerBase).IsAssignableFrom(t))
+                .SelectMany(type => type.GetMethods())
+                .Where(method => method.IsPublic
+                 && !method.IsDefined(typeof(NonActionAttribute), true)
+                 && method.IsDefined(typeof(AuthorizeAttribute), true))
+                 .SelectMany(t => t.GetCustomAttributes<AuthorizeAttribute>())
+                )
+                .Where(a => !string.IsNullOrWhiteSpace(a.Policy))
+                .SelectMany(a => a.Policy.Split(new[] { "," }, System.StringSplitOptions.RemoveEmptyEntries))
+                .Distinct()
+                .ToArray();
+
+            return policies;
         }
     }
 }

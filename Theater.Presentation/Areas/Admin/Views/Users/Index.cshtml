@@ -1,0 +1,39 @@
+﻿@using Theater.Domain.Models.Entities.Membership;
+@model List<AppUser>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Users</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Email Confirmed</th>
+            <th>Phone Number</th>
+            <th>Phone Confirmed</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>@user.EmailConfirmed</td>
+                <td>@user.PhoneNumber</td>
+                <td>@user.PhoneNumberConfirmed</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@user.Id">
+                        <i class="fa fa-eye"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

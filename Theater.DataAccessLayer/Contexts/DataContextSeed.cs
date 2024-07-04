@@ -37,6 +37,8 @@ namespace Theater.DataAccessLayer.Contexts
                 string superAdminSurname = configuration["Identity:Surname"]!;
                 string superAdminEmail = configuration["Identity:Email"]!;
                 string superAdminPassword = configuration["Identity:Password"]!;
+                string superAdminUsername = configuration["Identity:Username"]!;
+
 
                 var user = userManager.FindByEmailAsync(superAdminEmail).Result;
 
@@ -46,7 +48,7 @@ namespace Theater.DataAccessLayer.Contexts
                     {
                         Name=superAdminName,
                         Surname=superAdminSurname,
-                        UserName = superAdminEmail,
+                        UserName = superAdminUsername,
                         Email = superAdminEmail,
                         EmailConfirmed = true
                     };
