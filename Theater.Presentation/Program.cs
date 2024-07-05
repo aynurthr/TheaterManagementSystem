@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Theater.Application;
+using Theater.Application.Repositories;
 using Theater.Application.Services;
 using Theater.Application.Services.Identity;
 using Theater.DataAccessLayer.Contexts;
 using Theater.Infrastructure.Abstracts;
 using Theater.Infrastructure.Configurations;
 using Theater.Presentation.Pipeline;
+using Theater.Repository;
 
 namespace Theater.Presentation
 {
@@ -54,6 +56,7 @@ namespace Theater.Presentation
             builder.Services.AddScoped<IIdentityService, FakeIdentityService>();
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 
             //        builder.Services.AddControllersWithViews()

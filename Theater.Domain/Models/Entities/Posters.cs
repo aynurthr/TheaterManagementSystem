@@ -13,7 +13,7 @@ namespace Theater.Domain.Models.Entities
         public string Duration { get; set; }
         public string Description { get; set; }
         public string ImageSrc { get; set; }
-   
+
         public double Rating { get; set; }
 
         public ICollection<Role> Roles { get; set; }

@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.NewsModule.Queries.NewsGetAllQuery;
 using Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery;
@@ -14,11 +15,15 @@ namespace Theater.Presentation.Controllers
             this.mediator = mediator;
         }
 
+        [AllowAnonymous]
+
         public async Task<IActionResult> Index(NewsGetAllRequest request)
         {
             var response = await mediator.Send(request);
             return View(response);
         }
+
+        [AllowAnonymous]
 
         public async Task<IActionResult> Details(int id)
         {

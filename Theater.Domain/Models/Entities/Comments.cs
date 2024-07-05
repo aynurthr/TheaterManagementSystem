@@ -1,4 +1,5 @@
-﻿using Theater.Infrastructure.Abstracts;
+﻿using Theater.Domain.Models.Entities.Membership;
+using Theater.Infrastructure.Abstracts;
 using Theater.Infrastructure.Concrates;
 
 namespace Theater.Domain.Models.Entities
@@ -11,5 +12,7 @@ namespace Theater.Domain.Models.Entities
         public DateTime Time { get; set; }
         public int PosterId { get; set; }
         public Poster Poster { get; set; }
+        public AppUser User { get; set; }
+
     }
 }

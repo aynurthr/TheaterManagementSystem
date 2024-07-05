@@ -9,6 +9,7 @@ using Theater.Presentation.Models;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 using Theater.Application.Modules.ActorModule.Commands.ActorAddCommand;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Theater.Presentation.Controllers
@@ -25,6 +26,7 @@ namespace Theater.Presentation.Controllers
             _contactAddValidator = contactAddValidator;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var postersRequest = new PosterGetAllRequest { OnlyAvailable = true };
@@ -77,28 +79,34 @@ namespace Theater.Presentation.Controllers
             if (description.Length <= maxLength) return description;
             return description.Substring(0, maxLength) + "...";
         }
+        [AllowAnonymous]
 
         public IActionResult RulesOfConduct()
         {
             return View();
         }
+        [AllowAnonymous]
 
         public IActionResult HallPanorama()
         {
             return View();
         }
 
+        [AllowAnonymous]
+
         public IActionResult About()
         {
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Contact()
         {
             return View();
         }
 
         [HttpPost]
+
         public async Task<IActionResult> Contact(ContactPostApplyRequest request)
         {
             var validationResult = await _contactAddValidator.ValidateAsync(request);

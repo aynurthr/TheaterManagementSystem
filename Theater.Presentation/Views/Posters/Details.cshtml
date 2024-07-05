@@ -23,28 +23,13 @@
                         <p>Age Limit</p>
                         <div class="age">@Model.Age</div>
                     </div>
+                    <div>
+                        <p>Rating</p>
+                        <div class="duration">@Model.Rating</div>
+                    </div>
                 </div>
                 <div class="poster-item__content__top__right">
                     <a id="buy-ticket-btn" href="@Url.Action("BuyTicket", "Posters", new { id = Model.Id })">Buy Ticket</a>
-                </div>
-
-
-
-            </div>
-        </div>
-
-        <div class="poster-item__actions">
-            <div class="container">
-                <p>Watched the show? Review it now and let us know how we did!</p>
-                <div class="action-button" id="toggle-icon">
-                    <i class="fa-regular fa-eye" style="color: #282828" aria-hidden="true"></i>
-                </div>
-                <div class="star-rating">
-                    @for (int i = 1; i <= 5; i++)
-                    {
-                        <i class="fa-regular fa-star @(i <= @Model.Rating ? "filled" : "")" style="color: #282828" data-value="@i" aria-hidden="true"></i>
-                    }
-                    <h1 class="rating">@Model.Rating</h1>
                 </div>
             </div>
         </div>
@@ -59,9 +44,7 @@
                     </div>
                     <div class="tabs__content">
                         <div class="tab-content" id="about" style="display: block">
-                            <p>
-                                @Html.Raw(Model.Description)
-                            </p>
+                            <p>@Html.Raw(Model.Description)</p>
                         </div>
                         <div class="tab-content" id="team" style="display: none">
                             <div class="team-content">
@@ -81,10 +64,18 @@
                         <div class="tab-content" id="comments" style="display: none">
                             <div class="comments-content">
                                 <h2>Comments</h2>
-                                <form class="comment-form" id="comment-form">
-                                    <textarea id="comment-input" placeholder="Add a comment..." required></textarea>
-                                    <button type="submit">Post Comment</button>
-                                </form>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <form asp-action="AddComment" method="post" class="comment-form" id="comment-form">
+                                        <input type="hidden" name="PosterId" value="@Model.Id" />
+                                        <textarea class="form-control" id="comment-input" name="CommentText" placeholder="Add a comment..." required></textarea>
+                                        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <p>You must be logged in to add a comment.</p>
+                                }
                                 <div class="comments-info">
                                     <p id="comments-count">@Model.Comments.Count() Comments</p>
                                 </div>
@@ -92,13 +83,28 @@
                                     @foreach (var comment in Model.Comments)
                                     {
                                         <div class="comment">
-                                            <div class="comment-avatar">
-                                                <img src="~/assets/media/images/default-avatar.jpg" alt="Default Avatar" />
-                                            </div>
                                             <div class="comment-content">
                                                 <div class="comment-user">@comment.UserName</div>
                                                 <div class="comment-time">@comment.CreatedAt.ToString("MM/dd/yyyy, h:mm:ss tt")</div>
-                                                <div class="comment-text">@comment.Text</div>
+                                                @if (User.Identity.IsAuthenticated && ViewBag.CurrentUserName == @comment.UserName)
+                                                {
+                                                    <form asp-action="EditComment" method="post" class="edit-comment-form mt-2 d-inline">
+                                                        <input type="hidden" name="Id" value="@comment.Id" />
+                                                        <input type="hidden" name="PosterId" value="@Model.Id" />
+                                                        <div class="form-group">
+                                                            <textarea name="CommentText" class="form-control" style="resize: none;">@comment.Text</textarea>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-success btn-sm">Save</button>
+                                                    </form>
+                                                    <a href="@Url.Action("RemoveComment", "Posters", new { id = comment.Id })"
+                                                       data-entity-name="comment"
+                                                       onclick="confirmRemoveEntity(event)" class="btn btn-danger btn-sm mt-2 d-inline">Delete</a>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="comment-text">@comment.Text</div>
+                                                }
                                             </div>
                                         </div>
                                     }
@@ -106,7 +112,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
         </div>
         <p class="poster-description"></p>
@@ -116,5 +121,36 @@
 @section addjs {
     <script src="https://kit.fontawesome.com/277e46d269.js" crossorigin="anonymous"></script>
     <script src="~/js/posterDetails.js"></script>
-}
+    <script>
+        function confirmRemoveEntity(e) {
+            e.preventDefault();
+            let element = e.currentTarget;
+            let name = $(element).data('entity-name');
 
+            if (confirm(`Are you sure you want to delete this ${name}?`)) {
+                removeEntity(element);
+            }
+        }
+
+        function removeEntity(element) {
+            $(element).attr('disabled', 'disabled');
+
+            const link = $(element).attr('href');
+
+            $.ajax({
+                url: link,
+                type: 'POST',
+                success: function (response) {
+                    alert('Comment deleted successfully');
+                    location.reload(); // Refresh the page to reflect the deletion
+                },
+                error: function (errResponse) {
+                    console.log(errResponse);
+                    alert('An error occurred while deleting the item.');
+                }
+            }).always(function () {
+                $(element).removeAttr('disabled').trigger('blur');
+            });
+        }
+    </script>
+}

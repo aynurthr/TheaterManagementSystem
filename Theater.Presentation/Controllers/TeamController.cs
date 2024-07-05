@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetAllQuery;
@@ -13,6 +14,7 @@ namespace Theater.Presentation.Controllers
         {
             _mediator = mediator;
         }
+        [AllowAnonymous]
 
         public async Task<IActionResult> Index()
         {

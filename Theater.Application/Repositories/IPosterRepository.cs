@@ -8,6 +8,5 @@ namespace Theater.Application.Repositories
 {
     public interface IPosterRepository : IAsyncRepository<Poster>
     {
-       
     }
 }
