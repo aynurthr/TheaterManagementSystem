@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="~/assets/sass/main.css" />
     <link rel="icon" type="image/x-icon" href="~/assets/media/icons/theater.svg" />
 
-
     <script src="~/js/jquery.min.js"></script>
 
     @RenderSection("addcss", required: false)
@@ -30,8 +29,18 @@
             </div>
 
             <div class="navbar__actions">
-                <a href="@Url.Action("SignIn", "Account")" class="btn btn--login">Log In</a>
-                <a href="@Url.Action("SignUp", "Account")" class="btn btn--register">Register</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="@Url.Action("Profile", "UserProfile")" class="btn btn--user">
+                        <img src="~/assets/media/icons/user.svg" alt="User icon" /> @User.Identity.Name
+                    </a>
+                    <a href="@Url.Action("SignOut", "Account")" class="btn btn--logout">Log Out</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("SignIn", "Account")" class="btn btn--login">Log In</a>
+                    <a href="@Url.Action("SignUp", "Account")" class="btn btn--register">Register</a>
+                }
             </div>
             <div class="navbar__burger" id="burger-btn">
                 <img src="~/assets/media/icons/burger.svg" alt="Burger icon" />
@@ -43,8 +52,16 @@
             <a href="@Url.Action("Index", "News")">News</a>
             <a href="@Url.Action("About", "Home")">About the Theater</a>
             <a href="@Url.Action("Contact", "Home")">Contact Us</a>
-            <a href="@Url.Action("SignIn", "Account")" class="btn btn--login">Log In</a>
-            <a href="@Url.Action("SignUp", "Account")" class="btn btn--register">Register</a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="@Url.Action("Profile", "UserProfile")" class="btn btn--user">Profile</a>
+                <a href="@Url.Action("SignOut", "Account")" class="btn btn--logout">Log Out</a>
+            }
+            else
+            {
+                <a href="@Url.Action("SignIn", "Account")" class="btn btn--login">Log In</a>
+                <a href="@Url.Action("SignUp", "Account")" class="btn btn--register">Register</a>
+            }
         </div>
     </section>
 
@@ -108,7 +125,6 @@
     <script src="~/assets/common/sidebar.js"></script>
 
     @RenderSection("addjs", required: false)
-        @RenderSection("Scripts", required: false)
-
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

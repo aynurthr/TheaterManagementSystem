@@ -10,8 +10,14 @@ using Theater.Application.Modules.AccountModule.Commands.SignupCommand;
 
 namespace Theater.Presentation.Controllers
 {
-        public class AccountController(IMediator mediator) : Controller
+    public class AccountController : Controller
     {
+        private readonly IMediator mediator;
+
+        public AccountController(IMediator mediator)
+        {
+            this.mediator = mediator;
+        }
 
         [AllowAnonymous]
         [Route("/signin.html")]
@@ -102,18 +108,17 @@ namespace Theater.Presentation.Controllers
             return View();
         }
 
+        [Route("/signout.html")]
+        public async Task<IActionResult> Signout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Signin", "Account");
+        }
 
         [Route("/accessdenied.html")]
         public IActionResult Denied()
         {
             return Content("bura icazeniz yoxdur");
         }
-
-        [Route("/signout.html")]
-        public IActionResult Signout()
-        {
-            return Content("Cixish burdandir");
-        }
     }
-
 }
