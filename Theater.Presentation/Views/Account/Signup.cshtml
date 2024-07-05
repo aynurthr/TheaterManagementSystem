@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 <link rel="stylesheet" href="~/assets/sass/main.css" />
 
-
 <section class="auth">
     <img class="auth__top-image" src="../../assets/media/images/inside-theater.jpg" alt="Background" />
     <div class="container">
@@ -33,7 +32,7 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="input-group">
-                    <input asp-for="PhoneNumber" type="tel" id="phone" placeholder="Phone Number (optional)" class="form-control pl-5" />
+                    <input asp-for="PhoneNumber" type="tel" id="phone" class="form-control" />
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     <span id="phoneError" class="text-danger"></span>
                 </div>
@@ -110,24 +109,53 @@
 
             var input = document.querySelector("#phone");
             var iti = window.intlTelInput(input, {
-                initialCountry: "auto",
-                geoIpLookup: function (success, failure) {
-                    $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
-                        var countryCode = (resp && resp.country) ? resp.country : "us";
-                        success(countryCode);
-                    });
-                },
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                hiddenInput: "full",
+                separateDialCode: true,
+                autoPlaceholder: "polite",
+                nationalMode: false
+            });
+
+            const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+
+            const reset = () => {
+                input.classList.remove("error");
+                $('#phoneError').text('');
+            };
+
+            const showError = (msg) => {
+                input.classList.add("error");
+                $('#phoneError').text(msg);
+            };
+
+            input.addEventListener('change', () => {
+                reset();
+                if (input.value.trim() && !iti.isValidNumber()) {
+                    const errorCode = iti.getValidationError();
+                    const msg = errorMap[errorCode] || "Invalid phone number";
+                    showError(msg);
+                }
+            });
+
+            input.addEventListener('keyup', () => {
+                reset();
+                if (input.value.trim() && !iti.isValidNumber()) {
+                    const errorCode = iti.getValidationError();
+                    const msg = errorMap[errorCode] || "Invalid phone number";
+                    showError(msg);
+                }
             });
 
             $('#signupForm').on('submit', function () {
-                $('#phoneError').text(''); // Clear previous error message
+                reset(); // Clear previous error message
                 if (input.value.trim() && !iti.isValidNumber()) {
-                    $('#phoneError').text('Invalid phone number'); // Show error message
+                    const errorCode = iti.getValidationError();
+                    const msg = errorMap[errorCode] || "Invalid phone number";
+                    showError(msg); // Show error message
                     return false;
                 } else if (input.value.trim()) {
-                    var phoneNumber = iti.getNumber();
-                    $('#PhoneNumber').val(phoneNumber);
+                    var full_number = iti.getNumber(intlTelInputUtils.numberFormat.E164);
+                    input.value = full_number;
                 }
             });
         });

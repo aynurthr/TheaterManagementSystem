@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
+using Theater.Application.Services.Identity;
 using Theater.Domain.Models.Entities.Membership;
 using Theater.Infrastructure.Abstracts;
 using Theater.Presentation.Models;

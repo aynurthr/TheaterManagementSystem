@@ -26,7 +26,7 @@ public class SignupRequestValidator : AbstractValidator<SignupRequest>
             .Equal(x => x.Password).WithMessage("Passwords do not match.");
 
         RuleFor(x => x.PhoneNumber)
-            .Matches(@"^\d{10}$").When(x => !string.IsNullOrEmpty(x.PhoneNumber))
-            .WithMessage("Invalid phone number format."); //10 digit number
+            .Matches(@"^\+?[1-9]\d{1,14}$").When(x => !string.IsNullOrEmpty(x.PhoneNumber))
+            .WithMessage("Invalid phone number format.");
     }
 }

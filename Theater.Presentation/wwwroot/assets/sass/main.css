@@ -492,6 +492,12 @@ a:hover {
   background-color: #fa434b;
   border: 1px solid #fa434b;
 }
+
+.navbar__actions .btn--user {
+    img {
+        width: 25px;
+     }
+}
 .navbar__actions .btn--register:hover {
   background-color: #d1060e;
   border: 1px solid #d1060e;
@@ -4393,4 +4399,7 @@ a:hover {
         font-size: 0.875em;
         height: 1em;
     }
+.iti--separate-dial-code .iti__selected-dial-code {
+    color: black !important;
+}
 }

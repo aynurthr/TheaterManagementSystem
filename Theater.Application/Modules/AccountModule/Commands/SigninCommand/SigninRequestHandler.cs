@@ -25,7 +25,7 @@ namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
             {
                 user = await userManager.FindByEmailAsync(request.UserName);
             }
-            else if (request.UserName.All(char.IsDigit))
+            else if (request.UserName.All(char.IsDigit) || request.UserName.StartsWith("+"))
             {
                 user = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.UserName);
             }
