@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Theater.DataAccessLayer.Contexts;
 using Theater.Domain.Models.DTOs;
 using Theater.Domain.Models.Entities.Membership;
+using Theater.Presentation.Pipeline;
 
 namespace Theater.Presentation.Controllers
 {
@@ -54,7 +55,7 @@ namespace Theater.Presentation.Controllers
                 else
                 {
                     var userPolicies = userClaims.Where(m => m.Value == "1").Select(m => m.Type);
-                    dto.Policies = (from p in Program.policies
+                    dto.Policies = (from p in AppClaimsTransformation.policies
                                     join up in userPolicies on p equals up into leftSet
                                     from ls in leftSet.DefaultIfEmpty()
                                     select new PolicyDto
@@ -76,10 +77,10 @@ namespace Theater.Presentation.Controllers
 
                 return View(dto);
             }
-            catch
+            catch (Exception ex)
             {
                 // If any exception occurs, return a 500 status code with a generic error message
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }

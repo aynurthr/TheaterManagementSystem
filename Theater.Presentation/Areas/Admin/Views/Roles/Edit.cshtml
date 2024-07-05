@@ -1,0 +1,132 @@
+﻿@using Theater.Domain.Models.DTOs;
+@model AppRoleDto
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<form method="post">
+    <strong>Name</strong>
+    <input asp-for="Name" class="form-control" />
+    <input asp-for="Id" hidden />
+
+    <hr />
+    <a class="btn btn-outline-secondary" asp-action="Index">Go to back</a>
+    <button class="btn btn-outline-warning" type="submit">Save</button>
+
+    <div class="tab-control mt-3" role="tabcontrol">
+        <div class="tab-page" id="policies" aria-title="Policies" selected>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Policy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Policies)
+                    {
+                        <tr>
+                            <td><input type="checkbox" @(item.Selected ? "checked" : "") data-role-id="@Model.Id" data-policy-name="@item.Name" /></td>
+                            <td>@item.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-page" id="users" aria-title="Users">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Members)
+                    {
+                        <tr>
+                            <td><input type="checkbox" @(item.Selected ? "checked" : "") data-role-id="@Model.Id" data-member-id="@item.Id" /></td>
+                            <td>@item.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</form>
+
+@section Scripts {
+    <script src="~/lib/tabcontrol/tab-control.js"></script>
+    <script>
+        $(document).ready(function () {
+
+
+            $('input[type=checkbox][data-policy-name]').change(function (e) {
+
+                const postData = $(e.currentTarget).data();
+
+                postData.selected = $(e.currentTarget).is(':checked');
+
+                console.log(postData);
+
+
+                $.ajax({
+                    url: `@Url.Action("ChangeAccess")`,
+                    type: 'POST',
+                    data: postData,
+                    success: function (response) {
+                        console.log(response);
+
+                        if (response.error == true) {
+                            $(e.currentTarget).prop('checked', !postData.selected);
+                        }
+                    },
+                    error: function (response) {
+
+                        $(e.currentTarget).prop('checked', !postData.selected);
+                        console.warn(response);
+                    }
+
+                });
+
+            });
+
+
+            $('input[type=checkbox][data-member-id]').change(function (e) {
+
+                const postData = $(e.currentTarget).data();
+
+                postData.selected = $(e.currentTarget).is(':checked');
+
+                console.log(postData);
+
+
+                $.ajax({
+                    url: `@Url.Action("ManageMember")`,
+                    type: 'POST',
+                    data: postData,
+                    success: function (response) {
+                        console.log(response);
+
+                        if (response.error == true) {
+                            $(e.currentTarget).prop('checked', !postData.selected);
+                        }
+                    },
+                    error: function (response) {
+
+                        $(e.currentTarget).prop('checked', !postData.selected);
+                        console.warn(response);
+                    }
+
+                });
+
+            });
+
+        });
+    </script>
+}
+
+@section Styles {
+    <link href="~/lib/tabcontrol/tab-control.css" rel="stylesheet" />
+}

@@ -1,6 +1,7 @@
 using Autofac;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -18,10 +19,8 @@ namespace Theater.Presentation
 {
     public class Program
     {
-        internal static string[] policies = null;
         public static void Main(string[] args)
         {
-            Program.policies = GetPolicies();
 
             var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +69,8 @@ namespace Theater.Presentation
             builder.Services.AddValidatorsFromAssemblyContaining<IApplicationReference>(includeInternalTypes: true);
 
             builder.Services.AddIdentity();
+            builder.Services.AddSingleton<IClaimsTransformation, AppClaimsTransformation>();
+
             var app = builder.Build();
 
             app.UseIdentity(builder.Configuration);
@@ -82,29 +83,6 @@ namespace Theater.Presentation
 
             app.Run();
 
-        }
-        static string[] GetPolicies()
-        {
-            var types = typeof(Program).Assembly.GetTypes();
-
-            var policies = types
-                .Where(t => typeof(ControllerBase).IsAssignableFrom(t) && t.IsDefined(typeof(AuthorizeAttribute), true))
-                .SelectMany(t => t.GetCustomAttributes<AuthorizeAttribute>())
-                .Union(
-                types
-                .Where(t => typeof(ControllerBase).IsAssignableFrom(t))
-                .SelectMany(type => type.GetMethods())
-                .Where(method => method.IsPublic
-                 && !method.IsDefined(typeof(NonActionAttribute), true)
-                 && method.IsDefined(typeof(AuthorizeAttribute), true))
-                 .SelectMany(t => t.GetCustomAttributes<AuthorizeAttribute>())
-                )
-                .Where(a => !string.IsNullOrWhiteSpace(a.Policy))
-                .SelectMany(a => a.Policy.Split(new[] { "," }, System.StringSplitOptions.RemoveEmptyEntries))
-                .Distinct()
-                .ToArray();
-
-            return policies;
         }
     }
 }

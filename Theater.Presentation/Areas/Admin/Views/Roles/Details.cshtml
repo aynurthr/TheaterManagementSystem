@@ -1,0 +1,32 @@
+﻿@using Theater.Domain.Models.DTOs;
+@model AppRoleDto
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div>
+    <strong>Name</strong>
+    <p>@Model.Name</p>
+
+    <hr />
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Policy</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Policies)
+            {
+                <tr>
+                    <td><input disabled type="checkbox" @(item.Selected ? "checked" : "") /></td>
+                    <td>@item.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <hr />
+    <a class="btn btn-outline-secondary" asp-action="Index">Go to back</a>
+</div>
