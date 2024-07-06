@@ -1,14 +1,14 @@
-﻿using MediatR;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Theater.Application.Repositories;
 using Theater.Domain.Models.Entities;
-using Theater.Infrastructure.Abstracts;
 using Microsoft.EntityFrameworkCore;
-using Theater.Application.Modules.PostersModule.Commands.PurchaseTicketCommand;
+using Theater.Infrastructure.Abstracts;
 
-namespace Theater.Application.Modules.TicketModule.Commands.PurchaseTickets
+namespace Theater.Application.Modules.PosterModule.Commands.PurchaseTicketCommand
 {
     public class PurchaseTicketRequestHandler : IRequestHandler<PurchaseTicketRequest, bool>
     {
@@ -26,10 +26,10 @@ namespace Theater.Application.Modules.TicketModule.Commands.PurchaseTickets
             var user = await _userRepository.GetAsync(u => u.Id == request.UserId);
             if (user == null)
             {
-                return false;
+                throw new Exception($"User not found: {request.UserId}");
             }
 
-            var tickets = await _ticketRepository.GetAll(t => request.SeatIds.Contains(t.SeatId) && !t.IsPurchased)
+            var tickets = await _ticketRepository.GetAll(t => request.SeatIds.Contains(t.SeatId) && t.ShowDateId == request.ShowDateId && !t.IsPurchased)
                 .ToListAsync(cancellationToken);
 
             if (tickets.Count != request.SeatIds.Count)

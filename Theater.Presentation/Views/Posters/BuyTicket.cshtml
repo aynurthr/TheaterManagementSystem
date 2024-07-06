@@ -47,47 +47,114 @@
     </div>
 </section>
 
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Tickets purchased successfully.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="redirectToDetails()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login Required Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                You must be logged in to purchase tickets.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Purchase</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to purchase these seats?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmPurchaseBtn">Yes, Purchase</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function () {
         var totalPrice = 0;
         var selectedSeats = [];
+        var showDateId = $('.booking__date.active').data('showdateid');
 
-        function updateTotalPrice() {
-            $('#total-price').text(totalPrice + '$');
+        function updateTotalPrice(price) {
+            $('#total-price').text(price + '$');
         }
 
         $(document).on('click', '.seat', function () {
+            if ($(this).hasClass('reserved')) {
+                return; // Do nothing if the seat is reserved
+            }
+
             var seatPrice = parseFloat($(this).data('price'));
+            var seatId = $(this).data('seatid');
+
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
                 totalPrice -= seatPrice;
-                selectedSeats = selectedSeats.filter(seat => seat !== $(this).data('seatnumber'));
+                selectedSeats = selectedSeats.filter(id => id !== seatId);
             } else {
                 $(this).addClass('selected');
                 totalPrice += seatPrice;
-                selectedSeats.push($(this).data('seatnumber'));
+                selectedSeats.push(seatId);
             }
-            updateTotalPrice();
+            updateTotalPrice(totalPrice);
         });
 
         $('.booking__date').click(function () {
             $('.booking__date').removeClass('active');
             $(this).addClass('active');
-            var showDateId = $(this).data('showdateid');
+            showDateId = $(this).data('showdateid');
             var posterId = @Model.PosterId;
 
-            console.log('Fetching seats for showDateId:', showDateId, 'posterId:', posterId);
+            // Reset total price and selected seats when changing show date
+            totalPrice = 0;
+            selectedSeats = [];
+            updateTotalPrice(totalPrice);
 
             $.ajax({
                 url: '/api/posters/' + posterId + '/tickets/' + showDateId,
                 method: 'GET',
                 success: function (data) {
-                    console.log('Received data:', data);
-                    if (!data || !data.seats) {
-                        console.error('No seats data found');
-                        return;
-                    }
                     $('#seating-chart').empty();
                     var rows = {};
 
@@ -101,9 +168,9 @@
                     for (var row in rows) {
                         var rowDiv = $('<div class="seating-row">').append('<div>' + row + '</div>');
                         rows[row].forEach(function (seat) {
-                            var seatClass = seat.isPurchased ? 'seat purchased' : 'seat';
+                            var seatClass = seat.isPurchased ? 'seat reserved' : 'seat';
                             rowDiv.append(
-                                '<span class="' + seatClass + '" data-seatnumber="' + seat.seatNumber + '" data-price="' + seat.price + '">' + seat.seatNumber + '</span>'
+                                '<span class="' + seatClass + '" data-seatid="' + seat.seatNumber + '" data-price="' + seat.price + '">' + seat.seatNumber + '</span>'
                             );
                         });
                         $('#seating-chart').append(rowDiv);
@@ -115,6 +182,46 @@
             });
         });
 
+        $('.btn--pay').click(function () {
+            // Check if user is logged in
+            var isLoggedIn = '@(User.Identity.IsAuthenticated)' === 'True';
+            if (!isLoggedIn) {
+                $('#loginModal').modal('show');
+                return;
+            }
+
+            // Show confirmation modal
+            $('#confirmModal').modal('show');
+        });
+
+        $('#confirmPurchaseBtn').click(function () {
+            // Collect selected seat IDs
+            var payload = { seatIds: selectedSeats, showDateId: showDateId };
+
+            $.ajax({
+                url: '/api/posters/purchase-tickets',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function () {
+                    $('#confirmModal').modal('hide');
+                    $('#successModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error purchasing tickets:', xhr.responseText);
+                    alert('Failed to purchase tickets. Please try again.');
+                }
+            });
+        });
+
+        $('.btn--cancel').click(function () {
+            window.history.back();
+        });
+
         $('.booking__date').first().trigger('click');
     });
+
+    function redirectToDetails() {
+        window.location.href = '@Url.Action("Details", "Posters", new { id = Model.PosterId })';
+    }
 </script>

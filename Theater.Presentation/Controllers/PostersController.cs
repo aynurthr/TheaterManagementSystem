@@ -15,7 +15,7 @@ using Theater.Application.Repositories;
 using Microsoft.Extensions.Logging;
 using Theater.Application.Services;
 using Theater.Application.Modules.GenreModule.Commands.GenreRemoveCommand;
-using Theater.Application.Modules.PostersModule.Commands.PurchaseTicketCommand;
+using Theater.Application.Modules.PosterModule.Commands.PurchaseTicketCommand;
 
 namespace Theater.Presentation.Controllers
 {
@@ -62,9 +62,9 @@ namespace Theater.Presentation.Controllers
             return View(response);
         }
 
-        [HttpPost("comments")]
         [Authorize]
-        public async Task<IActionResult> AddComment([FromBody] CommentAddRequest request)
+        [HttpPost("add-comment")]
+        public async Task<IActionResult> AddComment([FromForm] CommentAddRequest request)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -78,9 +78,11 @@ namespace Theater.Presentation.Controllers
             return RedirectToAction("Details", new { id = request.PosterId });
         }
 
-        [HttpPut("comments")]
+
+
         [Authorize]
-        public async Task<IActionResult> EditComment([FromBody] CommentEditRequest request)
+        [HttpPost("edit-comment")]
+        public async Task<IActionResult> EditComment([FromForm] CommentEditRequest request)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -94,9 +96,10 @@ namespace Theater.Presentation.Controllers
             return RedirectToAction("Details", new { id = request.PosterId });
         }
 
-        [HttpDelete("comments/{id}")]
+
         [Authorize]
-        public async Task<IActionResult> RemoveComment(int id)
+        [HttpPost("remove-comment")]
+        public async Task<IActionResult> RemoveComment([FromForm] int id)
         {
             var userId = _currentUserService.UserId;
             if (userId == null)
@@ -113,6 +116,8 @@ namespace Theater.Presentation.Controllers
 
             return Ok();
         }
+
+
 
         [HttpGet("buy-ticket/{id}")]
         [AllowAnonymous]
@@ -166,7 +171,7 @@ namespace Theater.Presentation.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Unauthorized("You must be logged in to purchase tickets.");
+                return Unauthorized();
             }
 
             command.UserId = user.Id;
@@ -179,6 +184,7 @@ namespace Theater.Presentation.Controllers
 
             return Ok("Tickets purchased successfully.");
         }
+
 
 
     }

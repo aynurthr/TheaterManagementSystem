@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <div class="poster-item__content__top__right">
-<a id="buy-ticket-btn" href="@Url.Action("BuyTicket", "Posters", new { id = Model.Id })">Buy Ticket</a>
+                    <a id="buy-ticket-btn" href="@Url.Action("BuyTicket", "Posters", new { id = Model.Id })">Buy Ticket</a>
                 </div>
             </div>
         </div>
@@ -96,10 +96,7 @@
                                                         </div>
                                                         <button type="submit" class="btn btn-success btn-sm">Save</button>
                                                     </form>
-                                                    <a href="@Url.Action("RemoveComment", "Posters", new { id = comment.Id })"
-                                                       data-entity-name="comment"
-                                                       onclick="confirmRemoveEntity(event)" class="btn btn-danger btn-sm mt-2 d-inline">Delete</a>
-
+                                                    <button type="button" class="btn btn-danger btn-sm mt-2 d-inline" data-comment-id="@comment.Id" onclick="confirmRemoveEntity(this)">Delete</button>
                                                 }
                                                 else
                                                 {
@@ -111,46 +108,81 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
             </section>
         </div>
         <p class="poster-description"></p>
     </div>
 </section>
 
+<!-- Modal for confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this comment?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for success message -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Comment deleted successfully.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section addjs {
     <script src="https://kit.fontawesome.com/277e46d269.js" crossorigin="anonymous"></script>
     <script src="~/js/posterDetails.js"></script>
     <script>
-        function confirmRemoveEntity(e) {
-            e.preventDefault();
-            let element = e.currentTarget;
-            let name = $(element).data('entity-name');
+        var commentIdToDelete;
 
-            if (confirm(`Are you sure you want to delete this ${name}?`)) {
-                removeEntity(element);
-            }
+        function confirmRemoveEntity(element) {
+            commentIdToDelete = $(element).data('comment-id');
+            $('#confirmModal').modal('show');
         }
 
-        function removeEntity(element) {
-            $(element).attr('disabled', 'disabled');
-
-            const link = $(element).attr('href');
-
+        $('#confirmDeleteBtn').click(function () {
             $.ajax({
-                url: link,
+                url: '@Url.Action("RemoveComment", "Posters")',
                 type: 'POST',
+                data: { Id: commentIdToDelete },
                 success: function (response) {
-                    alert('Comment deleted successfully');
-                    location.reload(); // Refresh the page to reflect the deletion
+                    $('#confirmModal').modal('hide');
+                    $('#successModal').modal('show');
+                    $('#successModal').on('hidden.bs.modal', function () {
+                        location.reload(); // Refresh the page to reflect the deletion
+                    });
                 },
                 error: function (errResponse) {
                     console.log(errResponse);
                     alert('An error occurred while deleting the item.');
                 }
-            }).always(function () {
-                $(element).removeAttr('disabled').trigger('blur');
             });
-        }
+        });
     </script>
 }

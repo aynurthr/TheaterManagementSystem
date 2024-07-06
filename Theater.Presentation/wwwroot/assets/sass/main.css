@@ -3168,6 +3168,7 @@ a:hover {
   margin: 3px;
   border-radius: 100%;
   cursor: pointer;
+  text-align: center;
 }
 @media (max-width: 1067px) {
   #Buy-ticket .seat {
@@ -3185,6 +3186,11 @@ a:hover {
 }
 #Buy-ticket .seat.selected {
   background-color: #fa434b;
+}
+
+#Buy-ticket .seat.reserved {
+    background-color: #333;
+    color:white;
 }
 
 #Rules-of-Conduct .rules {

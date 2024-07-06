@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
@@ -11,10 +12,13 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
     public class PosterBuyTicketRequestHandler : IRequestHandler<PosterBuyTicketRequest, PosterBuyTicketResponseDto>
     {
         private readonly IPosterRepository _posterRepository;
+        private readonly IActionContextAccessor ctx;
 
-        public PosterBuyTicketRequestHandler(IPosterRepository posterRepository)
+        public PosterBuyTicketRequestHandler(IPosterRepository posterRepository, IActionContextAccessor ctx)
         {
             _posterRepository = posterRepository;
+            this.ctx = ctx;
+
         }
 
         public async Task<PosterBuyTicketResponseDto> Handle(PosterBuyTicketRequest request, CancellationToken cancellationToken)
@@ -37,11 +41,13 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
                 return null;
             }
 
+            string host = $"{ctx.ActionContext.HttpContext.Request.Scheme}://{ctx.ActionContext.HttpContext.Request.Host}";
+
             var response = new PosterBuyTicketResponseDto
             {
                 PosterId = poster.Id, // Set PosterId here
                 Title = poster.Title,
-                ImageSrc = poster.ImageSrc,
+                ImageSrc = $"{host}/uploads/images/{poster.ImageSrc}",
                 ShowDates = poster.ShowDates.Select(sd => new ShowDateDto
                 {
                     ShowDateId = sd.Id,
