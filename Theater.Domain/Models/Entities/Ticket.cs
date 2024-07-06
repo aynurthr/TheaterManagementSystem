@@ -10,7 +10,8 @@ namespace Theater.Domain.Models.Entities
         public int SeatId { get; set; }
         public decimal Price { get; set; }
         public bool IsPurchased { get; set; }
-
+        public int? IsPurchasedBy { get; set; }
+        public DateTime? IsPurchasedAt { get; set; }
         public ShowDate ShowDate { get; set; }
         public Seat Seat { get; set; }
     }

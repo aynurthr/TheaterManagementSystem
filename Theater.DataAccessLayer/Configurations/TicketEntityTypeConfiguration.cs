@@ -10,6 +10,12 @@ public class TicketTypeConfiguration : IEntityTypeConfiguration<Ticket>
         builder.Property(t => t.Price).IsRequired().HasColumnType("decimal(18,2)");
         builder.Property(t => t.IsPurchased).IsRequired();
 
+        builder.Property(t => t.IsPurchasedBy)
+            .IsRequired(false);
+
+        builder.Property(t => t.IsPurchasedAt)
+            .IsRequired(false);
+
         builder.HasOne(t => t.ShowDate)
             .WithMany(sd => sd.Tickets)
             .HasForeignKey(t => t.ShowDateId)

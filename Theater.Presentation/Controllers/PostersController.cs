@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery;
 using Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery;
@@ -13,10 +12,15 @@ using Theater.Application.Modules.CommentModule.Commands.CommentEditCommand;
 using Theater.Infrastructure.Abstracts;
 using Theater.Repository;
 using Theater.Application.Repositories;
+using Microsoft.Extensions.Logging;
+using Theater.Application.Services;
 using Theater.Application.Modules.GenreModule.Commands.GenreRemoveCommand;
+using Theater.Application.Modules.PostersModule.Commands.PurchaseTicketCommand;
 
 namespace Theater.Presentation.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class PostersController : Controller
     {
         private readonly IMediator _mediator;
@@ -24,24 +28,23 @@ namespace Theater.Presentation.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ICurrentUserService _currentUserService;
 
-
         public PostersController(IMediator mediator, ILogger<PostersController> logger, UserManager<AppUser> userManager, ICurrentUserService currentUserService)
         {
             _mediator = mediator;
             _logger = logger;
             _userManager = userManager;
             _currentUserService = currentUserService;
-
         }
 
+        [HttpGet]
         [AllowAnonymous]
-
-        public async Task<IActionResult> Index(PosterGetAllRequest request)
+        public async Task<IActionResult> Index([FromQuery] PosterGetAllRequest request)
         {
             var response = await _mediator.Send(request);
             return View(response);
         }
 
+        [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
@@ -59,9 +62,9 @@ namespace Theater.Presentation.Controllers
             return View(response);
         }
 
+        [HttpPost("comments")]
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> AddComment(CommentAddRequest request)
+        public async Task<IActionResult> AddComment([FromBody] CommentAddRequest request)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -75,9 +78,9 @@ namespace Theater.Presentation.Controllers
             return RedirectToAction("Details", new { id = request.PosterId });
         }
 
+        [HttpPut("comments")]
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> EditComment(CommentEditRequest request)
+        public async Task<IActionResult> EditComment([FromBody] CommentEditRequest request)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -91,8 +94,8 @@ namespace Theater.Presentation.Controllers
             return RedirectToAction("Details", new { id = request.PosterId });
         }
 
+        [HttpDelete("comments/{id}")]
         [Authorize]
-        [HttpPost]
         public async Task<IActionResult> RemoveComment(int id)
         {
             var userId = _currentUserService.UserId;
@@ -111,37 +114,72 @@ namespace Theater.Presentation.Controllers
             return Ok();
         }
 
+        [HttpGet("buy-ticket/{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> BuyTicket(int id)
         {
-            _logger.LogInformation("BuyTicket called with PosterId: {PosterId}", id);
-            var request = new PosterBuyTicketRequest { PosterId = id };
+            var posterDetailsRequest = new PosterGetByIdRequest { Id = id };
+            var posterDetails = await _mediator.Send(posterDetailsRequest);
+
+            if (posterDetails == null || !posterDetails.ShowDates.Any())
+            {
+                return NotFound();
+            }
+            var showDateId = posterDetails.ShowDates.First().ShowDateId;
+
+            var request = new PosterBuyTicketRequest { PosterId = id, ShowDateId = showDateId };
+
             var response = await _mediator.Send(request);
 
             if (response == null)
             {
-                _logger.LogWarning("No response found for PosterId: {PosterId}", id);
                 return NotFound();
             }
-
-            _logger.LogInformation("Returning view for BuyTicket with PosterId: {PosterId}", id);
             return View(response);
         }
 
-        [HttpGet("api/tickets/{showDateId}")]
-        public async Task<IActionResult> GetTickets(int showDateId)
+
+        [HttpGet("{posterId}/tickets/{showDateId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTickets(int posterId, int showDateId)
         {
-            _logger.LogInformation("GetTickets called with ShowDateId: {ShowDateId}", showDateId);
-            var request = new PosterBuyTicketRequest { ShowDateId = showDateId };
+            var request = new PosterBuyTicketRequest
+            {
+                PosterId = posterId,
+                ShowDateId = showDateId
+            };
+
             var response = await _mediator.Send(request);
 
             if (response == null)
             {
-                _logger.LogWarning("No tickets found for ShowDateId: {ShowDateId}", showDateId);
                 return NotFound();
             }
 
-            _logger.LogInformation("Returning JSON for GetTickets with ShowDateId: {ShowDateId}", showDateId);
             return Json(response);
         }
+
+        [HttpPost("purchase-tickets")]
+        [Authorize]
+        public async Task<IActionResult> PurchaseTickets([FromBody] PurchaseTicketRequest command)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("You must be logged in to purchase tickets.");
+            }
+
+            command.UserId = user.Id;
+            var result = await _mediator.Send(command);
+
+            if (!result)
+            {
+                return BadRequest("Unable to purchase tickets. Please try again.");
+            }
+
+            return Ok("Tickets purchased successfully.");
+        }
+
+
     }
 }

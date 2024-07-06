@@ -5,12 +5,13 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
 {
     public class PosterBuyTicketResponseDto
     {
+        public int PosterId { get; set; }  // Add this line
         public int ShowDateId { get; set; }
         public DateTime Date { get; set; }
         public List<SeatDto> Seats { get; set; }
-        public string Title { get; set; } // Add this
-        public string ImageSrc { get; set; } // Add this
-        public List<ShowDateDto> ShowDates { get; set; } // Add this
+        public string Title { get; set; }
+        public string ImageSrc { get; set; }
+        public List<ShowDateDto> ShowDates { get; set; }
     }
 
     public class SeatDto

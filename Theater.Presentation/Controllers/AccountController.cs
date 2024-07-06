@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.AccountModule.Commands.EmailConfirmationCommand;
 using Theater.Application.Modules.AccountModule.Commands.SigninCommand;
@@ -115,10 +116,35 @@ namespace Theater.Presentation.Controllers
             return RedirectToAction("Signin", "Account");
         }
 
+
+        //[HttpGet]
+        //[Route("/forgot-password")]
+        //public IActionResult ForgotPassword()
+        //{
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //[Route("/forgot-password")]
+        //public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        await mediator.Send(request);
+        //        ViewBag.Message = "Password reset link has been sent to your email.";
+        //    }
+
+        //    return View(request);
+        //}
+
+
+
         [Route("/accessdenied.html")]
         public IActionResult Denied()
         {
             return Content("bura icazeniz yoxdur");
         }
+
+
     }
 }

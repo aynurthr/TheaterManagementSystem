@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,8 +31,15 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
                 return null;
             }
 
+            var showDate = poster.ShowDates.FirstOrDefault(sd => sd.Id == request.ShowDateId);
+            if (showDate == null)
+            {
+                return null;
+            }
+
             var response = new PosterBuyTicketResponseDto
             {
+                PosterId = poster.Id, // Set PosterId here
                 Title = poster.Title,
                 ImageSrc = poster.ImageSrc,
                 ShowDates = poster.ShowDates.Select(sd => new ShowDateDto
@@ -42,8 +48,8 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
                     Date = sd.Date
                 }).ToList(),
                 ShowDateId = request.ShowDateId,
-                Date = poster.ShowDates.FirstOrDefault(sd => sd.Id == request.ShowDateId)?.Date ?? DateTime.MinValue,
-                Seats = poster.ShowDates.FirstOrDefault(sd => sd.Id == request.ShowDateId)?.Tickets.Select(t => new SeatDto
+                Date = showDate.Date,
+                Seats = showDate.Tickets.Select(t => new SeatDto
                 {
                     Row = t.Seat.Row,
                     SeatNumber = t.Seat.Number,

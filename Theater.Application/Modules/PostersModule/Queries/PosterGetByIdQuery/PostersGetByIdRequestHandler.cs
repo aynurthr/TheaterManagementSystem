@@ -22,8 +22,9 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
     {
         var poster = await posterRepository.GetAll()
             .Include(p => p.Roles).ThenInclude(r => r.Actor)
-            .Include(p => p.Comments).ThenInclude(c => c.User) // Include the User
-            .Include(p => p.Genre) // Include Genre
+            .Include(p => p.Comments).ThenInclude(c => c.User)
+            .Include(p => p.Genre)
+            .Include(p => p.ShowDates) // Include ShowDates
             .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
         if (poster == null)
@@ -37,7 +38,7 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
         {
             Id = poster.Id,
             Title = poster.Title,
-            Genre = poster.Genre.Name, // Get Genre name
+            Genre = poster.Genre.Name,
             Duration = poster.Duration,
             Age = poster.Age,
             Description = poster.Description,
@@ -53,9 +54,14 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
             Comments = poster.Comments.Select(c => new CommentDto
             {
                 Id = c.Id,
-                UserName = c.User.UserName, // Get the UserName from the User
+                UserName = c.User.UserName,
                 Text = c.CommentText,
                 CreatedAt = c.Time
+            }).ToList(),
+            ShowDates = poster.ShowDates.Select(sd => new ShowDateDto // Add this
+            {
+                ShowDateId = sd.Id,
+                Date = sd.Date
             }).ToList()
         };
     }

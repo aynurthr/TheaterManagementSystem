@@ -75,19 +75,19 @@
             $('.booking__date').removeClass('active');
             $(this).addClass('active');
             var showDateId = $(this).data('showdateid');
-            var posterId = @Model.PosterId;
-
-            console.log('Fetching seats for showDateId:', showDateId, 'posterId:', posterId);
+            var posterId = @Model.PosterId; // Use the PosterId from the model
 
             $.ajax({
                 url: '/api/posters/' + posterId + '/tickets/' + showDateId,
                 method: 'GET',
                 success: function (data) {
-                    console.log('Received data:', data);
+                    console.log(data); // Log the response data
+
                     if (!data || !data.seats) {
-                        console.error('No seats data found');
+                        alert('No seats data found.');
                         return;
                     }
+
                     $('#seating-chart').empty();
                     var rows = {};
 
@@ -118,3 +118,4 @@
         $('.booking__date').first().trigger('click');
     });
 </script>
+

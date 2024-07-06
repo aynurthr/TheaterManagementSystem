@@ -12,6 +12,7 @@
         public double Rating { get; set; }
         public IEnumerable<ActorDto> Actors { get; set; }
         public IEnumerable<CommentDto> Comments { get; set; }
+        public IEnumerable<ShowDateDto> ShowDates { get; set; } // Add this line
     }
 
     public class ActorDto
@@ -28,5 +29,11 @@
         public string UserName { get; set; }
         public string Text { get; set; }
         public DateTime CreatedAt { get; set; }
+    }
+
+    public class ShowDateDto // Add this class
+    {
+        public int ShowDateId { get; set; }
+        public DateTime Date { get; set; }
     }
 }

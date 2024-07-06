@@ -34,8 +34,6 @@ namespace Theater.Application.Modules.AccountModule.Commands.EmailConfirmationCo
                 throw new BadRequestException("Bad token request", errors);
             }
 
-
-
             var user = await userManager.FindByEmailAsync(match.Groups["email"].Value);
 
             await userManager.ConfirmEmailAsync(user, match.Groups["identityToken"].Value);

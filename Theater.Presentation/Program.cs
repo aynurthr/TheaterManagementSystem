@@ -79,10 +79,15 @@ namespace Theater.Presentation
             app.UseIdentity(builder.Configuration);
 
             app.UseStaticFiles();
+            app.UseRouting(); // Ensure UseRouting is called
+            app.UseAuthorization(); //added afterwards
+
 
             app.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=home}/{action=index}/{id?}");
 
             app.MapControllerRoute(name: "default", pattern: "{controller=home}/{action=index}/{id?}");
+            app.MapControllerRoute(name: "api", pattern: "api/{controller}/{action=Index}/{id?}");
+
 
             app.Run();
 
