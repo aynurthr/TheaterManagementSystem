@@ -1,0 +1,76 @@
+﻿@model Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery.PosterGetByIdRequestDto
+
+@{
+    ViewBag.Title = "Edit Poster";
+}
+
+<h2>Edit Poster</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="GenreId" class="control-label">Genre</label>
+        <select asp-for="GenreId" class="form-control select2" asp-items="@(new SelectList(ViewBag.Genres, "Id", "Name", Model.GenreId))">
+            <option value="">Select Genre</option>
+        </select>
+        <span asp-validation-for="GenreId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Duration" class="control-label"></label>
+        <input asp-for="Duration" class="form-control" />
+        <span asp-validation-for="Duration" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Age" class="control-label"></label>
+        <input asp-for="Age" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Image" class="control-label">Image</label>
+        <input asp-for="Image" id="cover-image" type="file" accept="image/png, image/jpeg, image/gif" class="form-control" />
+        <span asp-validation-for="Image" class="text-danger"></span>
+    </div>
+
+    <h3>Show Dates</h3>
+    <div id="showdates-container">
+        @{
+            var showDates = Model.ShowDates.ToList(); // Convert to list for indexing
+        }
+        @for (int i = 0; i < showDates.Count; i++)
+        {
+            <div class="form-group showdate-entry">
+                <input type="hidden" asp-for="@showDates[i].ShowDateId" />
+                <label>Date</label>
+                <input asp-for="@showDates[i].Date" type="datetime-local" class="form-control" />
+            </div>
+        }
+    </div>
+
+    <div class="form-group mt-3">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a href="@Url.Action("Index", "Poster")" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section addcss {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+}
+
+@section addjs {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#cover-image').singleImageChooser();
+            $('.select2').select2();
+        });
+    </script>
+}

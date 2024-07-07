@@ -1,0 +1,79 @@
+﻿@model Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery.PosterGetByIdRequestDto
+
+@{
+    ViewBag.Title = "Poster Details";
+}
+
+<h2>Poster Details</h2>
+
+<div>
+    <h3>@Model.Title</h3>
+    <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 100%; margin-bottom: 20px;" />
+
+    <table class="table table-striped">
+        <tbody>
+            <tr>
+                <td><strong>Genre:</strong></td>
+                <td>@Model.Genre</td>
+            </tr>
+            <tr>
+                <td><strong>Duration:</strong></td>
+                <td>@Model.Duration</td>
+            </tr>
+            <tr>
+                <td><strong>Age:</strong></td>
+                <td>@Model.Age</td>
+            </tr>
+            <tr>
+                <td><strong>Description:</strong></td>
+                <td>@Model.Description</td>
+            </tr>
+            <tr>
+                <td><strong>Rating:</strong></td>
+                <td>@Model.Rating</td>
+            </tr>
+            <tr>
+                <td><strong>Actors:</strong></td>
+                <td>
+                    <ul>
+                        @foreach (var actor in Model.Actors)
+                        {
+                            <li><a asp-action="Details" asp-controller="Actor" asp-route-id="@actor.Id">@actor.FullName</a> as @actor.Role</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Comments:</strong></td>
+                <td>
+                    <ul>
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <li>@comment.UserName: @comment.Text (Posted on @comment.CreatedAt)</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Show Dates:</strong></td>
+                <td>
+                    <ul>
+                        @foreach (var showDate in Model.ShowDates)
+                        {
+                            <li>@showDate.Date.ToString("dd MMM yyyy HH:mm")</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="fa-solid fa-pencil" style="color: #ffffff;"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-primary">
+            <i class="fa fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>

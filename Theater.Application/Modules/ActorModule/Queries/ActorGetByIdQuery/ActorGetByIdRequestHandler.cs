@@ -1,11 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Theater.Application.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using Theater.Application.Repositories;
 
 namespace Theater.Application.Modules.ActorModule.Queries.ActorGetByIdQuery
 {
@@ -32,6 +28,7 @@ namespace Theater.Application.Modules.ActorModule.Queries.ActorGetByIdQuery
             {
                 return null;
             }
+            var filteredRoles = entity.Roles.Where(r => r.DeletedAt == null).ToList();
 
             string host = $"{_ctx.ActionContext.HttpContext.Request.Scheme}://{_ctx.ActionContext.HttpContext.Request.Host}";
 
@@ -41,7 +38,7 @@ namespace Theater.Application.Modules.ActorModule.Queries.ActorGetByIdQuery
                 FullName = entity.FullName,
                 Title = entity.Title,
                 ImageSrc = $"{host}/uploads/images/{entity.ImageSrc}",
-                Roles = entity.Roles.Select(r => new RoleRequestDto
+                Roles = filteredRoles.Select(r => new RoleRequestDto
                 {
                     Id = r.Id,
                     RoleName = r.RoleName,

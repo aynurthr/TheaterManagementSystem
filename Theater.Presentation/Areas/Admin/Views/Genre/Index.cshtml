@@ -34,7 +34,7 @@
                                     <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">
                                         <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                     </a>
-                                    <a class="btn btn-sm btn-danger" data-entity-name="@item.Name" asp-action="Remove" asp-route-id="@item.Id" onclick="confirmRemoveEntity(event)">
+                                    <a class="btn btn-sm btn-danger" data-entity-name="@item.Name" data-entity-id="@item.Id" onclick="confirmRemoveEntity(event)">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>
@@ -53,30 +53,33 @@
             e.preventDefault();
             let element = e.currentTarget;
             let name = $(element).data('entity-name');
+            let id = $(element).data('entity-id');
 
             if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                removeEntity(element);
+                removeEntity(id, name, element);
             }
         }
 
-        function removeEntity(element) {
+        function removeEntity(id, name, element) {
             $(element).attr('disabled', 'disabled');
 
-            const link = $(element).attr('href');
-
             $.ajax({
-                url: link,
+                url: '@Url.Action("Remove", "Genre")/' + id,
                 type: 'POST',
                 success: function (response) {
-                    alert(`${name} deleted successfully`);
-                    location.reload(); // Refresh the page to reflect the deletion
+                    if (response.message === 'success') {
+                        alert(`${name} deleted successfully`);
+                        location.reload(); // Refresh the page to reflect the deletion
+                    } else {
+                        alert(response.message);
+                        $(element).removeAttr('disabled').trigger('blur');
+                    }
                 },
                 error: function (errResponse) {
                     console.log(errResponse);
                     alert('An error occurred while deleting the item.');
+                    $(element).removeAttr('disabled').trigger('blur');
                 }
-            }).always(function () {
-                $(element).removeAttr('disabled').trigger('blur');
             });
         }
     </script>

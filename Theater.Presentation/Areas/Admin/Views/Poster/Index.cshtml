@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery.PosterGetAllRequestDto>
+
+@{
+    ViewBag.Title = "Posters";
+}
+
+<h2>Posters</h2>
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-success btn-sm">
+        <i class="fa fa-plus"></i> Create Poster
+    </a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Nearest Show Date</th>
+            <th>Age</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var poster in Model)
+        {
+            <tr>
+                <td><img src="@poster.ImageUrl" alt="Poster Image" style="width: 100px; height: auto;"></td>
+                <td>@poster.Title</td>
+                <td>@poster.Genre</td>
+                <td>@poster.ShowDate.ToString("dd MMM yyyy HH:mm")</td>
+                <td>@poster.Age</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@poster.Id" class="btn btn-sm btn-primary">
+                        <i class="fa fa-eye"></i> Details
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@poster.Id" class="btn btn-sm btn-warning">
+                        <i class="fa-solid fa-pencil" style="color: #ffffff;"></i> Edit
+                    </a>
+                    <a class="btn btn-sm btn-danger" data-entity-name="@poster.Title" href="@Url.Action("Remove", "Poster", new { id = poster.Id })" onclick="confirmRemoveEntity(event)">
+                        <i class="fa fa-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section addjs {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function confirmRemoveEntity(e) {
+            e.preventDefault();
+            let element = e.currentTarget;
+            let name = $(element).data('entity-name');
+
+            if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                removeEntity(element);
+            }
+        }
+
+        function removeEntity(element) {
+            $(element).attr('disabled', 'disabled');
+
+            const link = $(element).attr('href');
+
+            $.ajax({
+                url: link,
+                type: 'POST',
+                success: function (response) {
+                    alert(`${$(element).data('entity-name')} deleted successfully`);
+                    location.reload(); // Refresh the page to reflect the deletion
+                },
+                error: function (errResponse) {
+                    console.log(errResponse);
+                    alert('An error occurred while deleting the item.');
+                }
+            }).always(function () {
+                $(element).removeAttr('disabled').trigger('blur');
+            });
+        }
+    </script>
+}

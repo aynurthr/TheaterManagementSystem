@@ -67,8 +67,9 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Remove([FromRoute] GenreRemoveRequest request)
         {
-            await _mediator.Send(request);
-            return RedirectToAction(nameof(Index));
+            var response = await _mediator.Send(request);
+            return Json(new { message = response });
         }
+
     }
 }

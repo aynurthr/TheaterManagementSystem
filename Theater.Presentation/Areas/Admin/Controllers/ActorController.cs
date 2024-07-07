@@ -39,17 +39,10 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] ActorAddRequest request)
+        public async Task<IActionResult> Create(ActorAddRequest request)
         {
-            var validationResult = await _actorAddValidator.ValidateAsync(request);
-
-            if (!validationResult.IsValid)
+            if (!ModelState.IsValid)
             {
-                foreach (var error in validationResult.Errors)
-                {
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                }
-
                 return View(request);
             }
 
@@ -74,8 +67,9 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Remove([FromRoute] ActorRemoveRequest request)
         {
-            await _mediator.Send(request);
-            return RedirectToAction(nameof(Index));
+            var response = await _mediator.Send(request);
+            return Json(new { message = response });
         }
+
     }
 }

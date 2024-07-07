@@ -42,6 +42,7 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
             Id = poster.Id,
             Title = poster.Title,
             Genre = poster.Genre.Name,
+            GenreId=poster.GenreId,
             Duration = poster.Duration,
             Age = poster.Age,
             Description = poster.Description,
@@ -49,6 +50,7 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
             Rating = poster.Rating,
             Actors = filteredRoles.Select(r => new ActorDto
             {
+                Id = r.Actor.Id,
                 FullName = r.Actor.FullName,
                 Role = r.RoleName,
                 Title = r.Actor.Title,
@@ -64,7 +66,8 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
             ShowDates = poster.ShowDates.Select(sd => new ShowDateDto // Add this
             {
                 ShowDateId = sd.Id,
-                Date = sd.Date
+                Date = sd.Date,
+                HallId = sd.HallId
             }).ToList()
         };
     }
