@@ -9,22 +9,22 @@ using Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery;
 
 public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest, PosterGetByIdRequestDto>
 {
-    private readonly IPosterRepository posterRepository;
-    private readonly IActionContextAccessor ctx;
+    private readonly IPosterRepository _posterRepository;
+    private readonly IActionContextAccessor _ctx;
 
     public PosterGetByIdRequestHandler(IPosterRepository posterRepository, IActionContextAccessor ctx)
     {
-        this.posterRepository = posterRepository;
-        this.ctx = ctx;
+        _posterRepository = posterRepository;
+        _ctx = ctx;
     }
 
     public async Task<PosterGetByIdRequestDto> Handle(PosterGetByIdRequest request, CancellationToken cancellationToken)
     {
-        var poster = await posterRepository.GetAll()
+        var poster = await _posterRepository.GetAll()
             .Include(p => p.Roles).ThenInclude(r => r.Actor)
             .Include(p => p.Comments).ThenInclude(c => c.User)
             .Include(p => p.Genre)
-            .Include(p => p.ShowDates) // Include ShowDates
+            .Include(p => p.ShowDates)
             .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
         if (poster == null)
@@ -32,7 +32,10 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
             return null;
         }
 
-        string host = $"{ctx.ActionContext.HttpContext.Request.Scheme}://{ctx.ActionContext.HttpContext.Request.Host}";
+        // Filter out roles where DeletedAt is not null
+        var filteredRoles = poster.Roles.Where(r => r.DeletedAt == null).ToList();
+
+        string host = $"{_ctx.ActionContext.HttpContext.Request.Scheme}://{_ctx.ActionContext.HttpContext.Request.Host}";
 
         return new PosterGetByIdRequestDto
         {
@@ -44,7 +47,7 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
             Description = poster.Description,
             ImageUrl = $"{host}/uploads/images/{poster.ImageSrc}",
             Rating = poster.Rating,
-            Actors = poster.Roles.Select(r => new ActorDto
+            Actors = filteredRoles.Select(r => new ActorDto
             {
                 FullName = r.Actor.FullName,
                 Role = r.RoleName,

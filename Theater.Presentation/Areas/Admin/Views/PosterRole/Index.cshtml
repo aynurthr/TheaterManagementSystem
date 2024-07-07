@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Theater.Application.Modules.RoleModule.Queries.RoleRequestDto>
+
+@{
+    ViewBag.Title = "Roles";
+}
+
+<h2>Roles</h2>
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-success btn-sm">
+        <i class="fa fa-plus"></i> Create Role
+    </a>
+</div>
+
+
+@{
+    var groupedRoles = Model.GroupBy(role => role.PosterTitle).ToList();
+}
+
+@foreach (var posterGroup in groupedRoles)
+{
+    <h3>@posterGroup.Key</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Role Name</th>
+                <th>Actor Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var role in posterGroup)
+            {
+                <tr data-id="@role.Id">
+                    <td>@role.RoleName</td>
+                    <td>@role.ActorName</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@role.Id" class="btn btn-sm btn-primary">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-sm btn-warning">
+                            <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
+                        </a>
+                        <a class="btn btn-sm btn-danger" data-entity-name="@role.RoleName" asp-action="Delete" asp-route-id="@role.Id" onclick="confirmRemoveEntity(event)">
+                            <i class="fa fa-trash"></i>
+
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section addjs {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function confirmRemoveEntity(e) {
+            e.preventDefault();
+            let element = e.currentTarget;
+            let name = $(element).data('entity-name');
+
+            if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                removeEntity(element);
+            }
+        }
+
+        function removeEntity(element) {
+            $(element).attr('disabled', 'disabled');
+
+            const link = $(element).attr('href');
+
+            $.ajax({
+                url: link,
+                type: 'POST',
+                success: function (response) {
+                    alert(`${$(element).data('entity-name')} deleted successfully`);
+                    location.reload(); // Refresh the page to reflect the deletion
+                },
+                error: function (errResponse) {
+                    console.log(errResponse);
+                    alert('An error occurred while deleting the item.');
+                }
+            }).always(function () {
+                $(element).removeAttr('disabled').trigger('blur');
+            });
+        }
+    </script>
+}

@@ -1,0 +1,68 @@
+﻿@model Theater.Application.Modules.RoleModule.Commands.RoleEditCommand.RoleEditRequest
+
+@{
+    ViewBag.Title = "Edit Role";
+}
+
+@section addcss {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+}
+
+<h2>Edit Role</h2>
+
+<form asp-action="Edit" method="post" class="form-horizontal">
+    <div class="form-group">
+        <label asp-for="RoleName" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="RoleName" class="form-control" />
+            <span asp-validation-for="RoleName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="ActorId" class="col-md-2 control-label">Actor</label>
+        <div class="col-md-10">
+            <select asp-for="ActorId" class="form-control select2" asp-items="@(new SelectList(ViewBag.Actors, "Id", "FullName"))">
+                <option value="">Select Actor</option>
+            </select>
+            <span asp-validation-for="ActorId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="PosterId" class="col-md-2 control-label">Poster</label>
+        <div class="col-md-10">
+            <select asp-for="PosterId" class="form-control select2" asp-items="@(new SelectList(ViewBag.Posters, "Id", "Title"))">
+                <option value="">Select Poster</option>
+            </select>
+            <span asp-validation-for="PosterId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-primary" />
+            <a href="@Url.Action("Index", "PosterRole")" class="btn btn-secondary">Cancel</a>
+
+        </div>
+    </div>
+</form>
+
+@section addjs {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+    </script>
+    <script>
+        // Custom validation script
+        (function () {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function (event) {
+                const roleName = form.querySelector('input[name="RoleName"]').value;
+                if (!roleName || roleName.length < 3) {
+                    event.preventDefault();
+                    alert('Role Name must be at least 3 characters long.');
+                }
+            });
+        })();
+    </script>
+}
