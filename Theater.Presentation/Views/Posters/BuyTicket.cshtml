@@ -108,120 +108,119 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    $(document).ready(function () {
-        var totalPrice = 0;
-        var selectedSeats = [];
-        var showDateId = $('.booking__date.active').data('showdateid');
 
-        function updateTotalPrice(price) {
-            $('#total-price').text(price + '$');
-        }
+@section addjs {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var totalPrice = 0;
+            var selectedSeats = [];
+            var showDateId = $('.booking__date.active').data('showdateid');
 
-        $(document).on('click', '.seat', function () {
-            if ($(this).hasClass('reserved')) {
-                return; // Do nothing if the seat is reserved
+            function updateTotalPrice(price) {
+                $('#total-price').text(price + '$');
             }
 
-            var seatPrice = parseFloat($(this).data('price'));
-            var seatId = $(this).data('seatid');
+            $(document).on('click', '.seat', function () {
+                if ($(this).hasClass('reserved')) {
+                    return; // Do nothing if the seat is reserved
+                }
 
-            if ($(this).hasClass('selected')) {
-                $(this).removeClass('selected');
-                totalPrice -= seatPrice;
-                selectedSeats = selectedSeats.filter(id => id !== seatId);
-            } else {
-                $(this).addClass('selected');
-                totalPrice += seatPrice;
-                selectedSeats.push(seatId);
-            }
-            updateTotalPrice(totalPrice);
-        });
+                var seatPrice = parseFloat($(this).data('price'));
+                var seatId = $(this).data('seatid');
 
-        $('.booking__date').click(function () {
-            $('.booking__date').removeClass('active');
-            $(this).addClass('active');
-            showDateId = $(this).data('showdateid');
-            var posterId = @Model.PosterId;
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                    totalPrice -= seatPrice;
+                    selectedSeats = selectedSeats.filter(id => id !== seatId);
+                } else {
+                    $(this).addClass('selected');
+                    totalPrice += seatPrice;
+                    selectedSeats.push(seatId);
+                }
+                updateTotalPrice(totalPrice);
+            });
 
-            // Reset total price and selected seats when changing show date
-            totalPrice = 0;
-            selectedSeats = [];
-            updateTotalPrice(totalPrice);
+            $('.booking__date').click(function () {
+                $('.booking__date').removeClass('active');
+                $(this).addClass('active');
+                showDateId = $(this).data('showdateid');
+                var posterId = @Model.PosterId;
 
-            $.ajax({
-                url: '/api/posters/' + posterId + '/tickets/' + showDateId,
-                method: 'GET',
-                success: function (data) {
-                    $('#seating-chart').empty();
-                    var rows = {};
+                // Reset total price and selected seats when changing show date
+                totalPrice = 0;
+                selectedSeats = [];
+                updateTotalPrice(totalPrice);
 
-                    data.seats.forEach(function (seat) {
-                        if (!rows[seat.row]) {
-                            rows[seat.row] = [];
-                        }
-                        rows[seat.row].push(seat);
-                    });
+                $.ajax({
+                    url: '/api/posters/' + posterId + '/tickets/' + showDateId,
+                    method: 'GET',
+                    success: function (data) {
+                        $('#seating-chart').empty();
+                        var rows = {};
 
-                    for (var row in rows) {
-                        var rowDiv = $('<div class="seating-row">').append('<div>' + row + '</div>');
-                        rows[row].forEach(function (seat) {
-                            var seatClass = seat.isPurchased ? 'seat reserved' : 'seat';
-                            rowDiv.append(
-                                '<span class="' + seatClass + '" data-seatid="' + seat.seatNumber + '" data-price="' + seat.price + '">' + seat.seatNumber + '</span>'
-                            );
+                        data.seats.forEach(function (seat) {
+                            if (!rows[seat.row]) {
+                                rows[seat.row] = [];
+                            }
+                            rows[seat.row].push(seat);
                         });
-                        $('#seating-chart').append(rowDiv);
+
+                        for (var row in rows) {
+                            var rowDiv = $('<div class="seating-row">').append('<div>' + row + '</div>');
+                            rows[row].forEach(function (seat) {
+                                var seatClass = seat.isPurchased ? 'seat reserved' : 'seat';
+                                rowDiv.append(
+                                    '<span class="' + seatClass + '" data-seatid="' + seat.id + '" data-price="' + seat.price + '">' + seat.seatNumber + '</span>'
+                                );
+                            });
+                            $('#seating-chart').append(rowDiv);
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load seats. Please try again.');
                     }
-                },
-                error: function () {
-                    alert('Failed to load seats. Please try again.');
-                }
+                });
             });
-        });
 
-        $('.btn--pay').click(function () {
-            // Check if user is logged in
-            var isLoggedIn = '@(User.Identity.IsAuthenticated)' === 'True';
-            if (!isLoggedIn) {
-                $('#loginModal').modal('show');
-                return;
-            }
-
-            // Show confirmation modal
-            $('#confirmModal').modal('show');
-        });
-
-        $('#confirmPurchaseBtn').click(function () {
-            // Collect selected seat IDs
-            var payload = { seatIds: selectedSeats, showDateId: showDateId };
-
-            $.ajax({
-                url: '/api/posters/purchase-tickets',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(payload),
-                success: function () {
-                    $('#confirmModal').modal('hide');
-                    $('#successModal').modal('show');
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error purchasing tickets:', xhr.responseText);
-                    alert('Failed to purchase tickets. Please try again.');
-                }
+            $('.btn--pay').click(function () {
+                // Show confirmation modal
+                $('#confirmModal').modal('show');
             });
+
+            $('#confirmPurchaseBtn').click(function () {
+                // Collect selected seat IDs
+                var payload = { seatIds: selectedSeats, showDateId: showDateId };
+
+                console.log("Seats to purchase:", payload.seatIds);
+                console.log("ShowDateId:", payload.showDateId);
+
+                $.ajax({
+                    url: '/api/posters/purchase-tickets',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function () {
+                        $('#confirmModal').modal('hide');
+                        $('#successModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error purchasing tickets:', xhr.responseText);
+                        alert('Failed to purchase tickets. Please try again.');
+                    }
+                });
+            });
+
+            $('.btn--cancel').click(function () {
+                window.history.back();
+            });
+
+            $('.booking__date').first().trigger('click');
         });
 
-        $('.btn--cancel').click(function () {
-            window.history.back();
-        });
-
-        $('.booking__date').first().trigger('click');
-    });
-
-    function redirectToDetails() {
-        window.location.href = '@Url.Action("Details", "Posters", new { id = Model.PosterId })';
-    }
-</script>
+        function redirectToDetails() {
+            window.location.href = '@Url.Action("Details", "Posters", new { id = Model.PosterId })';
+        }
+    </script>
+}

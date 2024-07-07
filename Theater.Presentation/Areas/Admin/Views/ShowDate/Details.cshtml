@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Theater.Application.Modules.ShowDateModule.Queries.SeatDto>
+
+@{
+    ViewBag.Title = "ShowDate Details";
+    var showDateId = ViewBag.ShowDateId;
+}
+
+<h2>ShowDate Details</h2>
+    <p>Red seats do not have a ticket assigned to them, while green seats have a ticket and the user can purchase them. You can add or edit the ticket by clicking on the seat.</p>
+
+<div class="seating-chart">
+    @foreach (var seatGroup in Model.GroupBy(s => s.Row))
+    {
+        <div class="seating-row">
+            <div class="row-label">@seatGroup.Key</div>
+            @foreach (var seat in seatGroup)
+            {
+                var seatClass = seat.IsPurchased ? "seat purchased" : "seat available";
+                <a href="@Url.Action("UpsertTicket", "ShowDate", new { showDateId = showDateId, seatId = seat.Id })" class="seat-link">
+                    <div class="@seatClass" data-showdateid="@showDateId" data-seatid="@seat.Id" title="Seat @seat.Number">
+                        @seat.Number
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>
+<a asp-action="Index" asp-controller="ShowDate" class="btn btn-secondary mt-3">Go Back</a>
+
+@section addjs {
+    <script>
+        $(document).ready(function () {
+            $(".seat").click(function () {
+                var seatId = $(this).data("seatid");
+                var showDateId = $(this).data("showdateid");
+                console.log("SeatId: " + seatId + ", ShowDateId: " + showDateId);
+
+                // Redirect to the Upsert view
+                window.location.href = '/showdate/upsertticket/' + showDateId + '/' + seatId;
+            });
+        });
+    </script>
+}
+
+<style>
+    .seating-chart {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .seating-row {
+        display: flex;
+        align-items: center;
+    }
+
+    .row-label {
+        width: 30px;
+        text-align: center;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .seat {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 30px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+    .seat.purchased {
+        background-color: #ccffcc;
+    }
+
+    .seat.available {
+        background-color: #ffcccc;
+    }
+
+    .seat-link {
+        text-decoration: none;
+        color: inherit;
+    }
+</style>

@@ -7,24 +7,28 @@
 <h2>Manage Seats for @Model.Name</h2>
 
 <div>
-    <div id="rows-container">
+    <div id="rows-container" class="seating-chart">
         @foreach (var row in Model.Seats.GroupBy(s => s.Row))
         {
-            <div class="row" data-row="@row.Key">
+            <div class="seating-row" data-row="@row.Key">
                 <span class="row-label">@row.Key</span>
                 @foreach (var seat in row)
                 {
-                    <span class="seat" data-seat-number="@seat.Number">@seat.Number</span>
+                    <span class="seat available" data-seat-number="@seat.Number">@seat.Number</span>
                 }
                 <button class="btn btn-sm btn-danger remove-seat">-</button>
                 <button class="btn btn-sm btn-success add-seat">+</button>
             </div>
         }
     </div>
-    <button class="btn btn-sm btn-primary add-row">Add Row</button>
+    <button class="btn btn-sm btn-primary add-row mt-3">Add Row</button>
 </div>
 
-<button id="save-button" class="btn btn-primary mt-3">Save</button>
+<div class="d-flex mt-3">
+    <a href="@Url.Action("Index", "Halls")" class="btn btn-secondary">Go Back</a>
+    <button id="save-button" class="btn btn-primary">Save</button>
+</div>
+
 
 @section addjs {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -35,10 +39,10 @@
             function updateSeatActions() {
                 // Add seat
                 $('.add-seat').off('click').on('click', function () {
-                    var rowDiv = $(this).closest('.row');
+                    var rowDiv = $(this).closest('.seating-row');
                     var row = rowDiv.data('row');
                     var seatCount = rowDiv.find('.seat').length + 1;
-                    var seat = $('<span class="seat ml-1" data-seat-number="' + seatCount + '">' + seatCount + '</span>');
+                    var seat = $('<span class="seat available ml-1" data-seat-number="' + seatCount + '">' + seatCount + '</span>');
                     var seats = rowDiv.find('.seat').toArray().concat(seat);
                     seats.sort(function (a, b) {
                         return $(a).data('seat-number') - $(b).data('seat-number');
@@ -51,7 +55,7 @@
 
                 // Remove seat
                 $('.remove-seat').off('click').on('click', function () {
-                    var rowDiv = $(this).closest('.row');
+                    var rowDiv = $(this).closest('.seating-row');
                     var seatCount = rowDiv.find('.seat').length;
                     var lastSeat = rowDiv.find('.seat').last();
 
@@ -62,15 +66,15 @@
 
                 // Add row
                 $('.add-row').off('click').on('click', function () {
-                    var rowCount = $('#rows-container .row').length;
+                    var rowCount = $('#rows-container .seating-row').length;
                     var newRow = String.fromCharCode(65 + rowCount);
                     $('#rows-container').append(`
-                            <div class="row" data-row="` + newRow + `">
-                                <span class="row-label">` + newRow + `</span>
-                                <button class="btn btn-sm btn-danger remove-seat">-</button>
-                                <button class="btn btn-sm btn-success add-seat">+</button>
-                            </div>
-                        `);
+                                    <div class="seating-row" data-row="` + newRow + `">
+                                        <span class="row-label">` + newRow + `</span>
+                                        <button class="btn btn-sm btn-danger remove-seat">-</button>
+                                        <button class="btn btn-sm btn-success add-seat">+</button>
+                                    </div>
+                                `);
                     updateSeatActions();
                 });
             }
@@ -80,26 +84,26 @@
 
             // Populate existing seats
             existingSeats.forEach(function (seat) {
-                var rowDiv = $('#rows-container .row[data-row="' + seat.row + '"]');
+                var rowDiv = $('#rows-container .seating-row[data-row="' + seat.row + '"]');
                 if (rowDiv.length === 0) {
                     var newRow = `
-                            <div class="row" data-row="` + seat.row + `">
-                                <span class="row-label">` + seat.row + `</span>
-                                <button class="btn btn-sm btn-danger remove-seat">-</button>
-                                <button class="btn btn-sm btn-success add-seat">+</button>
-                            </div>
-                        `;
+                                    <div class="seating-row" data-row="` + seat.row + `">
+                                        <span class="row-label">` + seat.row + `</span>
+                                        <button class="btn btn-sm btn-danger remove-seat">-</button>
+                                        <button class="btn btn-sm btn-success add-seat">+</button>
+                                    </div>
+                                `;
                     $('#rows-container').append(newRow);
-                    rowDiv = $('#rows-container .row[data-row="' + seat.row + '"]');
+                    rowDiv = $('#rows-container .seating-row[data-row="' + seat.row + '"]');
                 }
                 if (rowDiv.find('.seat[data-seat-number="' + seat.number + '"]').length === 0) {
-                    var seatSpan = $('<span class="seat ml-1" data-seat-number="' + seat.number + '">' + seat.number + '</span>');
+                    var seatSpan = $('<span class="seat available ml-1" data-seat-number="' + seat.number + '">' + seat.number + '</span>');
                     rowDiv.find('.remove-seat').before(seatSpan);
                 }
             });
 
             // Sort seats in each row
-            $('#rows-container .row').each(function () {
+            $('#rows-container .seating-row').each(function () {
                 var rowDiv = $(this);
                 var seats = rowDiv.find('.seat').toArray();
                 seats.sort(function (a, b) {
@@ -117,7 +121,7 @@
                 var seatsToAdd = [];
                 var seatsToRemove = [];
 
-                $('#rows-container .row').each(function () {
+                $('#rows-container .seating-row').each(function () {
                     var rowDiv = $(this);
                     var row = rowDiv.data('row');
                     var seatNumbers = rowDiv.find('.seat').map(function () {
@@ -131,7 +135,7 @@
                                 hallId: hallId,
                                 row: row,
                                 number: number,
-                                price: 10.00 // Default price, we wont need it since tickets already have a price
+                                price: 10.00 // Default price, we won't need it since tickets already have a price
                             });
                         }
                     });
@@ -163,14 +167,48 @@
             });
 
             // Initialize the first row if there are no rows
-            if ($('#rows-container .row').length === 0) {
+            if ($('#rows-container .seating-row').length === 0) {
                 $('.add-row').trigger('click');
             }
         });
     </script>
-
-
 }
 
+<style>
+    .seating-chart {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
 
+    .seating-row {
+        display: flex;
+        align-items: center;
+    }
 
+    .row-label {
+        width: 30px;
+        text-align: center;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .seat {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 30px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+        .seat.available {
+            background-color: #ccffcc;
+        }
+
+    .seat-link {
+        text-decoration: none;
+        color: inherit;
+    }
+</style>

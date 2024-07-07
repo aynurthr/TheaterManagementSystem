@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
+﻿namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
 {
     public class PosterBuyTicketResponseDto
     {
-        public int PosterId { get; set; }  // Add this line
+        public int PosterId { get; set; }
         public int ShowDateId { get; set; }
         public DateTime Date { get; set; }
         public List<SeatDto> Seats { get; set; }
@@ -16,6 +13,7 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
 
     public class SeatDto
     {
+        public int Id { get; set; } // Add this line
         public string Row { get; set; }
         public int SeatNumber { get; set; }
         public bool IsPurchased { get; set; }

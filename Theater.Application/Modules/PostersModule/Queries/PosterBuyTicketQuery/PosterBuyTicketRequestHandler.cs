@@ -58,6 +58,7 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
                     .Where(t => t.Seat.DeletedAt == null) // Filter seats where DeletedAt is null
                     .Select(t => new SeatDto
                     {
+                        Id = t.Seat.Id,
                         Row = t.Seat.Row,
                         SeatNumber = t.Seat.Number,
                         IsPurchased = t.IsPurchased,

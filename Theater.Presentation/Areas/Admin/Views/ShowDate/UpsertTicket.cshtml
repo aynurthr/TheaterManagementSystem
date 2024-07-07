@@ -1,0 +1,24 @@
+﻿@model Theater.Application.Modules.ShowDateModule.Queries.TicketDto
+
+@{
+    ViewBag.Title = "Upsert Ticket";
+}
+
+<h2>Upsert Ticket</h2>
+
+<form asp-action="UpsertTicket" method="post">
+    <input type="hidden" asp-for="ShowDateId" />
+    <input type="hidden" asp-for="SeatId" />
+
+    <div class="form-group">
+        <label asp-for="Price" class="control-label">Price</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Details" asp-controller="ShowDate" asp-route-id="@Model.ShowDateId" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+

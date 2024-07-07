@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Modules\AccountModule\Queries\" />
     <Folder Include="Modules\HallModule\Commands\" />
+    <Folder Include="Modules\TicketModule\Commands\" />
   </ItemGroup>
 
 
