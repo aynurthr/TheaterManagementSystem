@@ -16,6 +16,9 @@ using Theater.Infrastructure.Abstracts;
 using Theater.Infrastructure.Configurations;
 using Theater.Presentation.Pipeline;
 using Theater.Repository;
+using Theater.Domain.Models.Entities.Membership;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace Theater.Presentation
 {
@@ -26,8 +29,13 @@ namespace Theater.Presentation
 
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddScoped<IClaimsTransformation, AppClaimsTransformation>();
+
+            builder.Services.AddIdentity();
+
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("cString")));
+
 
             builder.Services.AddControllersWithViews(cfg =>
             {
@@ -71,8 +79,7 @@ namespace Theater.Presentation
             });
             builder.Services.AddValidatorsFromAssemblyContaining<IApplicationReference>(includeInternalTypes: true);
 
-            builder.Services.AddIdentity();
-            builder.Services.AddSingleton<IClaimsTransformation, AppClaimsTransformation>();
+            //builder.Services.AddSingleton<IClaimsTransformation, AppClaimsTransformation>();
 
             var app = builder.Build();
 
@@ -83,7 +90,7 @@ namespace Theater.Presentation
             app.UseAuthorization(); //added afterwards
 
 
-            app.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=home}/{action=index}/{id?}");
+            app.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=dashboard}/{action=index}/{id?}");
 
             app.MapControllerRoute(name: "default", pattern: "{controller=home}/{action=index}/{id?}");
             app.MapControllerRoute(name: "api", pattern: "api/{controller}/{action=Index}/{id?}");

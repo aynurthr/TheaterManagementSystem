@@ -54,7 +54,7 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
                 FullName = r.Actor.FullName,
                 Role = r.RoleName,
                 Title = r.Actor.Title,
-                ImageSrc = $"{host}/uploads/actors/{r.Actor.ImageSrc}"
+                ImageSrc = $"{host}/uploads/images/{r.Actor.ImageSrc}"
             }).ToList(),
             Comments = poster.Comments.Select(c => new CommentDto
             {

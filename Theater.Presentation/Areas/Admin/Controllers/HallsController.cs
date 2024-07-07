@@ -4,6 +4,7 @@ using Theater.Application.Modules.HallModule.Queries.HallGetByIdQuery;
 using Theater.Application.Modules.SeatModule.Commands.AddRemoveSeatsCommand;
 using Theater.Application.Modules.HallModule.Queries.HallGetAllQuery;
 using Theater.Application.Modules.SeatModule.Queries;
+using Theater.Application.Modules.HallModule.Commands.HallAddCommand;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
@@ -69,5 +70,25 @@ namespace Theater.Presentation.Areas.Admin.Controllers
 
             return Ok("Seats updated successfully.");
         }
+
+        [HttpGet("create")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromForm] HallAddRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
+            var result = await _mediator.Send(request);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
+
 }

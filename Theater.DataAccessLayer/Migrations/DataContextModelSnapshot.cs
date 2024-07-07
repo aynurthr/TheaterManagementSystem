@@ -95,7 +95,7 @@ namespace Theater.DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("Theater.Domain.Models.Entities.ContactPost", b =>

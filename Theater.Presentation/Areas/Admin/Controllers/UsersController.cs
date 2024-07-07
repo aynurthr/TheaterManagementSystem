@@ -54,15 +54,15 @@ namespace Theater.Presentation.Controllers
                 }
                 else
                 {
-                    var userPolicies = userClaims.Where(m => m.Value == "1").Select(m => m.Type);
-                    dto.Policies = (from p in AppClaimsTransformation.policies
-                                    join up in userPolicies on p equals up into leftSet
-                                    from ls in leftSet.DefaultIfEmpty()
-                                    select new PolicyDto
-                                    {
-                                        Name = p,
-                                        Selected = ls != null
-                                    }).ToList();
+                    //var userPolicies = userClaims.Where(m => m.Value == "1").Select(m => m.Type);
+                    //dto.Policies = (from p in AppClaimsTransformation.policies
+                    //                join up in userPolicies on p equals up into leftSet
+                    //                from ls in leftSet.DefaultIfEmpty()
+                    //                select new PolicyDto
+                    //                {
+                    //                    Name = p,
+                    //                    Selected = ls != null
+                    //                }).ToList();
                 }
 
                 dto.Roles = await (from r in db.Roles

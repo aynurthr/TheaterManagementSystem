@@ -33,7 +33,7 @@ namespace Theater.Presentation
                 .AddRoleManager<RoleManager<AppRole>>()
                 .AddUserManager<UserManager<AppUser>>()
                 .AddSignInManager<SignInManager<AppUser>>()
-                .AddEntityFrameworkStores<DbContext>()
+                .AddEntityFrameworkStores<DataContext>()
                 .AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(cfg =>

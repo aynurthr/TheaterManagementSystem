@@ -84,6 +84,7 @@ namespace Theater.Presentation.Controllers
         }
 
 
+
         [Authorize("roles.create")]
         public IActionResult Create()
         {
@@ -94,9 +95,35 @@ namespace Theater.Presentation.Controllers
         [Authorize("roles.create")]
         public async Task<IActionResult> Create(AppRole role)
         {
-            await roleManager.CreateAsync(role);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    role.ConcurrencyStamp = Guid.NewGuid().ToString(); // Set ConcurrencyStamp
 
-            return RedirectToAction(nameof(Index));
+                    var result = await roleManager.CreateAsync(role);
+
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+
+                catch (DbUpdateException dbEx)
+                {
+                    var innerException = dbEx.InnerException?.Message ?? dbEx.Message;
+                    return StatusCode(500, $"Database error: {innerException}");
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Exception: {ex.Message}");
+                }
+            }
+            return View(role);
         }
 
         [Authorize("roles.edit")]
@@ -161,8 +188,29 @@ namespace Theater.Presentation.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             AppRole role = await roleManager.FindByIdAsync(id.ToString());
+            if (role == null)
+            {
+                return NotFound();
+            }
 
-            await roleManager.DeleteAsync(role);
+            // Remove related entries in AppUserRoles
+            var userRoles = await db.UserRoles.Where(ur => ur.RoleId == id).ToListAsync();
+            db.UserRoles.RemoveRange(userRoles);
+
+            // Remove related entries in AppRoleClaims
+            var roleClaims = await db.RoleClaims.Where(rc => rc.RoleId == id).ToListAsync();
+            db.RoleClaims.RemoveRange(roleClaims);
+
+            // Save changes to the database
+            await db.SaveChangesAsync();
+
+            // Finally, delete the role
+            var result = await roleManager.DeleteAsync(role);
+            if (!result.Succeeded)
+            {
+                // Handle the error
+                return BadRequest("Failed to delete the role.");
+            }
 
             return RedirectToAction(nameof(Index));
         }

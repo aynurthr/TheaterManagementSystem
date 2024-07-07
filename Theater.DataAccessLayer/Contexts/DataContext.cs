@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace Theater.DataAccessLayer.Contexts
 {
@@ -22,7 +23,9 @@ namespace Theater.DataAccessLayer.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
+
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
