@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Modules\AccountModule\Queries\" />
-    <Folder Include="Modules\HallModule\Queries\HallGetByIdQuery\" />
+    <Folder Include="Modules\HallModule\Commands\" />
   </ItemGroup>
 
 

@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Theater.Application.Modules.HallModule.Queries.HallRequestDto>
+
+@{
+    ViewBag.Title = "Manage Halls";
+}
+
+<h2>Manage Halls</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hall in Model)
+        {
+            <tr>
+                <td>@hall.Name</td>
+                <td>@hall.Capacity</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = hall.Id })" class="btn btn-info">Manage Seats</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

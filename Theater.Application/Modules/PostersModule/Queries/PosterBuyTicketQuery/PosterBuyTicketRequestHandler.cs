@@ -18,7 +18,6 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
         {
             _posterRepository = posterRepository;
             this.ctx = ctx;
-
         }
 
         public async Task<PosterBuyTicketResponseDto> Handle(PosterBuyTicketRequest request, CancellationToken cancellationToken)
@@ -55,13 +54,15 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
                 }).ToList(),
                 ShowDateId = request.ShowDateId,
                 Date = showDate.Date,
-                Seats = showDate.Tickets.Select(t => new SeatDto
-                {
-                    Row = t.Seat.Row,
-                    SeatNumber = t.Seat.Number,
-                    IsPurchased = t.IsPurchased,
-                    Price = t.Price
-                }).ToList()
+                Seats = showDate.Tickets
+                    .Where(t => t.Seat.DeletedAt == null) // Filter seats where DeletedAt is null
+                    .Select(t => new SeatDto
+                    {
+                        Row = t.Seat.Row,
+                        SeatNumber = t.Seat.Number,
+                        IsPurchased = t.IsPurchased,
+                        Price = t.Price
+                    }).ToList()
             };
 
             return response;
