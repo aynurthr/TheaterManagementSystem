@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.NewsModule.Commands.NewsAddCommand;
@@ -15,12 +16,18 @@ namespace Theater.Presentation.Areas.Admin.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IValidator<NewsAddRequest> _newsAddValidator;
+        private readonly IValidator<NewsEditRequest> _newsEditValidator;
 
-        public NewsController(IMediator mediator, IValidator<NewsAddRequest> newsAddValidator)
+
+        public NewsController(IMediator mediator, IValidator<NewsAddRequest> newsAddValidator, IValidator<NewsEditRequest> newsEditValidator)
         {
             _mediator = mediator;
             _newsAddValidator = newsAddValidator;
+            _newsEditValidator = newsEditValidator;
+
         }
+
+        [Authorize("home.index")]
 
         public async Task<IActionResult> Index(NewsGetAllRequest request)
         {
@@ -67,6 +74,19 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromForm] NewsEditRequest request)
         {
+            //var validationResult = await _newsEditValidator.ValidateAsync(request);
+
+            //if (!validationResult.IsValid)
+            //{
+            //    foreach (var error in validationResult.Errors)
+            //    {
+            //        ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            //    }
+
+            //    return View(request);
+            //}
+
+
             await _mediator.Send(request);
             return RedirectToAction(nameof(Index));
         }

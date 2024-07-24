@@ -1,0 +1,12 @@
+﻿@using Theater.Presentation.Pipeline
+@model Exception
+
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1>An error occurred</h1>
+<h2>@Model.Message</h2>
+<pre>
+    @Model.StackTrace
+</pre>

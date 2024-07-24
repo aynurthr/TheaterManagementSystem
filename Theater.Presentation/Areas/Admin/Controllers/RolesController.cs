@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,14 @@ namespace Theater.Presentation.Controllers
     public class RolesController : Controller
     {
         private readonly RoleManager<AppRole> roleManager;
+        private readonly IValidator<AppRole> roleValidator;
         private readonly DataContext db;
 
-        public RolesController(RoleManager<AppRole> roleManager, DataContext db)
+        public RolesController(RoleManager<AppRole> roleManager, DataContext db, IValidator<AppRole> roleValidator)
         {
             this.roleManager = roleManager;
             this.db = db;
+            this.roleValidator = roleValidator;
         }
 
         [Authorize("roles.index")]
@@ -49,14 +52,20 @@ namespace Theater.Presentation.Controllers
             try
             {
                 var roleClaims = await roleManager.GetClaimsAsync(role);
+                var rolePolicies = roleClaims.Where(m => m.Value == "1").Select(m => m.Type).ToList();
 
-                if (roleClaims == null || !roleClaims.Any())
+                if (role.Name.ToLower() == "superadmin")
                 {
-                    dto.Policies = new List<PolicyDto>();
+                    // If the role is superadmin, assign all policies as selected
+                    dto.Policies = AppClaimsTransformation.policies.Select(p => new PolicyDto
+                    {
+                        Name = p,
+                        Selected = true // All policies selected for superadmin
+                    }).ToList();
                 }
                 else
                 {
-                    var rolePolicies = roleClaims.Where(m => m.Value == "1").Select(m => m.Type).ToList();
+                    // Regular roles
                     dto.Policies = AppClaimsTransformation.policies.Select(p => new PolicyDto
                     {
                         Name = p,
@@ -84,7 +93,6 @@ namespace Theater.Presentation.Controllers
         }
 
 
-
         [Authorize("roles.create")]
         public IActionResult Create()
         {
@@ -95,6 +103,17 @@ namespace Theater.Presentation.Controllers
         [Authorize("roles.create")]
         public async Task<IActionResult> Create(AppRole role)
         {
+            var validationResult = roleValidator.Validate(role); // Synchronous validation
+
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.ErrorMessage);
+                }
+                return View(role);
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -112,7 +131,6 @@ namespace Theater.Presentation.Controllers
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-
                 catch (DbUpdateException dbEx)
                 {
                     var innerException = dbEx.InnerException?.Message ?? dbEx.Message;
@@ -201,14 +219,11 @@ namespace Theater.Presentation.Controllers
             var roleClaims = await db.RoleClaims.Where(rc => rc.RoleId == id).ToListAsync();
             db.RoleClaims.RemoveRange(roleClaims);
 
-            // Save changes to the database
             await db.SaveChangesAsync();
 
-            // Finally, delete the role
             var result = await roleManager.DeleteAsync(role);
             if (!result.Succeeded)
             {
-                // Handle the error
                 return BadRequest("Failed to delete the role.");
             }
 

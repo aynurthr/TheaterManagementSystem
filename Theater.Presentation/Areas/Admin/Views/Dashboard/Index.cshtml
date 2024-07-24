@@ -1,7 +1,153 @@
-﻿
+﻿@using Newtonsoft.Json;
+@model Theater.Domain.Models.DTOs.DashboardResponseDto
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Dashboard";
 }
 
-<h1>Index</h1>
+<h2>Dashboard</h2>
 
+<div class="row">
+    <div class="col-md-6">
+        <h3>Upcoming Show Date</h3>
+        <div>
+            <p>Poster: @Model.UpcomingShowDate.PosterTitle</p>
+            <p>Date: @Model.UpcomingShowDate.Date.ToString("f")</p>
+            <p>Sold Tickets: @Model.UpcomingShowDate.SoldTickets</p>
+            <p>Unsold Tickets: @Model.UpcomingShowDate.UnsoldTickets</p>
+            <p>Revenue: @Model.UpcomingShowDate.Revenue.ToString("C")</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h3>Best Show Dates</h3>
+        <canvas id="bestShowDatesChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h3>Worst Show Dates</h3>
+        <canvas id="worstShowDatesChart"></canvas>
+    </div>
+    <div class="col-md-12">
+        <h3>Users With Roles</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Users</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var role in Model.UsersWithRoles)
+                {
+                    <tr>
+                        <td>@role.Role</td>
+                        <td>
+                            @foreach (var user in role.Users)
+                            {
+                                <p>@user</p>
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>No Role</td>
+                    <td>
+                        @foreach (var user in Model.UsersWithoutRolesList)
+                        {
+                            <p>@user</p>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-12">
+        <h3>Monthly Revenue (Last 6 Months)</h3>
+        <canvas id="monthlyRevenueChart"></canvas>
+    </div>
+</div>
+
+@section addjs {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Best Show Dates
+        var bestShowDatesCtx = document.getElementById('bestShowDatesChart').getContext('2d');
+        var bestShowDatesChart = new Chart(bestShowDatesCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(JsonConvert.SerializeObject(Model.BestShowDates.Select(s => s.PosterTitle + " (" + s.Date.ToString("f") + ")"))),
+                datasets: [{
+                    label: 'Sold Tickets',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.BestShowDates.Select(s => s.SoldTickets))),
+                    backgroundColor: '#36A2EB'
+                }, {
+                    label: 'Unsold Tickets',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.BestShowDates.Select(s => s.UnsoldTickets))),
+                    backgroundColor: '#FF6384'
+                }, {
+                    label: 'Revenue',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.BestShowDates.Select(s => s.Revenue))),
+                    backgroundColor: '#4BC0C0'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        });
+
+        // Worst Show Dates
+        var worstShowDatesCtx = document.getElementById('worstShowDatesChart').getContext('2d');
+        var worstShowDatesChart = new Chart(worstShowDatesCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.PosterTitle + " (" + s.Date.ToString("f") + ")"))),
+                datasets: [{
+                    label: 'Sold Tickets',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.SoldTickets))),
+                    backgroundColor: '#36A2EB'
+                }, {
+                    label: 'Unsold Tickets',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.UnsoldTickets))),
+                    backgroundColor: '#FF6384'
+                }, {
+                    label: 'Potential Revenue',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.Revenue))),
+                    backgroundColor: '#4BC0C0'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        });
+
+        // Monthly Revenue (Last 6 Months)
+        var monthlyRevenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+        var monthlyRevenueChart = new Chart(monthlyRevenueCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(JsonConvert.SerializeObject(Model.MonthlyRevenue.Select(m => m.Month.ToString("00") + '-' + m.Year))),
+                datasets: [{
+                    type: 'line',
+                    label: 'Revenue',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.MonthlyRevenue.Select(m => m.Revenue))),
+                    borderColor: '#36A2EB',
+                    fill: false
+                }]
+            }
+        });
+    </script>
+}
