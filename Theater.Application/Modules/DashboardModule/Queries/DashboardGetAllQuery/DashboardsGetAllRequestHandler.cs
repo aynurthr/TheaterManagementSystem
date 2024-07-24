@@ -99,8 +99,8 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                 .ToListAsync();
 
             var usersCount = await _userManager.Users.CountAsync();
-            var usersWithoutRolesCount = usersCount - userRoleDetails.Select(ur => ur.User.Id).Distinct().Count();
 
+            //monthly revenue
             var now = DateTime.Now;
             var lastSixMonths = Enumerable.Range(0, 6)
                 .Select(i => new
@@ -124,6 +124,24 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                     Year = date.Year,
                     Month = date.Month,
                     Revenue = tickets.Sum(t => t.Price)
+                }
+            ).ToList();
+
+
+            //monthly sold tickets
+            var ticketsData = await _ticketRepository.GetAll()
+                .Where(t => t.IsPurchased && t.DeletedAt == null)
+                .ToListAsync();
+
+            var monthlyTicketsSold = lastSixMonths.GroupJoin(
+                ticketsData,
+                date => new { date.Year, date.Month },
+                ticket => new { Year = ticket.IsPurchasedAt.Value.Year, Month = ticket.IsPurchasedAt.Value.Month },
+                (date, tickets) => new MonthlyTicketsSoldDto
+                {
+                    Year = date.Year,
+                    Month = date.Month,
+                    TicketsSold = tickets.Count()
                 }
             ).ToList();
 
@@ -160,9 +178,9 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                         Role = g.Key,
                         Users = g.Select(ur => ur.User.UserName).ToList()
                     }).ToList(),
-                UsersWithoutRoles = usersWithoutRolesCount,
                 UsersWithoutRolesList = usersWithoutRolesList,
-                MonthlyRevenue = monthlyRevenue
+                MonthlyRevenue = monthlyRevenue,
+                MonthlyTicketsSold = monthlyTicketsSold
             };
         }
     }

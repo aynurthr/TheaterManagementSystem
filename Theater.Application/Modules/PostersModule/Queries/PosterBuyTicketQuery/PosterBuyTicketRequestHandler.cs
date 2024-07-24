@@ -47,10 +47,12 @@ namespace Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery
                 PosterId = poster.Id, // Set PosterId here
                 Title = poster.Title,
                 ImageSrc = $"{host}/uploads/images/{poster.ImageSrc}",
-                ShowDates = poster.ShowDates.Select(sd => new ShowDateDto
+                ShowDates = poster.ShowDates
+                    .Where(sd => sd.DeletedAt == null)
+                    .Select(sd => new ShowDateDto
                 {
                     ShowDateId = sd.Id,
-                    Date = sd.Date
+                    Date = sd.Date,
                 }).ToList(),
                 ShowDateId = request.ShowDateId,
                 Date = showDate.Date,

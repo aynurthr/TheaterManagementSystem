@@ -11,6 +11,8 @@ namespace Theater.Domain.Models.DTOs
         public  int UsersWithoutRoles { get; set; }
         public List<string> UsersWithoutRolesList { get; set; }
         public List<MonthlyRevenueDto> MonthlyRevenue { get; set; }
+        public List<MonthlyTicketsSoldDto> MonthlyTicketsSold { get; set; }
+
     }
 
     public class ShowDateDto
@@ -33,5 +35,11 @@ namespace Theater.Domain.Models.DTOs
         public int Year { get; set; }
         public int Month { get; set; }
         public decimal Revenue { get; set; }
+    }
+    public class MonthlyTicketsSoldDto
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int TicketsSold { get; set; }
     }
 }

@@ -13,7 +13,7 @@
 
     public class SeatDto
     {
-        public int Id { get; set; } // Add this line
+        public int Id { get; set; }
         public string Row { get; set; }
         public int SeatNumber { get; set; }
         public bool IsPurchased { get; set; }
@@ -24,5 +24,6 @@
     {
         public int ShowDateId { get; set; }
         public DateTime Date { get; set; }
+
     }
 }
