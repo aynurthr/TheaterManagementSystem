@@ -1,18 +1,21 @@
-﻿using System.Collections.Generic;
-
-namespace Theater.Domain.Models.DTOs
+﻿namespace Theater.Domain.Models.DTOs
 {
     public class DashboardResponseDto
     {
         public ShowDateDto UpcomingShowDate { get; set; }
         public List<ShowDateDto> BestShowDates { get; set; }
         public List<ShowDateDto> WorstShowDates { get; set; }
-        public List<RoleUsersDto> UsersWithRoles { get; set; }
-        public  int UsersWithoutRoles { get; set; }
-        public List<string> UsersWithoutRolesList { get; set; }
+        public List<UserRoleDto> UsersWithRoles { get; set; } // Unified user list
         public List<MonthlyRevenueDto> MonthlyRevenue { get; set; }
         public List<MonthlyTicketsSoldDto> MonthlyTicketsSold { get; set; }
+    }
 
+    public class UserTicketDataDto
+    {
+        public int? UserId { get; set; }
+        public string UserName { get; set; }
+        public int TicketsBought { get; set; }
+        public decimal Revenue { get; set; }
     }
 
     public class ShowDateDto
@@ -24,10 +27,12 @@ namespace Theater.Domain.Models.DTOs
         public decimal Revenue { get; set; }
     }
 
-    public class RoleUsersDto
+    public class UserRoleDto
     {
-        public string Role { get; set; }
-        public List<string> Users { get; set; }
+        public string UserName { get; set; }
+        public string? Role { get; set; } // Can be null if no role
+        public int TicketsBought { get; set; }
+        public decimal Revenue { get; set; }
     }
 
     public class MonthlyRevenueDto
@@ -36,6 +41,7 @@ namespace Theater.Domain.Models.DTOs
         public int Month { get; set; }
         public decimal Revenue { get; set; }
     }
+
     public class MonthlyTicketsSoldDto
     {
         public int Year { get; set; }

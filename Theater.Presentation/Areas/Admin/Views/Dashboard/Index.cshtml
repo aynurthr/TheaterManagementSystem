@@ -63,51 +63,77 @@
         <canvas id="monthlyRevenueChart"></canvas>
     </div>
     <div class="col-md-12">
-        <h3 class="mt-5">Users With Roles</h3>
+        <h3 class="mt-5">Users</h3>
         <table class="table">
             <thead>
                 <tr>
+                    <th>User</th>
                     <th>Role</th>
-                    <th>Users</th>
+                    <th>Tickets Bought</th>
+                    <th>Revenue</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var role in Model.UsersWithRoles)
+                @foreach (var roleGroup in Model.UsersWithRoles.GroupBy(u => u.Role).OrderByDescending(g => g.Count()))
                 {
+                    var firstUser = roleGroup.FirstOrDefault();
+                    var firstUserTicketData = Model.UsersWithRoles.FirstOrDefault(utd => utd.UserName == firstUser.UserName);
                     <tr>
-                        <td>@role.Role</td>
-                        <td>
-                            @foreach (var user in role.Users)
-                            {
-                                <p>@user</p>
-                            }
-                        </td>
+                        <td rowspan="@roleGroup.Count()"><strong>@(roleGroup.Key ?? "No Role") (@roleGroup.Count())</strong></td>
+                        <td>@firstUser.UserName</td>
+                        <td>@(firstUserTicketData?.TicketsBought ?? 0)</td>
+                        <td>@(firstUserTicketData?.Revenue.ToString("C") ?? "$0.00")</td>
                     </tr>
+                    @foreach (var user in roleGroup.Skip(1))
+                    {
+                        var userTicketData = Model.UsersWithRoles.FirstOrDefault(utd => utd.UserName == user.UserName);
+                        <tr>
+                            <td>@user.UserName</td>
+                            <td>@(userTicketData?.TicketsBought ?? 0)</td>
+                            <td>@(userTicketData?.Revenue.ToString("C") ?? "$0.00")</td>
+                        </tr>
+                    }
                 }
-                <tr>
-                    <td>No Role (@Model.UsersWithoutRolesList.Count())</td>
-                    <td>
-                        @if (Model.UsersWithoutRolesList.Any())
-                        {
-                            @foreach (var user in Model.UsersWithoutRolesList)
-                            {
-                                <p>@user</p>
-                            }
-                        }
-                        else
-                        {
-                            <p>N/A</p>
-                        }
-                    </td>
-                </tr>
             </tbody>
+
         </table>
+    </div>
+    <div class="col-md-12 d-flex flex-column">
+        <h3 class="mt-5">Revenue Distribution by User</h3>
+        <div class="d-flex justify-content-center w-100">
+            <div style="width: 400px; height: 400px;">
+                <canvas id="userRevenueChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 
 @section addjs {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // User Revenue Pie Chart
+        var userRevenueCtx = document.getElementById('userRevenueChart').getContext('2d');
+        var userRevenueChart = new Chart(userRevenueCtx, {
+            type: 'pie',
+            data: {
+                labels: @Html.Raw(JsonConvert.SerializeObject(Model.UsersWithRoles.Select(utd => utd.UserName))),
+                datasets: [{
+                    label: 'Revenue ($)',
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model.UsersWithRoles.Select(utd => utd.Revenue))),
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+       
         // Best Show Dates - Tickets
         var bestShowDatesTicketsCtx = document.getElementById('bestShowDatesTicketsChart').getContext('2d');
         var bestShowDatesTicketsChart = new Chart(bestShowDatesTicketsCtx, {
@@ -144,7 +170,7 @@
             data: {
                 labels: @Html.Raw(JsonConvert.SerializeObject(Model.BestShowDates.Select(s => s.PosterTitle + "\n(" + s.Date.ToString("dd MMM yyyy h:mm tt") + ")"))),
                 datasets: [{
-                    label: 'Revenue',
+                    label: 'Revenue ($)',
                     data: @Html.Raw(JsonConvert.SerializeObject(Model.BestShowDates.Select(s => s.Revenue))),
                     backgroundColor: '#4BC0C0'
                 }]
@@ -156,7 +182,12 @@
                         stacked: false
                     },
                     y: {
-                        stacked: false
+                        stacked: false,
+                        ticks: {
+                            callback: function (value, index, values) {
+                                return '$' + value.toFixed(2);
+                            }
+                        }
                     }
                 }
             }
@@ -167,7 +198,7 @@
         var worstShowDatesTicketsChart = new Chart(worstShowDatesTicketsCtx, {
             type: 'bar',
             data: {
-                labels: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.PosterTitle + " (" + s.Date.ToString("dd MMM yyyy h:mm tt") + ")"))),
+                labels: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.PosterTitle + "\n(" + s.Date.ToString("dd MMM yyyy h:mm tt") + ")"))),
                 datasets: [{
                     label: 'Sold Tickets',
                     data: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.SoldTickets))),
@@ -196,9 +227,9 @@
         var worstShowDatesRevenueChart = new Chart(worstShowDatesRevenueCtx, {
             type: 'bar',
             data: {
-                labels: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.PosterTitle + " (" + s.Date.ToString("dd MMM yyyy h:mm tt") + ")"))),
+                labels: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.PosterTitle + "\n(" + s.Date.ToString("dd MMM yyyy h:mm tt") + ")"))),
                 datasets: [{
-                    label: 'Potential Revenue',
+                    label: 'Potential Revenue ($)',
                     data: @Html.Raw(JsonConvert.SerializeObject(Model.WorstShowDates.Select(s => s.Revenue))),
                     backgroundColor: '#FFA726'
                 }]
@@ -210,7 +241,12 @@
                         stacked: false
                     },
                     y: {
-                        stacked: false
+                        stacked: false,
+                        ticks: {
+                            callback: function (value, index, values) {
+                                return '$' + value.toFixed(2);
+                            }
+                        }
                     }
                 }
             }
@@ -225,7 +261,7 @@
                 datasets: [
                     {
                         type: 'line',
-                        label: 'Revenue',
+                        label: 'Revenue ($)',
                         data: @Html.Raw(JsonConvert.SerializeObject(Model.MonthlyRevenue.Select(m => m.Revenue))),
                         borderColor: '#FF6384',
                         fill: false,
@@ -261,14 +297,14 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Revenue'
+                            text: 'Revenue ($)'
                         },
                         grid: {
                             drawOnChartArea: false
                         },
                         ticks: {
                             callback: function (value, index, values) {
-                                return '$' + value;
+                                return '$' + value.toFixed(2);
                             }
                         }
                     }

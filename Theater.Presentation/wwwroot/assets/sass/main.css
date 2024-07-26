@@ -487,11 +487,34 @@ a:hover {
   background-color: #fa434b;
   border: 1px solid #fa434b;
 }
+
+    .navbar__actions .btn--logout {
+        color: #282828;
+        background-color: transparent;
+        border: 1px solid #818181;
+        display: flex;
+        align-items: center;
+    }
+
+.navbar__actions .btn--logout:hover {
+    color: #fff;
+    background-color: #fa434b;
+    border: 1px solid #fa434b;
+}
+
 .navbar__actions .btn--register {
   color: #fff;
   background-color: #fa434b;
   border: 1px solid #fa434b;
 }
+
+    .navbar__actions .btn--admin {
+        color: #fff;
+        background-color: #4169e1;
+        border: 1px solid #4169e1;
+        display: flex;
+        align-items: center;
+    }
 
 .navbar__actions .btn--user {
     img {
@@ -502,6 +525,12 @@ a:hover {
   background-color: #d1060e;
   border: 1px solid #d1060e;
 }
+
+.navbar__actions .btn--admin:hover {
+    background-color: #123456;
+    border: 1px solid #123456;
+}
+
 @media (max-width: 1067px) {
   .navbar__actions {
     display: none;
@@ -521,26 +550,28 @@ a:hover {
 }
 
 .sidebar-menu {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  row-gap: 20px;
-  position: fixed;
-  top: 0;
-  right: -350px;
-  width: 300px;
-  height: 100%;
-  background-color: #fff;
-  -webkit-box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-          box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-  padding: 20px;
-  -webkit-transition: right 0.3s ease-in-out;
-  transition: right 0.3s ease-in-out;
-  z-index: 1000;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    row-gap: 20px;
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 300px;
+    /*  height: 100%; */
+    max-height: 100vh; /* Ensure the sidebar doesn't exceed the viewport height */
+    overflow-y: auto;
+    background-color: #fff;
+    -webkit-box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    -webkit-transition: right 0.3s ease-in-out;
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
 }
 .sidebar-menu--active {
   right: 0;

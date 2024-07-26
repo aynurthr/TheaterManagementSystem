@@ -33,15 +33,15 @@
             <div class="navbar__actions">
                 @if (User.Identity.IsAuthenticated)
                 {
+                    @if (User.Claims.Any(c => c.Type == ClaimTypes.Role))
+                    {
+                        <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="btn btn--admin">Admin</a>
+                    }
+
+                    <a href="@Url.Action("SignOut", "Account")" class="btn btn--logout">Log Out</a>
                     <a href="@Url.Action("Profile", "UserProfile")" class="btn btn--user">
                         <img src="~/assets/media/icons/user.svg" alt="User icon" /> @User.Identity.Name
                     </a>
-                    @if (User.Claims.Any(c => c.Type == ClaimTypes.Role))
-                    {
-                        <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="btn btn--admin" style="background-color: blue; color: white;">Admin</a>
-                    }
-                   
-                    <a href="@Url.Action("SignOut", "Account")" class="btn btn--logout">Log Out</a>
                 }
                 else
                 {
@@ -63,10 +63,10 @@
             {
                 @if (User.Claims.Any(c => c.Type == ClaimTypes.Role))
                 {
-                    <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="btn btn--admin" style="background-color: blue; color: white;">Admin</a>
+                    <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="btn btn--admin">Admin</a>
                 }
-                <a href="@Url.Action("Profile", "UserProfile")" class="btn btn--user">Profile</a>
-                <a href="@Url.Action("SignOut", "Account")" class="btn btn--logout">Log Out</a>
+                <a href="@Url.Action("Profile", "UserProfile")" class="btn btn--register">Profile</a>
+                <a href="@Url.Action("SignOut", "Account")" class="btn btn--login">Log Out</a>
             }
             else
             {

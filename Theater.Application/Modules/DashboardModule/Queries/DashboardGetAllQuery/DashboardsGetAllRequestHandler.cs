@@ -80,6 +80,7 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                 .Take(3)
                 .ToList();
 
+            // Fetch all user roles and their details
             var usersWithRoles = await _userRoleRepository.GetAll().ToListAsync();
             var userIds = usersWithRoles.Select(ur => ur.UserId).Distinct().ToList();
             var roleIds = usersWithRoles.Select(ur => ur.RoleId).Distinct().ToList();
@@ -93,14 +94,53 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                 Role = roles.FirstOrDefault(r => r.Id == ur.RoleId)
             }).Where(ur => ur.User != null && ur.Role != null).ToList();
 
-            var usersWithoutRolesList = await _userManager.Users
-                .Where(u => !userRoleDetails.Select(ur => ur.User.Id).Contains(u.Id))
-                .Select(u => u.UserName)
+            // Fetch all user tickets
+            var userTickets = await _ticketRepository.GetAll()
+                .Where(t => t.IsPurchased && t.DeletedAt == null)
+                .GroupBy(t => t.IsPurchasedBy)
+                .Select(g => new UserTicketDataDto
+                {
+                    UserId = g.Key ?? 0, // Default to 0 if UserId is null
+                    TicketsBought = g.Count(),
+                    Revenue = g.Sum(t => t.Price)
+                })
                 .ToListAsync();
 
-            var usersCount = await _userManager.Users.CountAsync();
+            // Map user details to user ticket data
+            var userTicketDataWithUsernames = userTickets.Select(ut => new UserTicketDataDto
+            {
+                UserId = ut.UserId,
+                TicketsBought = ut.TicketsBought,
+                Revenue = ut.Revenue,
+                UserName = users.FirstOrDefault(u => u.Id == ut.UserId)?.UserName ?? "Unknown"
+            }).ToList();
 
-            //monthly revenue
+            // Create a list of users with their roles and ticket data
+            var usersWithRolesList = users.Select(u => new UserRoleDto
+            {
+                UserName = u.UserName,
+                Role = userRoleDetails.FirstOrDefault(ur => ur.User.Id == u.Id)?.Role.Name,
+                TicketsBought = userTicketDataWithUsernames.FirstOrDefault(utd => utd.UserId == u.Id)?.TicketsBought ?? 0,
+                Revenue = userTicketDataWithUsernames.FirstOrDefault(utd => utd.UserId == u.Id)?.Revenue ?? 0
+            }).ToList();
+
+            // Fetch and add users without roles to the list
+            var usersWithoutRoles = await _userManager.Users
+                .Where(u => !userRoleDetails.Select(ur => ur.User.Id).Contains(u.Id))
+                .ToListAsync();
+
+            var usersWithoutRolesList = usersWithoutRoles.Select(u => new UserRoleDto
+            {
+                UserName = u.UserName,
+                Role = "No Role", // Explicitly set role as "No Role"
+                TicketsBought = userTicketDataWithUsernames.FirstOrDefault(utd => utd.UserId == u.Id)?.TicketsBought ?? 0,
+                Revenue = userTicketDataWithUsernames.FirstOrDefault(utd => utd.UserId == u.Id)?.Revenue ?? 0
+            }).ToList();
+
+            // Merge both lists
+            usersWithRolesList.AddRange(usersWithoutRolesList);
+
+            // Monthly revenue
             var now = DateTime.Now;
             var lastSixMonths = Enumerable.Range(0, 6)
                 .Select(i => new
@@ -127,8 +167,7 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                 }
             ).ToList();
 
-
-            //monthly sold tickets
+            // Monthly sold tickets
             var ticketsData = await _ticketRepository.GetAll()
                 .Where(t => t.IsPurchased && t.DeletedAt == null)
                 .ToListAsync();
@@ -144,7 +183,6 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                     TicketsSold = tickets.Count()
                 }
             ).ToList();
-
 
             return new DashboardResponseDto
             {
@@ -172,16 +210,12 @@ namespace Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQue
                     UnsoldTickets = sd.Tickets.Count(t => !t.IsPurchased),
                     Revenue = sd.Tickets.Where(t => !t.IsPurchased).Sum(t => t.Price)
                 }).ToList(),
-                UsersWithRoles = userRoleDetails.GroupBy(ur => ur.Role.Name)
-                    .Select(g => new RoleUsersDto
-                    {
-                        Role = g.Key,
-                        Users = g.Select(ur => ur.User.UserName).ToList()
-                    }).ToList(),
-                UsersWithoutRolesList = usersWithoutRolesList,
+                UsersWithRoles = usersWithRolesList,
                 MonthlyRevenue = monthlyRevenue,
-                MonthlyTicketsSold = monthlyTicketsSold
+                MonthlyTicketsSold = monthlyTicketsSold,
             };
         }
     }
 }
+
+
