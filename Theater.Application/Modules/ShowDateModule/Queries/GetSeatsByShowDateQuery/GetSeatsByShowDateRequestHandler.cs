@@ -16,10 +16,11 @@ public class GetSeatsByShowDateRequestHandler : IRequestHandler<GetSeatsByShowDa
     public async Task<IEnumerable<SeatDto>> Handle(GetSeatsByShowDateRequest request, CancellationToken cancellationToken)
     {
         var showDate = await _showDateRepository.GetAll()
-            .Include(sd => sd.Hall)
-                .ThenInclude(h => h.Seats)
-                    .ThenInclude(s => s.Tickets)
-            .FirstOrDefaultAsync(sd => sd.Id == request.ShowDateId && sd.DeletedAt == null, cancellationToken);
+    .Include(sd => sd.Hall)
+        .ThenInclude(h => h.Seats)
+            .ThenInclude(s => s.Tickets.Where(t => t.DeletedAt == null))
+    .FirstOrDefaultAsync(sd => sd.Id == request.ShowDateId && sd.DeletedAt == null, cancellationToken);
+
 
         if (showDate == null)
         {
@@ -33,7 +34,8 @@ public class GetSeatsByShowDateRequestHandler : IRequestHandler<GetSeatsByShowDa
                 Row = seat.Row,
                 Number = seat.Number,
                 Price = seat.Price,
-                IsPurchased = seat.Tickets.Any(t => t.ShowDateId == request.ShowDateId)
+                IsPurchased = seat.Tickets.Any(t => t.ShowDateId == request.ShowDateId),
+                IsTicketPurchased = seat.Tickets.Any(t => t.ShowDateId == request.ShowDateId && t.IsPurchasedBy != null)
             }).ToList();
 
         return seats;

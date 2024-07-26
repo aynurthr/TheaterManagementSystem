@@ -6,14 +6,14 @@
 
 <h2>Upsert Ticket</h2>
 
-<form asp-action="UpsertTicket" method="post">
+<form id="ticketForm" asp-action="UpsertTicket" method="post">
     <input type="hidden" asp-for="ShowDateId" />
     <input type="hidden" asp-for="SeatId" />
 
     <div class="form-group">
         <label asp-for="Price" class="control-label">Price</label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
+        <input asp-for="Price" class="form-control" id="priceInput" />
+        <span asp-validation-for="Price" class="text-danger" id="priceError"></span>
     </div>
 
     <div class="form-group">
@@ -22,3 +22,18 @@
     </div>
 </form>
 
+@section addjs {
+    <script>
+        document.getElementById("ticketForm").addEventListener("submit", function(event) {
+            var priceInput = document.getElementById("priceInput");
+            var priceError = document.getElementById("priceError");
+
+            if (parseFloat(priceInput.value) <= 0) {
+                event.preventDefault();
+                priceError.textContent = "The price must be greater than zero.";
+            } else {
+                priceError.textContent = "";
+            }
+        });
+    </script>
+}

@@ -6,7 +6,12 @@
 }
 
 <h2>ShowDate Details</h2>
-    <p>Red seats do not have a ticket assigned to them, while green seats have a ticket and the user can purchase them. You can add or edit the ticket by clicking on the seat.</p>
+<p>
+    <span style="color: red;">Red seats</span> do not have a ticket assigned to them, while
+    <span style="color: green;">green seats</span> have a ticket and the user can purchase them.
+    You can add or edit the ticket by clicking on the seat.
+    <span style="color: black;">Black seats</span> mean that tickets assigned to those seats have already been purchased and cannot be edited.
+</p>
 
 <div class="seating-chart">
     @foreach (var seatGroup in Model.GroupBy(s => s.Row))
@@ -15,13 +20,23 @@
             <div class="row-label">@seatGroup.Key</div>
             @foreach (var seat in seatGroup)
             {
-                var seatClass = seat.IsPurchased ? "seat purchased" : "seat available";
-                <a href="@Url.Action("UpsertTicket", "ShowDate", new { showDateId = showDateId, seatId = seat.Id })" class="seat-link">
-                    <div class="@seatClass" data-showdateid="@showDateId" data-seatid="@seat.Id" title="Seat @seat.Number">
+                if (seat.IsTicketPurchased)
+                {
+                    <div class="ticket-purchased" title="Seat @seatGroup.Key@seat.Number">
                         @seat.Number
                     </div>
-                </a>
+                }
+                else
+                {
+                    var seatClass = seat.IsPurchased ? "seat purchased" : "seat available";
+                    <a href="@Url.Action("UpsertTicket", "ShowDate", new { showDateId = showDateId, seatId = seat.Id })" class="seat-link">
+                        <div class="@seatClass" data-showdateid="@showDateId" data-seatid="@seat.Id" title="Seat @seatGroup.Key@seat.Number">
+                            @seat.Number
+                        </div>
+                    </a>
+                }
             }
+
         </div>
     }
 </div>
@@ -61,6 +76,19 @@
         margin-right: 10px;
     }
 
+    .ticket-purchased {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 30px;
+        margin: 0 5px;
+        cursor: pointer;
+        background-color: black;
+        color: white;
+        cursor: default;
+    }
+
     .seat {
         width: 30px;
         height: 30px;
@@ -71,13 +99,13 @@
         cursor: pointer;
     }
 
-    .seat.purchased {
+        .seat.purchased {
         background-color: #ccffcc;
-    }
+        }
 
-    .seat.available {
-        background-color: #ffcccc;
-    }
+        .seat.available {
+            background-color: #ffcccc;
+        }
 
     .seat-link {
         text-decoration: none;

@@ -13,5 +13,7 @@ namespace Theater.Application.Modules.ShowDateModule.Queries
         public int Number { get; set; }
         public decimal Price { get; set; }
         public bool IsPurchased { get; set; }
+        public bool IsTicketPurchased { get; set; }
+
     }
 }
