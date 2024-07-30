@@ -1,8 +1,11 @@
-﻿using System;
+﻿
 
-namespace Theater.Domain.Models.Entities
+
+using Microsoft.AspNetCore.Http;
+
+namespace Theater.Application.Modules.ContactPostModule.Queries.ContactPostGetByIdQuery
 {
-    public class ContactPost
+    public class ContactPostGetByIdRequestDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -13,6 +16,8 @@ namespace Theater.Domain.Models.Entities
         public DateTime? AnsweredAt { get; set; }
         public string? AnsweredBy { get; set; }
         public string? Answer { get; set; }
+        public string ReplyMessage { get; set; }
 
     }
 }
+

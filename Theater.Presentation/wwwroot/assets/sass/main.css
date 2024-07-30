@@ -1548,7 +1548,7 @@ a:hover {
   }
 }
 #Login .auth__form form .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   position: relative;
 }
 #Login .auth__form form .input-group input {
@@ -1738,7 +1738,7 @@ a:hover {
   }
 }
 #Register .auth__form form .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   position: relative;
 }
 #Register .auth__form form .input-group input {
@@ -4240,7 +4240,7 @@ a:hover {
           flex-direction: column;
 }
 #Contact .contact-section .container .contact-wrapper .contact-form form .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   position: relative;
 }
 #Contact .contact-section .container .contact-wrapper .contact-form form .input-group input,

@@ -16,6 +16,7 @@ namespace Theater.DataAccessLayer.Configurations
             builder.Property(c => c.SentAt).IsRequired();
             builder.Property(c => c.AnsweredAt).IsRequired(false);
             builder.Property(c => c.AnsweredBy).HasMaxLength(100);
+            builder.Property(c => c.Answer).HasMaxLength(500);
 
             builder.ToTable("Contacts");
         }

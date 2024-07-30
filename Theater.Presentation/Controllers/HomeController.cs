@@ -106,7 +106,7 @@ namespace Theater.Presentation.Controllers
         }
 
         [HttpPost]
-
+        [AllowAnonymous]
         public async Task<IActionResult> Contact(ContactPostApplyRequest request)
         {
             var validationResult = await _contactAddValidator.ValidateAsync(request);
@@ -129,10 +129,6 @@ namespace Theater.Presentation.Controllers
                 errors = new Dictionary<string, IEnumerable<string>>()
             });
         }
-
-
-
-
     }
 
 }

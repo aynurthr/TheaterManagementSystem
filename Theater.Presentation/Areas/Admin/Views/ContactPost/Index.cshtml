@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Theater.Application.Modules.ContactPostModule.Queries.ContactPostGetAllQuery.ContactPostGetAllRequestDto>
+
+@{
+    ViewBag.Title = "Contact Posts";
+}
+
+<h2>Contact Posts</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Not Answered</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Topic</th>
+                    <th>Sent At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var post in Model.Where(cp => !cp.AnsweredAt.HasValue))
+                {
+                    <tr>
+                        <td>@post.Name</td>
+                        <td>@post.Email</td>
+                        <td>@post.Topic</td>
+                        <td>@post.SentAt.ToString("dd MMM yyyy HH:mm")</td>
+                        <td>
+                            <a asp-action="Reply" asp-route-id="@post.Id" class="btn btn-primary">Reply</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-12 mt-4">
+        <h3>Already Answered</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Topic</th>
+                    <th>Answered At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var post in Model.Where(cp => cp.AnsweredAt.HasValue))
+                {
+                    <tr>
+                        <td>@post.Name</td>
+                        <td>@post.Email</td>
+                        <td>@post.Topic</td>
+                        <td>@post.AnsweredAt?.ToString("dd MMM yyyy HH:mm")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-primary">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

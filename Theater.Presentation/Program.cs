@@ -18,6 +18,7 @@ using Theater.Presentation.Pipeline;
 using Theater.Repository;
 using Theater.Domain.Models.Entities.Membership;
 using Microsoft.AspNetCore.Identity;
+using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 
 
 namespace Theater.Presentation
@@ -45,8 +46,8 @@ namespace Theater.Presentation
                 cfg.Filters.AppendAuthorization();
             });
 
-            //builder.Services.AddControllersWithViews()
-            //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignupRequestValidator>());
+            builder.Services.AddControllersWithViews()
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignupRequestValidator>());
 
             builder.Services.AddRouting(cfg => cfg.LowercaseUrls = true);
 
@@ -67,8 +68,8 @@ namespace Theater.Presentation
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 
-            //        builder.Services.AddControllersWithViews()
-            //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
+            builder.Services.AddControllersWithViews()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
 
 
             //builder.Services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();

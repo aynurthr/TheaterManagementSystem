@@ -14,7 +14,7 @@ namespace Theater.Repository
     public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly UserManager<AppUser> _userManager; // Assuming you have access to UserManager
+        private readonly UserManager<AppUser> _userManager;
 
         public CurrentUserService(IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
         {
