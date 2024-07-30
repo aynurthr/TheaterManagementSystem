@@ -32,7 +32,7 @@
                 Attention! The selected tickets must be paid for by credit card within 30 minutes. Be sure to print the electronic ticket you purchased. It must be presented at the entrance to the theater.
             </p>
             <div class="booking__actions">
-                <button class="btn btn--pay" id="pay-button">Pay for Ticket</button>
+                <button class="btn btn--pay" id="pay-button" disabled>Pay for Ticket</button>
                 <button class="btn btn--cancel">Cancel</button>
             </div>
         </div>
@@ -118,6 +118,15 @@
 
             function updateTotalPrice(price) {
                 $('#total-price').text(price + '$');
+                updatePayButtonState();
+            }
+
+            function updatePayButtonState() {
+                if (totalPrice > 0) {
+                    $('#pay-button').removeAttr('disabled');
+                } else {
+                    $('#pay-button').attr('disabled', 'disabled');
+                }
             }
 
             $(document).on('click', '.seat', function () {
@@ -205,10 +214,19 @@
                     },
                     error: function (xhr, status, error) {
                         console.error('Error purchasing tickets:', xhr.responseText);
-                        alert('Failed to purchase tickets. Please try again.');
+                        if (xhr.status === 401) {
+                            $('#confirmModal').modal('hide');
+                            $('#loginModal').modal('show');
+                            $('#loginModal').on('hidden.bs.modal', function () {
+                                window.location.href = '@Url.Action("Signin", "Account")';
+                            });
+                        } else {
+                            alert('Failed to purchase tickets. Please try again.');
+                        }
                     }
                 });
             });
+
 
             $('.btn--cancel').click(function () {
                 window.history.back();

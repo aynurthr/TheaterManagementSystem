@@ -8,10 +8,13 @@ using Theater.Application.Modules.ShowDateModule.Queries.GetTicketBySeatAndShowD
 using Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetAllQuery;
 using Theater.Application.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("tickets.manage")]
+
     public class ShowDateController : Controller
     {
         private readonly IMediator _mediator;

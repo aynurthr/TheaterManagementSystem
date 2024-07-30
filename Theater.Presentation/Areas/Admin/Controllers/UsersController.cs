@@ -8,10 +8,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Theater.Presentation.Pipeline;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("users.manage")]
     public class UsersController : Controller
     {
         private readonly UserManager<AppUser> userManager;

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.GenreModule.Commands.GenreAddCommand;
 using Theater.Application.Modules.GenreModule.Commands.GenreEditCommand;
@@ -10,6 +11,8 @@ using Theater.Application.Modules.GenreModule.Queries.GenreGetByIdQuery;
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("genres.manage")]
+
     public class GenreController : Controller
     {
         private readonly IMediator _mediator;

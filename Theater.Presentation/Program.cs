@@ -35,6 +35,11 @@ namespace Theater.Presentation
 
             builder.Services.AddIdentity();
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Account/Denied";
+            });
+
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("cString")));
 

@@ -5,12 +5,15 @@ using Theater.Application.Modules.SeatModule.Commands.AddRemoveSeatsCommand;
 using Theater.Application.Modules.HallModule.Queries.HallGetAllQuery;
 using Theater.Application.Modules.SeatModule.Queries;
 using Theater.Application.Modules.HallModule.Commands.HallAddCommand;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/[controller]")]
     [ApiController]
+    [Authorize("halls.manage")]
+
     public class HallsController : Controller
     {
         private readonly IMediator _mediator;

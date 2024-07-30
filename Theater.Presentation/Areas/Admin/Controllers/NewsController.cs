@@ -12,6 +12,8 @@ using Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery;
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("news.manage")]
+
     public class NewsController : Controller
     {
         private readonly IMediator _mediator;

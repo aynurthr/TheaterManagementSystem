@@ -1,10 +1,13 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.DashboardModule.Queries.DashboardGetAllQuery;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("dashboard.manage")]
+
     public class DashboardController : Controller
     {
         private readonly IMediator _mediator;

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Theater.Application.Modules.ActorModule.Queries.ActorGetAllQuery;
@@ -14,6 +15,8 @@ using Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery;
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("posters.manage")]
+
     public class PosterController : Controller
     {
         private readonly IMediator _mediator;

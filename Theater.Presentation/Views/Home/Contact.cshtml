@@ -88,83 +88,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script>
         $(document).ready(function () {
-            var input = document.querySelector("#phone");
-            var iti = window.intlTelInput(input, {
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-                hiddenInput: "full",
-                separateDialCode: true,
-                autoPlaceholder: "polite",
-                nationalMode: false
-            });
+            $('#contactForm').submit(function (e) {
+                e.preventDefault(); // Prevent default form submission
 
-            const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+                let formData = $(this).serialize();
 
-            const reset = () => {
-                input.classList.remove("error");
-                $('#phoneError').text('');
-            };
-
-            const showError = (msg) => {
-                input.classList.add("error");
-                $('#phoneError').text(msg);
-            };
-
-            input.addEventListener('change', () => {
-                reset();
-                if (input.value.trim() && !iti.isValidNumber()) {
-                    const errorCode = iti.getValidationError();
-                    const msg = errorMap[errorCode] || "Invalid phone number";
-                    showError(msg);
-                }
-            });
-
-            input.addEventListener('keyup', () => {
-                reset();
-                if (input.value.trim() && !iti.isValidNumber()) {
-                    const errorCode = iti.getValidationError();
-                    const msg = errorMap[errorCode] || "Invalid phone number";
-                    showError(msg);
-                }
-            });
-
-            $('#signupForm').submit(function (e) {
-                e.preventDefault();
-
-                // Check if the form is valid
-                if ($(this).valid()) {
-                    reset(); // Clear previous error message
-                    if (input.value.trim() && !iti.isValidNumber()) {
-                        const errorCode = iti.getValidationError();
-                        const msg = errorMap[errorCode] || "Invalid phone number";
-                        showError(msg); // Show error message
-                        return false;
-                    } else if (input.value.trim()) {
-                        var full_number = iti.getNumber(intlTelInputUtils.numberFormat.E164);
-                        input.value = full_number;
-                    }
-
-                    let formData = $(this).serialize();
-
-                    $.ajax({
-                        url: '@Url.Action("Signup", "Account")',
-                        type: 'POST',
-                        data: formData,
-                        success: function (response) {
-                            if (!response.error) {
-                                $('#signupForm')[0].reset();
-                                $('#successModal').modal('show'); // Show the success modal
-                            } else {
-                                alert('An error occurred while creating your account: ' + response.message);
-                            }
-                        },
-                        error: function (errResponse) {
-                            alert('An error occurred while creating your account. Please try again. Error details: ' + JSON.stringify(errResponse));
+                $.ajax({
+                    url: '@Url.Action("Contact", "Home")',
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json', // Expect JSON response
+                    success: function (response) {
+                        // Check if the response indicates success
+                        if (response && !response.error) {
+                            $('#contactForm')[0].reset(); // Reset the form
+                            $('#successModal').modal('show'); // Show the success modal
                         }
-                    });
-                }
+                    }
+                });
             });
         });
     </script>
 }
+
 
 

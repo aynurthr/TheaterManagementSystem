@@ -36,7 +36,7 @@ namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
 
             if (user is null)
             {
-                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email, username, or phone number." };
+                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email, username, phone number or password." };
             }
 
             var isSuccess = await signinManager.CheckPasswordSignInAsync(user, request.Password, true);
@@ -55,7 +55,7 @@ namespace Theater.Application.Modules.AccountModule.Commands.SigninCommand
             }
             else
             {
-                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid username/email/phone number or password." };
+                return new SigninResult { Succeeded = false, ErrorMessage = "Invalid email, username, phone number or password." };
             }
         }
     }

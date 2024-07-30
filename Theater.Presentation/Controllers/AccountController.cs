@@ -142,7 +142,7 @@ namespace Theater.Presentation.Controllers
         [Route("/accessdenied.html")]
         public IActionResult Denied()
         {
-            return Content("bura icazeniz yoxdur");
+            return View();
         }
 
 

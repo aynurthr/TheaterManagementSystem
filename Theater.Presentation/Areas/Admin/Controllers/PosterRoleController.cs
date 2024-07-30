@@ -9,10 +9,13 @@ using Theater.Application.Modules.RoleModule.Queries.RoleGetAllQuery;
 using Theater.Application.Modules.RoleModule.Queries.RoleGetByIdQuery;
 using Theater.Application.Modules.RoleModule.Commands.RoleEditCommand;
 using Theater.Application.Modules.RoleModule.Commands.RoleRemoveCommand;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("poster-roles.manage")]
+
     public class PosterRoleController : Controller
     {
         private readonly IMediator _mediator;

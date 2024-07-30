@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostReplyCommand;
 using Theater.Application.Modules.ContactPostModule.Queries.ContactPostGetByIdQuery;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("contact-posts.manage")]
     public class ContactPostController : Controller
     {
         private readonly IMediator _mediator;

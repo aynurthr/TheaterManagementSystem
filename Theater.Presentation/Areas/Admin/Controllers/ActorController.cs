@@ -6,10 +6,12 @@ using Theater.Application.Modules.ActorModule.Commands.ActorEditCommand;
 using Theater.Application.Modules.ActorModule.Commands.ActorRemoveCommand;
 using Theater.Application.Modules.ActorModule.Queries.ActorGetAllQuery;
 using Theater.Application.Modules.ActorModule.Queries.ActorGetByIdQuery;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("actors.manage")]
     public class ActorController : Controller
     {
         private readonly IMediator _mediator;

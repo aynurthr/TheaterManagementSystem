@@ -14,15 +14,6 @@
         .input-group{
             margin-bottom:20px !important;
         }
-        /* .input-group span {
-            min-height: 1.5em;
-            color: red;
-            font-size: 0.9em;
-            display: flex;
-            align-items: start;
-            width: 100%;
-            margin: 0
-        } */
     </style>
 }
 
@@ -76,52 +67,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script>
         $(document).ready(function () {
-            // $('#signupForm').validate({
-            //     rules: {
-            //         Name: {
-            //             required: true,
-            //             maxlength: 100
-            //         },
-            //         Surname: {
-            //             required: true,
-            //             maxlength: 100
-            //         },
-            //         Email: {
-            //             required: true,
-            //             email: true
-            //         },
-            //         Password: {
-            //             required: true,
-            //             minlength: 6
-            //         },
-            //         ConfirmPassword: {
-            //             required: true,
-            //             equalTo: "#Password"
-            //         }
-            //     },
-            //     messages: {
-            //         Name: {
-            //             required: "Name is required.",
-            //             maxlength: "Name must not exceed 100 characters."
-            //         },
-            //         Surname: {
-            //             required: "Surname is required.",
-            //             maxlength: "Surname must not exceed 100 characters."
-            //         },
-            //         Email: {
-            //             required: "Email is required.",
-            //             email: "Invalid email format."
-            //         },
-            //         Password: {
-            //             required: "Password is required.",
-            //             minlength: "Password must be at least 6 characters long."
-            //         },
-            //         ConfirmPassword: {
-            //             required: "Confirm Password is required.",
-            //             equalTo: "Passwords do not match."
-            //         }
-            //     }
-            // });
 
             var input = document.querySelector("#phone");
             var iti = window.intlTelInput(input, {
@@ -163,16 +108,16 @@
             });
 
             $('#signupForm').on('submit', function () {
-                reset(); // Clear previous error message
-                if (input.value.trim() && !iti.isValidNumber()) {
-                    const errorCode = iti.getValidationError();
-                    const msg = errorMap[errorCode] || "Invalid phone number";
-                    showError(msg); // Show error message
-                    return false;
-                } else if (input.value.trim()) {
-                    var full_number = iti.getNumber(intlTelInputUtils.numberFormat.E164);
-                    input.value = full_number;
-                }
+                    reset(); // Clear previous error message
+                    if (input.value.trim() && !iti.isValidNumber()) {
+                        const errorCode = iti.getValidationError();
+                        const msg = errorMap[errorCode] || "Invalid phone number";
+                        showError(msg); // Show error message
+                        return false;
+                    } else if (input.value.trim()) {
+                        var full_number = iti.getNumber(intlTelInputUtils.numberFormat.E164);
+                        input.value = full_number;
+                    }
             });
         });
     </script>

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.TeamMemberModule.Commands.TeamMemberAddCommand;
 using Theater.Application.Modules.TeamMemberModule.Commands.TeamMemberEditCommand;
@@ -10,6 +11,8 @@ using Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetByIdQuer
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize("team-members.manage")]
+
     public class TeamMemberController : Controller
     {
         private readonly IMediator _mediator;
