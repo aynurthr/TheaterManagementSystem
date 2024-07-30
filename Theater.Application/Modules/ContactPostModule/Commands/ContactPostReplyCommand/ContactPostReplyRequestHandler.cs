@@ -30,7 +30,7 @@ namespace Theater.Application.Modules.ContactPostModule.Commands.ContactPostRepl
                 throw new NotFoundException(nameof(ContactPost), request.Id);
             }
 
-            contactPost.AnsweredAt = DateTime.UtcNow;
+            contactPost.AnsweredAt = DateTime.Now;
             contactPost.AnsweredBy = _identityService.GetPrincipialId().ToString();
             contactPost.Answer = request.ReplyMessage;
 

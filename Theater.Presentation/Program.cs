@@ -19,6 +19,7 @@ using Theater.Repository;
 using Theater.Domain.Models.Entities.Membership;
 using Microsoft.AspNetCore.Identity;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
+using Theater.Application.Modules.ContactPostModule.Commands.ContactPostReplyCommand;
 
 
 namespace Theater.Presentation
@@ -70,6 +71,8 @@ namespace Theater.Presentation
 
             builder.Services.AddControllersWithViews()
     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
+            builder.Services.AddControllersWithViews()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostReplyRequestValidator>());
 
 
             //builder.Services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();

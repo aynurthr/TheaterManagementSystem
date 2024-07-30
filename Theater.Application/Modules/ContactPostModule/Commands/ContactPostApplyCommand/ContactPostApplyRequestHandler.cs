@@ -21,7 +21,7 @@ namespace Theater.Application.Modules.ContactPostModule.Commands.ContactPostAppl
             entity.Email = request.Email;
             entity.Topic = request.Subject;
             entity.Message = request.Message;
-            entity.SentAt = DateTime.UtcNow;
+            entity.SentAt = DateTime.Now;
 
             await contactPostRepository.AddAsync(entity, cancellationToken);
             await contactPostRepository.SaveAsync(cancellationToken);

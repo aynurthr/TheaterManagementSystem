@@ -107,7 +107,17 @@ namespace Theater.Application.Modules.AccountModule.Commands.SignupCommand
 
             var confirmationUrl = $"{ctx.ActionContext.HttpContext.Request.Scheme}://{ctx.ActionContext.HttpContext.Request.Host}/email-confirmation.html?token={token}";
 
-            await emailService.SendEmailAsync(request.Email, "Kazan Theater Registration", @$"Hello, Dear Customer.<br/>Please <a href='{confirmationUrl}'>Confirm</a> your email");
+            await emailService.SendEmailAsync(request.Email, "Kazan Theater Registration", @$"
+    <html>
+    <body style='font-family: Arial, sans-serif; color: #333;'>
+        <h2>Welcome to Kazan State Theater of The Young Spectators</h2>
+        <p>Hello, Dear Customer,</p>
+        <p>Thank you for registering with Kazan State Theater of The Young Spectators. To complete your registration, please confirm your email by clicking the link below:</p>
+        <p><a href='{confirmationUrl}' style='color: #1a73e8;'>Confirm your email</a></p>
+       <i>Best regards,<br>Kazan State Theater of The Young Spectators</i>
+    </body>
+    </html>
+");
         }
     }
 }

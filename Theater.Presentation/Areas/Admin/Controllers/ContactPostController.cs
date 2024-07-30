@@ -4,6 +4,7 @@ using Theater.Application.Modules.ContactPostModule.Queries.ContactPostGetAllQue
 using System.Threading.Tasks;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostReplyCommand;
 using Theater.Application.Modules.ContactPostModule.Queries.ContactPostGetByIdQuery;
+using FluentValidation;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
@@ -11,10 +12,12 @@ namespace Theater.Presentation.Areas.Admin.Controllers
     public class ContactPostController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IValidator<ContactPostReplyRequest> _replyValidator;
 
-        public ContactPostController(IMediator mediator)
+        public ContactPostController(IMediator mediator, IValidator<ContactPostReplyRequest> replyValidator)
         {
             _mediator = mediator;
+            _replyValidator = replyValidator;
         }
 
         public async Task<IActionResult> Index()
@@ -37,7 +40,12 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(request);
+                // Re-fetch the details to populate the view correctly
+                var detailsRequest = new ContactPostGetByIdRequest { Id = request.Id };
+                var detailsResponse = await _mediator.Send(detailsRequest);
+                detailsResponse.ReplyMessage = request.ReplyMessage;
+
+                return View(detailsResponse);
             }
 
             var replyRequest = new ContactPostReplyRequest
@@ -45,6 +53,23 @@ namespace Theater.Presentation.Areas.Admin.Controllers
                 Id = request.Id,
                 ReplyMessage = request.ReplyMessage
             };
+
+            var validationResult = await _replyValidator.ValidateAsync(replyRequest);
+
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
+                // Re-fetch the details to populate the view correctly
+                var detailsRequest = new ContactPostGetByIdRequest { Id = request.Id };
+                var detailsResponse = await _mediator.Send(detailsRequest);
+                detailsResponse.ReplyMessage = request.ReplyMessage;
+
+                return View(detailsResponse);
+            }
 
             await _mediator.Send(replyRequest);
             return RedirectToAction("Index");
