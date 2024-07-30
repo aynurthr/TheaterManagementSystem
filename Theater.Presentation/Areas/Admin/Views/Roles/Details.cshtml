@@ -1,32 +1,66 @@
-﻿@using Theater.Domain.Models.DTOs;
+﻿@using Theater.Domain.Models.DTOs
 @model AppRoleDto
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Role Details";
 }
 
-<div>
-    <strong>Name</strong>
-    <p>@Model.Name</p>
-
-    <hr />
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Policy</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Policies)
-            {
-                <tr>
-                    <td><input disabled type="checkbox" @(item.Selected ? "checked" : "") /></td>
-                    <td>@item.Name</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <hr />
-    <a class="btn btn-outline-secondary" asp-action="Index">Go back</a>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Role Details</h1>
+        </div>
+        <div class="card-body">
+            <div>
+                <h4>Role Information</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-3">Role Name</dt>
+                    <dd class="col-sm-9">@Model.Name</dd>
+                </dl>
+            </div>
+            <div>
+                <h4>Policies</h4>
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Policy Name</th>
+                            <th>Assigned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Policies)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>
+                                    <input disabled type="checkbox" @(item.Selected ? "checked" : "") />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Members</h4>
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Users</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var member in Model.Members)
+                        {
+                            <tr>
+                                <td>@member.Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <hr />
+            <a class="btn btn-outline-secondary" asp-action="Index">Go back</a>
+        </div>
+    </div>
 </div>

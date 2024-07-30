@@ -27,8 +27,6 @@ namespace Theater.Presentation.Areas.Admin.Controllers
 
         }
 
-        [Authorize("home.index")]
-
         public async Task<IActionResult> Index(NewsGetAllRequest request)
         {
             var response = await _mediator.Send(request);

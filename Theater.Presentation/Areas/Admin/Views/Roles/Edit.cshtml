@@ -1,128 +1,116 @@
 ﻿@using Theater.Domain.Models.DTOs;
 @model AppRoleDto
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Role";
 }
 
-<form method="post">
-    <strong>Name</strong>
-    <input asp-for="Name" class="form-control" />
-    <input asp-for="Id" hidden />
-
-    <hr />
-    <a class="btn btn-outline-secondary" asp-action="Index">Go to back</a>
-    <button class="btn btn-outline-warning" type="submit">Save</button>
-
-    <div class="tab-control mt-3" role="tabcontrol">
-        <div class="tab-page" id="policies" aria-title="Policies" selected>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Policy</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Policies)
-                    {
-                        <tr>
-                            <td><input type="checkbox" @(item.Selected ? "checked" : "") data-role-id="@Model.Id" data-policy-name="@item.Name" /></td>
-                            <td>@item.Name</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Edit Role</h1>
         </div>
-        <div class="tab-page" id="users" aria-title="Users">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>User</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Members)
-                    {
-                        <tr>
-                            <td><input type="checkbox" @(item.Selected ? "checked" : "") data-role-id="@Model.Id" data-member-id="@item.Id" /></td>
-                            <td>@item.Name</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="card-body">
+            <form method="post">
+                <div class="form-group">
+                    <label asp-for="Name"><strong>Name</strong></label>
+                    <input asp-for="Name" class="form-control" />
+                    <input asp-for="Id" type="hidden" />
+                </div>
+                <hr />
+                <div class="form-group">
+                    <a class="btn btn-outline-secondary" asp-action="Index">Go back</a>
+                    <button class="btn btn-outline-warning" type="submit">Save</button>
+                </div>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-policies-tab" data-toggle="tab" href="#nav-policies" role="tab" aria-controls="nav-policies" aria-selected="true">Policies</a>
+                    <a class="nav-item nav-link" id="nav-users-tab" data-toggle="tab" href="#nav-users" role="tab" aria-controls="nav-users" aria-selected="false">Users</a>
+                </div>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-policies" role="tabpanel" aria-labelledby="nav-policies-tab">
+                        <table class="table table-striped mt-3">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th></th>
+                                    <th>Policy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Policies)
+                                {
+                                    <tr>
+                                        <td><input type="checkbox" @(item.Selected ? "checked" : "") data-role-id="@Model.Id" data-policy-name="@item.Name" /></td>
+                                        <td>@item.Name</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+                        <table class="table table-striped mt-3">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th></th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Members)
+                                {
+                                    <tr>
+                                        <td><input type="checkbox" @(item.Selected ? "checked" : "") data-role-id="@Model.Id" data-member-id="@item.Id" /></td>
+                                        <td>@item.Name</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-
-</form>
+</div>
 
 @section addjs {
     <script src="~/lib/tabcontrol/tab-control.js"></script>
     <script>
         $(document).ready(function () {
-
-
             $('input[type=checkbox][data-policy-name]').change(function (e) {
-
                 const postData = $(e.currentTarget).data();
-
                 postData.selected = $(e.currentTarget).is(':checked');
-
-                console.log(postData);
-
 
                 $.ajax({
                     url: `@Url.Action("ChangeAccess")`,
                     type: 'POST',
                     data: postData,
                     success: function (response) {
-                        console.log(response);
-
-                        if (response.error == true) {
+                        if (response.error) {
                             $(e.currentTarget).prop('checked', !postData.selected);
                         }
                     },
                     error: function (response) {
-
                         $(e.currentTarget).prop('checked', !postData.selected);
-                        console.warn(response);
                     }
-
                 });
-
             });
 
-
             $('input[type=checkbox][data-member-id]').change(function (e) {
-
                 const postData = $(e.currentTarget).data();
-
                 postData.selected = $(e.currentTarget).is(':checked');
-
-                console.log(postData);
-
 
                 $.ajax({
                     url: `@Url.Action("ManageMember")`,
                     type: 'POST',
                     data: postData,
                     success: function (response) {
-                        console.log(response);
-
-                        if (response.error == true) {
+                        if (response.error) {
                             $(e.currentTarget).prop('checked', !postData.selected);
                         }
                     },
                     error: function (response) {
-
                         $(e.currentTarget).prop('checked', !postData.selected);
-                        console.warn(response);
                     }
-
                 });
-
             });
-
         });
     </script>
 }

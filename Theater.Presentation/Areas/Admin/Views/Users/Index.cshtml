@@ -25,7 +25,14 @@
                 <td>@user.UserName</td>
                 <td>@user.Email</td>
                 <td>@user.EmailConfirmed</td>
-                <td>@user.PhoneNumber</td>
+                <td> @if (string.IsNullOrEmpty(user.PhoneNumber))
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        @user.PhoneNumber
+                    }</td>
                 <td>@user.PhoneNumberConfirmed</td>
                 <td>
                     <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@user.Id">

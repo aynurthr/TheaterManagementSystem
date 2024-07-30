@@ -74,13 +74,13 @@ namespace Theater.Presentation.Controllers
                 }
 
                 dto.Members = await (from u in db.Users
-                                     join ur in db.UserRoles.Where(m => m.RoleId == role.Id) on u.Id equals ur.UserId into leftSet
-                                     from ls in leftSet.DefaultIfEmpty()
+                                     join ur in db.UserRoles on u.Id equals ur.UserId
+                                     where ur.RoleId == role.Id
                                      select new AppRoleMemberDto
                                      {
                                          Id = u.Id,
                                          Name = $"{u.UserName} ({u.Email})",
-                                         Selected = ls != null
+                                         Selected = true
                                      }).ToListAsync();
 
                 return View(dto);
@@ -91,6 +91,7 @@ namespace Theater.Presentation.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
 
         [Authorize("roles.create")]
@@ -179,6 +180,7 @@ namespace Theater.Presentation.Controllers
             dto.Members = await (from u in db.Users
                                  join ur in db.UserRoles.Where(m => m.RoleId == role.Id) on u.Id equals ur.UserId into leftSet
                                  from ls in leftSet.DefaultIfEmpty()
+                                 where !db.UserRoles.Any(sur => sur.UserId == u.Id && db.Roles.Any(r => r.Id == sur.RoleId && r.Name.ToLower() == "superadmin"))
                                  select new AppRoleMemberDto
                                  {
                                      Id = u.Id,

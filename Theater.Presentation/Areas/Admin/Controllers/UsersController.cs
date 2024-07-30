@@ -4,9 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Theater.DataAccessLayer.Contexts;
 using Theater.Domain.Models.DTOs;
 using Theater.Domain.Models.Entities.Membership;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Theater.Presentation.Pipeline;
 
-namespace Theater.Presentation.Controllers
+namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class UsersController : Controller
@@ -39,50 +42,58 @@ namespace Theater.Presentation.Controllers
             {
                 Id = user.Id,
                 UserName = user.UserName,
+                Surname = user.Surname,
+                Name = user.Name,
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed,
                 Phone = user.PhoneNumber,
-                PhoneConfirmed = user.PhoneNumberConfirmed
+                PhoneConfirmed = user.PhoneNumberConfirmed,
+                Policies = new List<PolicyDto>(),
+                Roles = new List<AppUserRoleDto>()
             };
 
             try
             {
-                var userClaims = await userManager.GetClaimsAsync(user);
-                if (userClaims == null || !userClaims.Any())
-                {
-                    dto.Policies = new List<PolicyDto>(); // No policies found, set an empty list
-                }
-                else
-                {
-                    //var userPolicies = userClaims.Where(m => m.Value == "1").Select(m => m.Type);
-                    //dto.Policies = (from p in AppClaimsTransformation.policies
-                    //                join up in userPolicies on p equals up into leftSet
-                    //                from ls in leftSet.DefaultIfEmpty()
-                    //                select new PolicyDto
-                    //                {
-                    //                    Name = p,
-                    //                    Selected = ls != null
-                    //                }).ToList();
-                }
+                // Get user roles
+                var userRoles = await (from r in db.Roles
+                                       join ur in db.UserRoles on r.Id equals ur.RoleId
+                                       where ur.UserId == user.Id
+                                       select new AppUserRoleDto
+                                       {
+                                           Id = r.Id,
+                                           Name = r.Name,
+                                           Selected = true
+                                       }).ToListAsync();
 
-                dto.Roles = await (from r in db.Roles
-                                   join ur in db.UserRoles.Where(m => m.UserId == user.Id) on r.Id equals ur.RoleId into leftSet
-                                   from ls in leftSet.DefaultIfEmpty()
-                                   select new AppUserRoleDto
-                                   {
-                                       Id = r.Id,
-                                       Name = r.Name,
-                                       Selected = ls != null
-                                   }).ToListAsync();
+                dto.Roles = userRoles;
+
+                // Get all available claims
+                var allClaims = AppClaimsTransformation.policies;
+
+                // Get claims for user roles
+                var roleIds = userRoles.Select(r => r.Id).ToList();
+                var roleClaims = await (from rc in db.RoleClaims
+                                        where roleIds.Contains(rc.RoleId)
+                                        select new PolicyDto
+                                        {
+                                            Name = rc.ClaimType,
+                                            Selected = rc.ClaimValue == "1"
+                                        }).ToListAsync();
+
+                // Mark claims based on user roles
+                dto.Policies = allClaims.Select(claim => new PolicyDto
+                {
+                    Name = claim,
+                    Selected = roleClaims.Any(rc => rc.Name == claim && rc.Selected) ||
+                               userRoles.Any(ur => ur.Name.ToLower() == "superadmin")
+                }).ToList();
 
                 return View(dto);
             }
             catch (Exception ex)
             {
-                // If any exception occurs, return a 500 status code with a generic error message
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
         }
     }
 }
