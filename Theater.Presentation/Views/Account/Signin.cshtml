@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="~/assets/sass/main.css" />
 
-@section addcss{
-<style>
+@section addcss {
+    <style>
         .input-group label.error {
             min-height: 1.5em;
             color: red;
@@ -19,9 +19,8 @@
             width: 100%;
             margin: 0
         }
-</style>
+    </style>
 }
-
 
 <section class="auth">
     <img class="auth__top-image" src="../../assets/media/images/inside-theater.jpg" alt="Background" />
@@ -38,7 +37,7 @@
                     @ViewBag.ErrorMessage
                 </div>
             }
-            <form asp-action="Signin"  method="post" id="signinForm">
+            <form asp-action="Signin" method="post" id="signinForm">
                 <div class="input-group">
                     <input asp-for="UserName" placeholder="Email, Username, or Phone Number" class="form-control" required />
                     <label id="UserName-error" class="error" for="UserName"></label>
@@ -51,9 +50,9 @@
                 </div>
                 <button type="submit" class="btn">Login</button>
             </form>
-           @*  <p>
+            <p>
                 <a asp-action="ForgotPassword" asp-controller="Account">Forgot your password?</a>
-            </p> *@
+            </p>
         </div>
     </div>
 </section>
@@ -66,7 +65,14 @@
                 <h5 class="modal-title" id="successModalLabel">Success</h5>
             </div>
             <div class="modal-body">
-                Confirmation email has been sent. Please check your email and confirm your account.
+                @if (ViewBag.EmailConfirmationSent != null)
+                {
+                    @ViewBag.EmailConfirmationSent
+                }
+                @if (ViewBag.ResetPasswordSuccess != null)
+                {
+                    @ViewBag.ResetPasswordSuccess
+                }
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
@@ -110,7 +116,7 @@
                 }
             });
 
-        @if (ViewBag.EmailConfirmationSent != null)
+        @if (ViewBag.EmailConfirmationSent != null || ViewBag.ResetPasswordSuccess != null)
         {
             <text>
                     $(document).ready(function () {

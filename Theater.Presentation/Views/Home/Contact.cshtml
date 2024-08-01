@@ -97,9 +97,8 @@
                     url: '@Url.Action("Contact", "Home")',
                     type: 'POST',
                     data: formData,
-                    dataType: 'json', // Expect JSON response
+                    dataType: 'json',
                     success: function (response) {
-                        // Check if the response indicates success
                         if (response && !response.error) {
                             $('#contactForm')[0].reset(); // Reset the form
                             $('#successModal').modal('show'); // Show the success modal

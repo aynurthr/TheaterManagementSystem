@@ -1,23 +1,31 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Theater.Application.Modules.AccountModule.Commands.EmailConfirmationCommand;
+using Theater.Application.Modules.AccountModule.Commands.ForgetPasswordCommand;
+using Theater.Application.Modules.AccountModule.Commands.ResetPasswordCommand;
 using Theater.Application.Modules.AccountModule.Commands.SigninCommand;
 using Theater.Application.Modules.AccountModule.Commands.SignupCommand;
+using Theater.Infrastructure.Exceptions;
+
 
 namespace Theater.Presentation.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IMediator mediator;
+        private readonly IValidator<Application.Modules.AccountModule.Commands.ResetPasswordCommand.ResetPasswordRequest> _resetPasswordValidator;
+        private readonly IValidator<ForgetPasswordRequest> _forgetPasswordValidator;
 
-        public AccountController(IMediator mediator)
+        public AccountController(IMediator mediator, IValidator<Application.Modules.AccountModule.Commands.ResetPasswordCommand.ResetPasswordRequest> resetPasswordValidator, IValidator<ForgetPasswordRequest> forgetPasswordValidator)
         {
             this.mediator = mediator;
+            _resetPasswordValidator = resetPasswordValidator;
+            _forgetPasswordValidator = forgetPasswordValidator;
         }
 
         [AllowAnonymous]
@@ -28,6 +36,12 @@ namespace Theater.Presentation.Controllers
             {
                 ViewBag.EmailConfirmationSent = TempData["EmailConfirmationSent"];
             }
+
+            if (TempData["ResetPasswordSuccess"] != null)
+            {
+                ViewBag.ResetPasswordSuccess = TempData["ResetPasswordSuccess"];
+            }
+
             return View();
         }
 
@@ -116,34 +130,86 @@ namespace Theater.Presentation.Controllers
             return RedirectToAction("Signin", "Account");
         }
 
-
-        //[HttpGet]
-        //[Route("/forgot-password")]
-        //public IActionResult ForgotPassword()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //[Route("/forgot-password")]
-        //public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        await mediator.Send(request);
-        //        ViewBag.Message = "Password reset link has been sent to your email.";
-        //    }
-
-        //    return View(request);
-        //}
-
-
-
         [Route("/accessdenied.html")]
         public IActionResult Denied()
         {
             return View();
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("/forgot-password.html")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("/forgot-password.html")]
+        public async Task<IActionResult> ForgotPassword(ForgetPasswordRequest request)
+        {
+            var validationResult = await _forgetPasswordValidator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
+                return View(request);
+            }
+
+            try
+            {
+                await mediator.Send(request);
+                ViewBag.ForgotPasswordSuccess = "Reset password email has been sent successfully.";
+            }
+            catch (BadRequestException ex)
+            {
+                foreach (var error in ex.Errors)
+                {
+                    ModelState.AddModelError(error.Key, string.Join(", ", error.Value));
+                }
+                return View(request);
+            }
+
+            return View();
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("/reset-password.html")]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            var model = new Application.Modules.AccountModule.Commands.ResetPasswordCommand.ResetPasswordRequest { Token = token, Email = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("/reset-password.html")]
+        public async Task<IActionResult> ResetPassword(Application.Modules.AccountModule.Commands.ResetPasswordCommand.ResetPasswordRequest request)
+        {
+            var validationResult = await _resetPasswordValidator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
+                return View(request);
+            }
+
+            await mediator.Send(request);
+            TempData["ResetPasswordSuccess"] = "Your password has been reset successfully.";
+            return RedirectToAction("Signin");
+        }
+
 
 
     }

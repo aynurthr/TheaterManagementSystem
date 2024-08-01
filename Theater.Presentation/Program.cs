@@ -52,8 +52,19 @@ namespace Theater.Presentation
                 cfg.Filters.AppendAuthorization();
             });
 
+
             builder.Services.AddControllersWithViews()
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignupRequestValidator>());
+                .AddFluentValidation(fv =>
+                {
+                    fv.RegisterValidatorsFromAssemblyContaining<SignupRequestValidator>();
+                    fv.RegisterValidatorsFromAssemblyContaining<ResetPasswordRequestValidator>();
+                    fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>();
+                    fv.RegisterValidatorsFromAssemblyContaining<ContactPostReplyRequestValidator>();
+                    fv.RegisterValidatorsFromAssemblyContaining<ForgetPasswordRequestValidator>();
+
+                });
+
+
 
             builder.Services.AddRouting(cfg => cfg.LowercaseUrls = true);
 
@@ -72,12 +83,6 @@ namespace Theater.Presentation
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-
-            builder.Services.AddControllersWithViews()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>());
-            builder.Services.AddControllersWithViews()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ContactPostReplyRequestValidator>());
 
 
             //builder.Services.AddSingleton<IValidatorInterceptor, ValidatorInterceptor>();
