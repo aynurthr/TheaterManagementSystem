@@ -20,6 +20,7 @@ using Theater.Domain.Models.Entities.Membership;
 using Microsoft.AspNetCore.Identity;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostApplyCommand;
 using Theater.Application.Modules.ContactPostModule.Commands.ContactPostReplyCommand;
+using Theater.Application.Validators.Genre;
 
 
 namespace Theater.Presentation
@@ -61,6 +62,7 @@ namespace Theater.Presentation
                     fv.RegisterValidatorsFromAssemblyContaining<ContactPostApplyRequestValidator>();
                     fv.RegisterValidatorsFromAssemblyContaining<ContactPostReplyRequestValidator>();
                     fv.RegisterValidatorsFromAssemblyContaining<ForgetPasswordRequestValidator>();
+                    fv.RegisterValidatorsFromAssemblyContaining<GenreEditRequestValidator>();
 
                 });
 
