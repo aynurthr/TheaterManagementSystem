@@ -12,17 +12,20 @@
 
 <section class="shows">
     <div class="container">
-        <div class="search-bar">
-            <input type="text" placeholder="Search premieres..." id="posters-search" />
+        <div class="search-bar mb-3">
+            <input type="text" placeholder="Search premieres..." id="posters-search" class="form-control" />
         </div>
         <div class="filter-bar mb-3 row align-items-center">
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <select id="genre-filter" class="form-control select2" asp-items="@(new SelectList(ViewBag.Genres, "Id", "Name"))">
                     <option value="">All Genres</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <button id="filter-button" class="btn btn-primary w-100">Filter</button>
+            </div>
+            <div class="col-md-3">
+                <button id="clear-filters-button" class="btn btn-secondary w-100">Clear Filters</button>
             </div>
         </div>
         <h1>Premieres - @ViewBag.SelectedGenre</h1>
@@ -62,6 +65,8 @@
         document.addEventListener("DOMContentLoaded", function () {
             const filterButton = document.getElementById("filter-button");
             const genreFilter = document.getElementById("genre-filter");
+            const searchInput = document.getElementById("posters-search");
+            const clearFiltersButton = document.getElementById("clear-filters-button");
 
             filterButton.addEventListener("click", function () {
                 const genreId = genreFilter.value;
@@ -71,6 +76,21 @@
                     let url = '/api/posters/genre/' + genreId;
                     window.location.href = url;
                 }
+            });
+
+            searchInput.addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        let url = '/api/posters/search?query=' + encodeURIComponent(query);
+                        window.location.href = url;
+                    }
+                }
+            });
+
+            clearFiltersButton.addEventListener("click", function () {
+                window.location.href = "/api/posters";
             });
 
             $('.select2').select2();

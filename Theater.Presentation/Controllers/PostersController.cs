@@ -67,6 +67,19 @@ namespace Theater.Presentation.Controllers
             return View("Index", response);
         }
 
+        [HttpGet("search")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchPosters([FromQuery] string query)
+        {
+            var request = new PosterGetAllRequest { SearchQuery = query };
+            var response = await _mediator.Send(request);
+            var genres = _genreRepository.GetAll().Where(g => g.DeletedAt == null);
+
+            ViewBag.Genres = genres.Select(g => new { g.Id, g.Name }).ToList();
+            ViewBag.SelectedGenre = "Search Results";
+
+            return View("Index", response);
+        }
 
         [HttpGet("{id}")]
         [AllowAnonymous]
