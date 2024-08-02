@@ -1,42 +1,79 @@
 ﻿@using Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery
 @using Theater.Infrastructure.Extensions
-
 @model IEnumerable<PosterGetAllRequestDto>
+
 @{
     ViewBag.Title = "Premieres";
     ViewBag.BodyId = "Premieres";
 }
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 <section class="shows">
     <div class="container">
         <div class="search-bar">
             <input type="text" placeholder="Search premieres..." id="posters-search" />
         </div>
-        <h1>Premieres</h1>
+        <div class="filter-bar mb-3 row align-items-center">
+            <div class="col-md-8">
+                <select id="genre-filter" class="form-control select2" asp-items="@(new SelectList(ViewBag.Genres, "Id", "Name"))">
+                    <option value="">All Genres</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button id="filter-button" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </div>
+        <h1>Premieres - @ViewBag.SelectedGenre</h1>
         <div class="shows-wrapper" id="shows-wrapper">
-            @foreach (var poster in Model)
+            @if (!Model.Any())
             {
-                <div class="shows-item" data-id="@poster.Id">
-                    <a href="@Url.Action("Details", "Posters", new { id = poster.Id })" class="shows-item__link">
-                        <img src="@poster.ImageUrl" alt="show@poster.Id" />
-                        <div class="shows-item__shadow"></div>
-                        <div class="shows-item__top">
-                            <date>@poster.ShowDate.ToString("dd MMMM, HH:mm")</date>
-                            <age>@poster.Age</age>
-                        </div>
-                        <div class="shows-item__bottom">
-                            <h5>@poster.Title</h5>
-                            <p class="description">
-                                @Html.Raw(@poster.Description.Truncate(150)) <!-- Adjust the length as needed -->
-                            </p>
-                        </div>
-                    </a>
-                </div>
+                <p>No Posters</p>
+            }
+            else
+            {
+                @foreach (var poster in Model)
+                {
+                    <div class="shows-item" data-id="@poster.Id">
+                        <a href="@Url.Action("Details", "Posters", new { id = poster.Id })" class="shows-item__link">
+                            <img src="@poster.ImageUrl" alt="show@poster.Id" />
+                            <div class="shows-item__shadow"></div>
+                            <div class="shows-item__top">
+                                <date>@poster.ShowDate.ToString("dd MMMM, HH:mm")</date>
+                                <age>@poster.Age</age>
+                            </div>
+                            <div class="shows-item__bottom">
+                                <h5>@poster.Title</h5>
+                                <p class="description">
+                                    @Html.Raw(@poster.Description.Truncate(150)) <!-- Adjust the length as needed -->
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                }
             }
         </div>
     </div>
 </section>
 
 @section addjs {
-    <script type="module" src="~/scripts/posters.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const filterButton = document.getElementById("filter-button");
+            const genreFilter = document.getElementById("genre-filter");
+
+            filterButton.addEventListener("click", function () {
+                const genreId = genreFilter.value;
+                if (genreId === "") {
+                    window.location.href = "/api/posters";
+                } else {
+                    let url = '/api/posters/genre/' + genreId;
+                    window.location.href = url;
+                }
+            });
+
+            $('.select2').select2();
+        });
+    </script>
 }

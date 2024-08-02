@@ -1,21 +1,18 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery;
-using Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery;
-using Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Theater.Application.Modules.CommentModule.Commands.CommentAddCommand;
-using Theater.Domain.Models.Entities.Membership;
 using Theater.Application.Modules.CommentModule.Commands.CommentEditCommand;
-using Theater.Infrastructure.Abstracts;
-using Theater.Repository;
-using Theater.Application.Repositories;
-using Microsoft.Extensions.Logging;
-using Theater.Application.Services;
 using Theater.Application.Modules.GenreModule.Commands.GenreRemoveCommand;
+using Theater.Application.Modules.GenreModule.Queries.GenreGetAllQuery;
 using Theater.Application.Modules.PosterModule.Commands.PurchaseTicketCommand;
+using Theater.Application.Modules.PosterModule.Queries.PosterBuyTicketQuery;
+using Theater.Application.Modules.PosterModule.Queries.PosterGetAllQuery;
+using Theater.Application.Modules.PosterModule.Queries.PosterGetByIdQuery;
+using Theater.Application.Repositories;
+using Theater.Domain.Models.Entities.Membership;
 
 namespace Theater.Presentation.Controllers
 {
@@ -27,13 +24,15 @@ namespace Theater.Presentation.Controllers
         private readonly ILogger<PostersController> _logger;
         private readonly UserManager<AppUser> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IGenreRepository _genreRepository;
 
-        public PostersController(IMediator mediator, ILogger<PostersController> logger, UserManager<AppUser> userManager, ICurrentUserService currentUserService)
+        public PostersController(IMediator mediator, ILogger<PostersController> logger, UserManager<AppUser> userManager, ICurrentUserService currentUserService, IGenreRepository genreRepository)
         {
             _mediator = mediator;
             _logger = logger;
             _userManager = userManager;
             _currentUserService = currentUserService;
+            _genreRepository = genreRepository;
         }
 
         [HttpGet]
@@ -41,8 +40,33 @@ namespace Theater.Presentation.Controllers
         public async Task<IActionResult> Index([FromQuery] PosterGetAllRequest request)
         {
             var response = await _mediator.Send(request);
+            var genres = _genreRepository.GetAll().Where(g => g.DeletedAt == null);
+
+            ViewBag.Genres = genres.Select(g => new { g.Id, g.Name }).ToList();
+            ViewBag.SelectedGenre = genres.FirstOrDefault(g => g.Id == request.GenreId)?.Name ?? "All Genres";
+
             return View(response);
         }
+
+        [HttpGet("genre/{genreId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPostersByGenre(int genreId)
+        {
+            if (genreId == 0)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var request = new PosterGetAllRequest { GenreId = genreId };
+            var response = await _mediator.Send(request);
+            var genres = _genreRepository.GetAll().Where(g => g.DeletedAt == null);
+
+            ViewBag.Genres = genres.Select(g => new { g.Id, g.Name }).ToList();
+            ViewBag.SelectedGenre = genres.FirstOrDefault(g => g.Id == genreId)?.Name ?? "All Genres";
+
+            return View("Index", response);
+        }
+
 
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -184,8 +208,5 @@ namespace Theater.Presentation.Controllers
 
             return Ok("Tickets purchased successfully.");
         }
-
-
-
     }
 }
