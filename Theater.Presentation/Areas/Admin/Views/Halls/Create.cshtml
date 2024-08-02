@@ -26,31 +26,4 @@
 @section addjs {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#hallForm').validate({
-                rules: {
-                    Name: {
-                        required: true
-                    },
-                    Capacity: {
-                        required: true,
-                        min: 1
-                    }
-                },
-                messages: {
-                    Name: {
-                        required: "Please enter the hall name"
-                    },
-                    Capacity: {
-                        required: "Please enter the hall capacity",
-                        min: "Capacity must be at least 1"
-                    }
-                },
-                errorClass: "text-danger",
-                validClass: "is-valid",
-                errorElement: "span"
-            });
-        });
-    </script>
 }

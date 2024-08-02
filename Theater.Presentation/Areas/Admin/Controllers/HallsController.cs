@@ -6,21 +6,23 @@ using Theater.Application.Modules.HallModule.Queries.HallGetAllQuery;
 using Theater.Application.Modules.SeatModule.Queries;
 using Theater.Application.Modules.HallModule.Commands.HallAddCommand;
 using Microsoft.AspNetCore.Authorization;
+using FluentValidation;
+using Theater.Application.Modules.GenreModule.Commands.GenreAddCommand;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/[controller]")]
-    [ApiController]
     [Authorize("halls.manage")]
-
     public class HallsController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IValidator<HallAddRequest> _hallAddValidator;
 
-        public HallsController(IMediator mediator)
+        public HallsController(IMediator mediator, IValidator<HallAddRequest> hallAddValidator)
         {
             _mediator = mediator;
+            _hallAddValidator = hallAddValidator;
         }
 
         [HttpGet]
@@ -83,8 +85,15 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromForm] HallAddRequest request)
         {
-            if (!ModelState.IsValid)
+            var validationResult = await _hallAddValidator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
             {
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
                 return View(request);
             }
 
@@ -93,5 +102,4 @@ namespace Theater.Presentation.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-
 }
