@@ -53,7 +53,7 @@ namespace Theater.Presentation.Controllers
 
             if (response == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             var user = await _userManager.FindByIdAsync(_currentUserService.UserId);
@@ -128,7 +128,7 @@ namespace Theater.Presentation.Controllers
 
             if (posterDetails == null || !posterDetails.ShowDates.Any())
             {
-                return NotFound();
+                return View("NotFound");
             }
             var showDateId = posterDetails.ShowDates.First().ShowDateId;
 
@@ -138,7 +138,7 @@ namespace Theater.Presentation.Controllers
 
             if (response == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
             return View(response);
         }

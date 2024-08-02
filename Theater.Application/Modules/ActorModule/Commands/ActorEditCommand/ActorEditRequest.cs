@@ -10,5 +10,7 @@ namespace Theater.Application.Modules.ActorModule.Commands.ActorEditCommand
         public string FullName { get; set; }
         public string Title { get; set; }
         public IFormFile Image { get; set; }
+        public string ImageUrl { get; set; }
+
     }
 }

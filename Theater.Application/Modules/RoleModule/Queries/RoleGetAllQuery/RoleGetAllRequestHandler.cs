@@ -22,7 +22,7 @@ namespace Theater.Application.Modules.RoleModule.Queries.RoleGetAllQuery
         {
             var roles = await _roleRepository
                 .GetAll()
-                .Where(r => r.DeletedAt == null) // Add this filter
+                .Where(r => r.DeletedAt == null)
                 .Include(r => r.Actor)
                 .Include(r => r.Poster)
                 .ToListAsync(cancellationToken);

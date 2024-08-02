@@ -30,6 +30,7 @@ namespace Theater.Application.Modules.ActorModule.Commands.ActorEditCommand
             if (request.Image != null)
             {
                 entity.ImageSrc = await _fileService.ChangeFileAsync(entity.ImageSrc, request.Image);
+                request.ImageUrl = entity.ImageSrc;  // Set the Image URL here
             }
 
             _actorRepository.Edit(entity);

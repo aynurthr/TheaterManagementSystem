@@ -4,33 +4,49 @@
     ViewBag.Title = "Upsert Ticket";
 }
 
-<h2>Upsert Ticket</h2>
+<div class="container">
+    <div class="justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title">Upsert Ticket</h2>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Poster Title:</strong> @ViewBag.PosterTitle <br>
+                        <strong>Show Date:</strong> @ViewBag.ShowDate <br>
+                        <strong>Seat:</strong> @ViewBag.SeatDetails
+                    </p>
+                    <form asp-action="UpsertTicket" method="post" id="ticketForm">
+                        <div class="form-group">
+                            <label asp-for="Price" class="control-label"></label>
+                            <input asp-for="Price" class="form-control" id="priceInput" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                            <span id="priceError" class="text-danger"></span>
+                        </div>
+                        <input type="hidden" asp-for="ShowDateId" />
+                        <input type="hidden" asp-for="SeatId" />
+                        <div class="d-flex mt-3">
+                            <button type="submit" class="btn btn-primary mr-0.5">Save</button>
+                            <a class="btn btn-secondary ml-2" href="javascript:history.back()">Cancel</a>
+                        </div>
 
-<form id="ticketForm" asp-action="UpsertTicket" method="post">
-    <input type="hidden" asp-for="ShowDateId" />
-    <input type="hidden" asp-for="SeatId" />
-
-    <div class="form-group">
-        <label asp-for="Price" class="control-label">Price</label>
-        <input asp-for="Price" class="form-control" id="priceInput" />
-        <span asp-validation-for="Price" class="text-danger" id="priceError"></span>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
-        <a asp-action="Details" asp-controller="ShowDate" asp-route-id="@Model.ShowDateId" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+</div>
 
 @section addjs {
     <script>
-        document.getElementById("ticketForm").addEventListener("submit", function(event) {
+        document.getElementById("ticketForm").addEventListener("submit", function (event) {
             var priceInput = document.getElementById("priceInput");
             var priceError = document.getElementById("priceError");
 
-            if (parseFloat(priceInput.value) <= 0) {
+            if (priceInput.value === "" || parseFloat(priceInput.value) <= 0) {
                 event.preventDefault();
-                priceError.textContent = "The price must be greater than zero.";
+                priceError.textContent = "The price must be greater than zero and cannot be empty.";
             } else {
                 priceError.textContent = "";
             }

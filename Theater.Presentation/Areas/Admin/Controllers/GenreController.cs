@@ -61,6 +61,11 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         public async Task<IActionResult> Edit([FromRoute] GenreGetByIdRequest request)
         {
             var response = await _mediator.Send(request);
+            if (response == null)
+            {
+                return View("NotFound");
+            }
+
             return View(response);
         }
 

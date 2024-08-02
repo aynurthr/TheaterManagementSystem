@@ -21,6 +21,7 @@ public class PosterGetByIdRequestHandler : IRequestHandler<PosterGetByIdRequest,
     public async Task<PosterGetByIdRequestDto> Handle(PosterGetByIdRequest request, CancellationToken cancellationToken)
     {
         var poster = await _posterRepository.GetAll()
+            .Where(p => p.DeletedAt == null)
             .Include(p => p.Roles).ThenInclude(r => r.Actor)
             .Include(p => p.Comments).ThenInclude(c => c.User)
             .Include(p => p.Genre)

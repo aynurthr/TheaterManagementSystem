@@ -24,19 +24,19 @@ namespace Theater.Presentation.Controllers
         }
 
         [AllowAnonymous]
-
         public async Task<IActionResult> Details(int id)
         {
             var request = new NewsGetByIdRequest { Id = id };
             var newsItem = await mediator.Send(request);
 
-            //if (newsItem == null)
-            //{
-            //    return NotFound();
-            //}
+            if (newsItem == null)
+            {
+                return View("NotFound");
+            }
 
             return View(newsItem);
         }
+
 
     }
 }

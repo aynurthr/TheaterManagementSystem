@@ -34,6 +34,10 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         {
             var request = new ContactPostGetByIdRequest { Id = id };
             var response = await _mediator.Send(request);
+            if (response == null || response.AnsweredAt != null)
+            {
+                return View("NotFound");
+            }
             return View(response);
         }
 
@@ -81,6 +85,10 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         {
             var request = new ContactPostGetByIdRequest { Id = id };
             var response = await _mediator.Send(request);
+            if (response == null || response.AnsweredAt == null)
+            {
+                return View("NotFound");
+            }
             return View(response);
         }
     }

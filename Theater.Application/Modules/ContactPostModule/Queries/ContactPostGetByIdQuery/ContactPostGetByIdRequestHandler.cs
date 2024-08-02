@@ -1,7 +1,5 @@
-﻿
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Theater.Application.Repositories;
 using Theater.Domain.Models.Entities.Membership;
 
@@ -21,6 +19,10 @@ namespace Theater.Application.Modules.ContactPostModule.Queries.ContactPostGetBy
         public async Task<ContactPostGetByIdRequestDto> Handle(ContactPostGetByIdRequest request, CancellationToken cancellationToken)
         {
             var entity = await contactPostRepository.GetAsync(m => m.Id == request.Id, cancellationToken);
+            if (entity == null)
+            {
+                return null;
+            }
 
             var AnsweredById = entity.AnsweredBy;
             var AnsweredByUserName = "Guest";
@@ -44,6 +46,5 @@ namespace Theater.Application.Modules.ContactPostModule.Queries.ContactPostGetBy
                 Answer = entity.Answer,
             };
         }
-
     }
 }

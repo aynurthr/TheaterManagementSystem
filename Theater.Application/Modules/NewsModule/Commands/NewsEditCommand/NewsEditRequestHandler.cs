@@ -21,7 +21,10 @@ namespace Theater.Application.Modules.NewsModule.Commands.NewsEditCommand
         public async Task<News> Handle(NewsEditRequest request, CancellationToken cancellationToken)
         {
             var entity = await _newsRepository.GetAsync(m => m.Id == request.Id && m.DeletedAt == null, cancellationToken);
-
+            if (entity == null)
+            {
+                return null;
+            }
             entity.Title = request.Title;
             entity.Description = request.Description;
 

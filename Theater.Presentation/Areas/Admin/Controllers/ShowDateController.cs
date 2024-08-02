@@ -9,6 +9,7 @@ using Theater.Application.Modules.TeamMemberModule.Queries.TeamMemberGetAllQuery
 using Theater.Application.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading;
 
 namespace Theater.Presentation.Areas.Admin.Controllers
 {
@@ -19,11 +20,15 @@ namespace Theater.Presentation.Areas.Admin.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IShowDateRepository _showDateRepository;
+        private readonly ISeatRepository _seatRepository;
 
-        public ShowDateController(IMediator mediator, IShowDateRepository showDateRepository)
+
+        public ShowDateController(IMediator mediator, IShowDateRepository showDateRepository, ISeatRepository seatRepository)
         {
             _mediator = mediator;
             _showDateRepository = showDateRepository;
+            _seatRepository = seatRepository;
+
         }
 
         public async Task<IActionResult> Index(ShowDateGetAllRequest request)
@@ -39,17 +44,17 @@ namespace Theater.Presentation.Areas.Admin.Controllers
 
             if (response == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             // Fetching the show date and related poster details
             var showDate = await _showDateRepository.GetAll()
                 .Include(sd => sd.Poster)
-                .FirstOrDefaultAsync(sd => sd.Id == id && sd.DeletedAt == null); // Adjust this to match your repository setup
+                .FirstOrDefaultAsync(sd => sd.Id == id && sd.DeletedAt == null);
 
-            if (showDate == null)
+            if (response == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             ViewBag.PosterTitle = showDate.Poster.Title;
@@ -73,16 +78,35 @@ namespace Theater.Presentation.Areas.Admin.Controllers
 
             if (response == null)
             {
-                response = new TicketDto
-                {
-                    ShowDateId = showDateId,
-                    SeatId = seatId,
-                    Price = 0 // Default price for new ticket
-                };
+                return View("NotFound");
             }
+
+            // Fetching the show date and related poster details
+            var showDate = await _showDateRepository.GetAll()
+                .Include(sd => sd.Poster)
+                .FirstOrDefaultAsync(sd => sd.Id == showDateId && sd.DeletedAt == null);
+
+            if (showDate == null)
+            {
+                return View("NotFound");
+            }
+
+            var seat = await _seatRepository.GetAll()
+                .FirstOrDefaultAsync(s => s.Id == seatId && s.DeletedAt == null);
+
+            if (seat == null)
+            {
+                return View("NotFound");
+            }
+
+            ViewBag.PosterTitle = showDate.Poster.Title;
+            ViewBag.ShowDate = showDate.Date.ToString("dd MMM yyyy HH:mm");
+            ViewBag.SeatDetails = $"{seat.Row}{seat.Number}";
 
             return View(response);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> UpsertTicket(UpsertTicketRequest request)

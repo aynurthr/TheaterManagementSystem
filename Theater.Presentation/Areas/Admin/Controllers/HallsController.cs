@@ -45,7 +45,7 @@ namespace Theater.Presentation.Areas.Admin.Controllers
 
             if (response == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             return View(response);

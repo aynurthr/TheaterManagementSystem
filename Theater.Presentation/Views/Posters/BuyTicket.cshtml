@@ -159,7 +159,6 @@
                 totalPrice = 0;
                 selectedSeats = [];
                 updateTotalPrice(totalPrice);
-
                 $.ajax({
                     url: '/api/posters/' + posterId + '/tickets/' + showDateId,
                     method: 'GET',
@@ -167,6 +166,7 @@
                         $('#seating-chart').empty();
                         var rows = {};
 
+                        // Group seats by row
                         data.seats.forEach(function (seat) {
                             if (!rows[seat.row]) {
                                 rows[seat.row] = [];
@@ -174,7 +174,11 @@
                             rows[seat.row].push(seat);
                         });
 
-                        for (var row in rows) {
+                        // Get the keys (row names) and sort them alphabetically
+                        var sortedRows = Object.keys(rows).sort();
+
+                        // Append rows in alphabetical order
+                        sortedRows.forEach(function (row) {
                             var rowDiv = $('<div class="seating-row">').append('<div>' + row + '</div>');
                             rows[row].forEach(function (seat) {
                                 var seatClass = seat.isPurchased ? 'seat reserved' : 'seat';
@@ -183,12 +187,13 @@
                                 );
                             });
                             $('#seating-chart').append(rowDiv);
-                        }
+                        });
                     },
                     error: function () {
                         alert('Failed to load seats. Please try again.');
                     }
                 });
+
             });
 
             $('.btn--pay').click(function () {

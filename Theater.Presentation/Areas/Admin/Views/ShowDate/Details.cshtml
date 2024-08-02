@@ -7,6 +7,10 @@
 
 <h2>ShowDate Details</h2>
 <p>
+    <strong>Poster Title:</strong> @ViewBag.PosterTitle <br>
+    <strong>Show Date:</strong> @ViewBag.ShowDate
+</p>
+<p>
     <span style="color: red;">Red seats</span> do not have a ticket assigned to them, while
     <span style="color: green;">green seats</span> have a ticket and the user can purchase them.
     You can add or edit the ticket by clicking on the seat.
@@ -14,7 +18,7 @@
 </p>
 
 <div class="seating-chart">
-    @foreach (var seatGroup in Model.GroupBy(s => s.Row))
+    @foreach (var seatGroup in Model.GroupBy(s => s.Row).OrderBy(g => g.Key)) // Order by row alphabetically
     {
         <div class="seating-row">
             <div class="row-label">@seatGroup.Key</div>
@@ -36,7 +40,6 @@
                     </a>
                 }
             }
-
         </div>
     }
 </div>
@@ -56,6 +59,7 @@
         });
     </script>
 }
+
 
 <style>
     .seating-chart {

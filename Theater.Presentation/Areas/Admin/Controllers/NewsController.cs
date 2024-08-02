@@ -38,6 +38,10 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         public async Task<IActionResult> Details([FromRoute] NewsGetByIdRequest request)
         {
             var response = await _mediator.Send(request);
+            if (response == null)
+            {
+                return View("NotFound");
+            }
             return View(response);
         }
 
@@ -68,6 +72,10 @@ namespace Theater.Presentation.Areas.Admin.Controllers
         public async Task<IActionResult> Edit([FromRoute] NewsGetByIdRequest request)
         {
             var response = await _mediator.Send(request);
+            if (response == null)
+            {
+                return View("NotFound");
+            }
             return View(response);
         }
 

@@ -16,6 +16,10 @@ namespace Theater.Application.Modules.GenreModule.Queries.GenreGetByIdQuery
         {
             var entity = await genreRepository.GetAsync(m => m.Id == request.Id && m.DeletedAt == null, cancellationToken);
 
+            if (entity == null)
+            {
+                return null;
+            }
             return new GenreRequestDto
             {
                 Id = entity.Id,

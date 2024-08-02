@@ -18,6 +18,10 @@ namespace Theater.Application.Modules.NewsModule.Queries.NewsGetByIdQuery
         public async Task<NewsGetByIdRequestDto> Handle(NewsGetByIdRequest request, CancellationToken cancellationToken)
         {
             var entity = await newsRepository.GetAsync(m => m.Id == request.Id && m.DeletedAt == null, cancellationToken);
+            if (entity == null)
+            {
+                return null;
+            }
 
             string host = $"{ctx.ActionContext.HttpContext.Request.Scheme}://{ctx.ActionContext.HttpContext.Request.Host}";
 

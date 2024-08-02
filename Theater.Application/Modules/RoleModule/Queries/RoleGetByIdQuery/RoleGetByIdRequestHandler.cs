@@ -21,7 +21,7 @@ namespace Theater.Application.Modules.RoleModule.Queries.RoleGetByIdQuery
             var role = await _roleRepository.GetAll()
                                             .Include(r => r.Actor)
                                             .Include(r => r.Poster)
-                                            .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
+                                            .FirstOrDefaultAsync(r => r.Id == request.Id && r.DeletedAt == null, cancellationToken);
 
             if (role == null)
             {
