@@ -44,43 +44,33 @@
         <span asp-validation-for="Image" class="text-danger"></span>
     </div>
 
-    <h3>Roles</h3>
-    <div id="roles-container">
-        <div class="form-group role-entry">
-            <label>Role Name</label>
-            <input name="Roles[0].RoleName" class="form-control" />
-            <label>Actor</label>
-            <select name="Roles[0].ActorId" class="form-control">
-                <option value="">Select Actor</option>
-                @foreach (var actor in ViewBag.Actors)
-                {
-                    <option value="@actor.Id">@actor.FullName</option>
-                }
-                @* Closing the foreach block *@
-                }
-            </select>
-        </div>
+    <h3>Role</h3>
+    <div class="form-group role-entry">
+        <label>Role Name</label>
+        <input asp-for="Roles[0].RoleName" class="form-control" />
+        <label>Actor</label>
+        <select asp-for="Roles[0].ActorId" class="form-control">
+            <option value="">Select Actor</option>
+            @foreach (var actor in ViewBag.Actors)
+            {
+                <option value="@actor.Id">@actor.FullName</option>
+            }
+        </select>
     </div>
-    <button type="button" id="add-role" class="btn btn-secondary">Add Role</button>
 
-    <h3>Show Dates</h3>
-    <div id="showdates-container">
-        <div class="form-group showdate-entry">
-            <label>Date</label>
-            <input name="ShowDates[0].Date" type="datetime-local" class="form-control" />
-            <label>Hall</label>
-            <select name="ShowDates[0].HallId" class="form-control">
-                <option value="">Select Hall</option>
-                @foreach (var hall in ViewBag.Halls)
-                {
-                    <option value="@hall.Id">@hall.Name</option>
-                }
-                @* Closing the foreach block *@
-                }
-            </select>
-        </div>
+    <h3>Show Date</h3>
+    <div class="form-group showdate-entry">
+        <label>Date</label>
+        <input asp-for="ShowDates[0].Date" type="datetime-local" class="form-control" />
+        <label>Hall</label>
+        <select asp-for="ShowDates[0].HallId" class="form-control">
+            <option value="">Select Hall</option>
+            @foreach (var hall in ViewBag.Halls)
+            {
+                <option value="@hall.Id">@hall.Name</option>
+            }
+        </select>
     </div>
-    <button type="button" id="add-showdate" class="btn btn-secondary">Add Show Date</button>
 
     <div class="form-group mt-3">
         <input type="submit" value="Create" class="btn btn-primary" />
@@ -94,49 +84,9 @@
 
 @section addjs {
     <script src="~/lib/single-image-chooser/single-image-chooser.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#cover-image').singleImageChooser();
-
-            var roleIndex = 1;
-            var showdateIndex = 1;
-
-            $('#add-role').click(function () {
-                var roleHtml = `<div class="form-group role-entry">
-                                            <label>Role Name</label>
-                                            <input name="Roles[${roleIndex}].RoleName" class="form-control" />
-                                            <label>Actor</label>
-                                            <select name="Roles[${roleIndex}].ActorId" class="form-control">
-                                                <option value="">Select Actor</option>
-        @foreach (var actor in ViewBag.Actors)
-        {
-                                                        <option value="@actor.Id">@actor.FullName</option>
-        }
-                                                }
-                                            </select>
-                                        </div>`;
-                $('#roles-container').append(roleHtml);
-                roleIndex++;
-            });
-
-            $('#add-showdate').click(function () {
-                var showdateHtml = `<div class="form-group showdate-entry">
-                                                <label>Date</label>
-                                                <input name="ShowDates[${showdateIndex}].Date" type="datetime-local" class="form-control" />
-                                                <label>Hall</label>
-                                                <select name="ShowDates[${showdateIndex}].HallId" class="form-control">
-                                                    <option value="">Select Hall</option>
-        @foreach (var hall in ViewBag.Halls)
-        {
-                                                            <option value="@hall.Id">@hall.Name</option>
-        }
-                                                    }
-                                                </select>
-                                            </div>`;
-                $('#showdates-container').append(showdateHtml);
-                showdateIndex++;
-            });
         });
     </script>
 }

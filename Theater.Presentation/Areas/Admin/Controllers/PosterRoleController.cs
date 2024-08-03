@@ -48,8 +48,13 @@ namespace Theater.Presentation.Areas.Admin.Controllers
 
         public async Task<IActionResult> Create()
         {
-            ViewBag.Actors = await _actorRepository.GetAll().ToListAsync();
-            ViewBag.Posters = await _posterRepository.GetAll().ToListAsync();
+            ViewBag.Actors = await _actorRepository.GetAll()
+               .Where(a => a.DeletedAt == null)
+               .ToListAsync();
+
+            ViewBag.Posters = await _posterRepository.GetAll()
+                .Where(p => p.DeletedAt == null)
+                .ToListAsync();
             return View();
         }
 
@@ -64,8 +69,13 @@ namespace Theater.Presentation.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            ViewBag.Actors = await _actorRepository.GetAll().ToListAsync();
-            ViewBag.Posters = await _posterRepository.GetAll().ToListAsync();
+            ViewBag.Actors = await _actorRepository.GetAll()
+               .Where(a => a.DeletedAt == null)
+               .ToListAsync();
+
+            ViewBag.Posters = await _posterRepository.GetAll()
+                .Where(p => p.DeletedAt == null)
+                .ToListAsync();
             return View(request);
         }
 
@@ -77,8 +87,13 @@ namespace Theater.Presentation.Areas.Admin.Controllers
                 return View("NotFound");
             }
 
-            ViewBag.Actors = await _actorRepository.GetAll().ToListAsync();
-            ViewBag.Posters = await _posterRepository.GetAll().ToListAsync();
+            ViewBag.Actors = await _actorRepository.GetAll()
+               .Where(a => a.DeletedAt == null)
+               .ToListAsync();
+
+            ViewBag.Posters = await _posterRepository.GetAll()
+                .Where(p => p.DeletedAt == null)
+                .ToListAsync();
 
             var model = new RoleEditRequest
             {
@@ -109,8 +124,13 @@ namespace Theater.Presentation.Areas.Admin.Controllers
                 }
             }
 
-            ViewBag.Actors = await _actorRepository.GetAll().ToListAsync();
-            ViewBag.Posters = await _posterRepository.GetAll().ToListAsync();
+            ViewBag.Actors = await _actorRepository.GetAll()
+               .Where(a => a.DeletedAt == null)
+               .ToListAsync();
+
+            ViewBag.Posters = await _posterRepository.GetAll()
+                .Where(p => p.DeletedAt == null)
+                .ToListAsync();
 
             return View(request);
         }
