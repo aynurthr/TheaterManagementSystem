@@ -63,6 +63,7 @@ namespace Theater.Presentation
                     fv.RegisterValidatorsFromAssemblyContaining<ContactPostReplyRequestValidator>();
                     fv.RegisterValidatorsFromAssemblyContaining<ForgetPasswordRequestValidator>();
                     fv.RegisterValidatorsFromAssemblyContaining<GenreEditRequestValidator>();
+                    fv.RegisterValidatorsFromAssemblyContaining<NewsletterSubscribeRequestValidator>();
 
                 });
 

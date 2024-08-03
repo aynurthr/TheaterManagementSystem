@@ -121,9 +121,11 @@
                 <div class="footer-top__right">
                     <div class="footer-top__right__header"><h3>Subscribe to our newsletter</h3></div>
                     <p>Get exclusive promotions and updates straight to your inbox.</p>
-                    <form action="" class="email-form">
-                        <input type="email" placeholder="Enter your email" class="email-input" />
-                        <button type="submit">Subscribe</button>
+                    <form id="newsletterForm" asp-action="Subscribe" asp-controller="Newsletter" method="post" novalidate class="email-form">
+                        <div class="form-group mb-2">
+                            <input type="email" id="emailInput" name="Email" placeholder="Enter your email" class="form-control email-input" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Subscribe</button>
                     </form>
                 </div>
             </div>
@@ -133,11 +135,74 @@
             </div>
         </div>
     </footer>
+
+   <!-- Subscription Success Modal -->
+    <div class="modal fade" id="subscriptionSuccessModal" tabindex="-1" role="dialog" aria-labelledby="subscriptionSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subscriptionSuccessModalLabel">Subscription Successful</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Thank you for subscribing to our newsletter!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Subscription Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="errorModalBody">
+                    <!-- Error message will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="~/assets/common/sidebar.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     @RenderSection("addjs", required: false)
     @RenderSection("Scripts", required: false)
+
+    <script>
+        $(document).ready(function () {
+            @if (TempData["SubscriptionSuccess"] != null && (bool)TempData["SubscriptionSuccess"])
+            {
+                           <text>
+                    $('#subscriptionSuccessModal').modal('show'); </text>
+
+            }
+
+            @if (TempData["SubscriptionError"] != null)
+            {
+                            <text>
+
+                var errorMessage = "@TempData["SubscriptionError"]";
+                $('#errorModalBody').text(errorMessage);
+                $('#errorModal').modal('show'); </text>
+
+            }
+        });
+    </script>
+
 </body>
 </html>

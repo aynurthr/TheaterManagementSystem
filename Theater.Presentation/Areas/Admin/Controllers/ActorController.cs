@@ -67,6 +67,7 @@ namespace Theater.Presentation.Areas.Admin.Controllers
             var response = await _mediator.Send(request);
             return View(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> Edit([FromForm] ActorEditRequest request)
         {
@@ -85,15 +86,17 @@ namespace Theater.Presentation.Areas.Admin.Controllers
                     Id = request.Id,
                     FullName = request.FullName,
                     Title = request.Title,
-                    ImageSrc = $"{host}/uploads/images/{request.ImageUrl}",
+                    ImageSrc = $"{host}/uploads/images/{request.ImageUrl}"
                 };
 
                 return View(model);
             }
 
-            await _mediator.Send(request);
+            var response = await _mediator.Send(request);
             return RedirectToAction(nameof(Index));
         }
+
+
 
 
 
